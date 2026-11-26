@@ -2,12 +2,14 @@
 
 from copy import deepcopy
 from curriculum import COURSE_ASSESSMENTS, PRACTICE
+from history import STORIES
 
 REFERENCE = {"url": "https://brilliant.org/courses/", "checked_on": "2026-11-25",
              "scope": "Public Topics page; not a complete lesson-level inventory."}
 
 SUBJECTS = [
     {"id": "math", "title": "Mathematics", "description": "From quantities to calculus."},
+    {"id": "history", "title": "Math history", "description": "Why each idea was invented, and how people reasoned their way to it."},
     {"id": "logic", "title": "Logic and puzzles", "description": "Reason, deduce, and find patterns."},
     {"id": "computing", "title": "Computer science", "description": "Turn ideas into algorithms and code."},
     {"id": "technology", "title": "Technology", "description": "Explore the systems behind everyday tools."},
@@ -234,6 +236,25 @@ def _courses():
              "objectives": ["Interpret slope and intercept in a linear model."],
              "lesson_ids": ["slope", "intercepts", "models"]},
         ],
+    }, {
+        "id": "math-history", "subject_id": "history",
+        "title": "How math was invented",
+        "prerequisites": [], "topics": ["Math history"], "reference": None,
+        "related_lesson_ids": [],
+        "units": [
+            {"id": "history-numbers", "title": "Counting and writing numbers",
+             "objectives": ["Explain how matching and tallies led to number systems.",
+                            "Compare additive systems with place value, and explain why zero matters."],
+             "lesson_ids": ["history-counting", "history-symbols", "history-place-value"]},
+            {"id": "history-calculating", "title": "Calculating, sharing, and owing",
+             "objectives": ["Multiply by doubling and adding, and explain carrying.",
+                            "Describe why fractions and negative numbers were needed."],
+             "lesson_ids": ["history-arithmetic", "history-fractions", "history-negatives"]},
+            {"id": "history-reasoning", "title": "Balancing, measuring, and proving",
+             "objectives": ["Explain how restoring and balancing became algebra.",
+                            "Trace geometry from land measuring to proof and coordinates."],
+             "lesson_ids": ["history-algebra", "history-geometry"]},
+        ],
     }]
     by_id = {}
     for topic, subject_id, rows in TOPICS:
@@ -344,6 +365,11 @@ def validate_catalog(lessons, skills, courses=COURSES):
         raise ValueError("Every published lesson must belong to exactly one catalog unit.")
     if any(lesson["skill"] not in skill_ids for lesson in lessons):
         raise ValueError("Published lesson references an unknown skill.")
+    for lesson_id, story in STORIES.items():
+        if lesson_id not in lesson_ids:
+            raise ValueError(f"Story references an unknown lesson: {lesson_id}")
+        if not all(isinstance(story.get(key), str) and story[key].strip() for key in ("title", "text", "art")):
+            raise ValueError(f"Story is incomplete: {lesson_id}")
     if len(skill_ids) != len(skills) or len(lesson_ids) != len(lessons):
         raise ValueError("Duplicate skill or lesson ID.")
     skill_map = {skill["id"]: skill for skill in skills}

@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
 from uuid import UUID
 
 from curriculum import COURSE_ASSESSMENTS, DIAGNOSTIC, LESSONS, PRACTICE, SKILLS
+from history import STORIES
 from catalog import catalog_state, validate_catalog
 
 ROOT = Path(__file__).resolve().parent
@@ -245,7 +246,7 @@ class Store:
             "profile": json.loads(profile_row["value"]) if profile_row else None,
             "lessons": lessons, "mastery": mastery, "passed": passed,
             "catalog": catalog_state(lessons, passed),
-            "practice": practice, "course_assessments": assessments,
+            "practice": practice, "course_assessments": assessments, "stories": STORIES,
             "diagnostic": [{"skill": skill, **public_question(q)} for skill, q in DIAGNOSTIC],
             "diagnostic_answered": diagnostic_ids,
             "activity": {"days": days, "streak": streak, "attempts": len(attempts)},

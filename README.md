@@ -21,18 +21,24 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
-- Six subject areas, 65 courses, and subject/course/unit navigation. Courses
+- Seven subject areas, 66 courses, and subject/course/unit navigation. Courses
   are ordered from simple to complex within each subject, using each course's
   prerequisite chain to assign a Beginner, Intermediate, or Advanced level.
 - A roadmap page listing every course by subject and topic group.
-- Five playable courses: the six-lesson starter course, fractions, equations
+- Six playable courses: the six-lesson starter course, fractions, equations
   ("First steps with equations"), linear relationships ("Lines tell a story"),
-  and a combined geometry course ("Geometry and coordinates", nine lessons from
-  perimeter and angles through slopes, shapes, and polar coordinates). The other
-  60 courses are outlines with objectives and proposed prerequisites, not
-  playable courses.
+  a combined geometry course ("Geometry and coordinates", nine lessons from
+  perimeter and angles through slopes, shapes, and polar coordinates), and a
+  math history course ("How math was invented"). The other 60 courses are
+  outlines with objectives and proposed prerequisites, not playable courses.
+- Math history in two forms. Story cards ("Why people needed this") open nine
+  lessons with a short account and illustration. They are display-only: not
+  graded, and they never affect progress. The history course follows the chain of
+  needs from counting to geometry in eight low-stakes lessons, with no graded
+  course check. History text is written in hedged language where scholars
+  disagree and should be fact-checked against reputable sources before release.
 - Editable local learner profile and daily intention.
-- Thirty-three lessons, 153 lesson challenges, hints, and explanations.
+- Forty-one lessons, 185 lesson challenges, hints, and explanations.
 - The fractions course covers equal parts, equivalence, comparison, addition,
   subtraction, and fractions of quantities. It includes 30 lesson challenges,
   24 separate authored practice questions, and a twelve-question course check.
@@ -129,7 +135,7 @@ HTTP connections:
 
 ```powershell
 $env:PYTHONPATH = "tests"
-python -m unittest test_app.StoreTests test_catalog.CatalogTests test_fractions.FractionsTests test_equations.EquationsTests test_linear.LinearTests test_geometry.GeometryTests -v
+python -m unittest test_app.StoreTests test_catalog.CatalogTests test_fractions.FractionsTests test_equations.EquationsTests test_linear.LinearTests test_geometry.GeometryTests test_history.HistoryTests -v
 ```
 
 This does not replace the HTTP tests, which still need an environment with
@@ -174,13 +180,14 @@ answers remain saved. The JSON editor does not edit these source-controlled bank
 Changes to existing bank questions require deliberate version invalidation of
 their associated lessons, or new question IDs for genuinely new questions.
 
-The five playable courses have automated arithmetic and interaction checks
+The playable courses have automated arithmetic and interaction checks
 (answers are verified against independent calculations), but still need
-independent educator/learner review before production. Learnova is meant for
-people who are struggling with math or starting with no foundation, so the next
-content milestone is a true beginner path before fractions: counting and number
-sense, adding and subtracting, and multiplying and dividing, each with large,
-friendly illustrations and hands-on activities.
+independent educator/learner review before production, and the history text
+needs a fact-check. Learnova is meant for people who are struggling with math or
+starting with no foundation, so the next content milestone is a true beginner
+path before fractions: counting and number sense, adding and subtracting, and
+multiplying and dividing, each with large, friendly illustrations, hands-on
+activities, and story cards.
 
 ## Before production
 

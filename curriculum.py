@@ -1232,3 +1232,239 @@ COURSE_ASSESSMENTS["coordinate-geometry"] = [
 COURSE_ASSESSMENTS["coordinate-geometry"] += _geometry_extra
 _geometry_order = [lesson["id"] for lesson in GEOMETRY_LESSONS]
 COURSE_ASSESSMENTS["coordinate-geometry"].sort(key=lambda item: _geometry_order.index(item[0]))
+
+SKILLS.extend([
+    {"id": "hist-counting", "name": "Counting and matching", "prerequisites": []},
+    {"id": "hist-symbols", "name": "Writing numbers with symbols", "prerequisites": ["hist-counting"]},
+    {"id": "hist-place", "name": "Place value and zero", "prerequisites": ["hist-symbols"]},
+    {"id": "hist-arith", "name": "Methods of calculating", "prerequisites": ["hist-place"]},
+    {"id": "hist-fractions", "name": "Sharing and unit fractions", "prerequisites": ["hist-arith"]},
+    {"id": "hist-negatives", "name": "Debts and negative numbers", "prerequisites": ["hist-arith"]},
+    {"id": "hist-algebra", "name": "Balancing and restoring", "prerequisites": ["hist-negatives", "hist-fractions"]},
+    {"id": "hist-geometry", "name": "Measuring, proving, and mapping", "prerequisites": ["hist-algebra"]},
+])
+
+HISTORY_LESSONS = [
+    {
+        "id": "history-counting", "skill": "hist-counting", "title": "Before numbers",
+        "subtitle": "How people kept track of things before they had number words.",
+        "duration": 6, "color": "yellow", "icon": "graph",
+        "intro": "People counted long before they wrote numbers. A herder could drop one pebble "
+                 "into a bag for each animal that left in the morning, then match the pebbles "
+                 "to the animals coming home at night. A pebble left over meant an animal was "
+                 "missing. That is one-to-one matching, and it works with no number names at all. "
+                 "Notches on old bones, such as the Ishango bone found in central Africa, may be "
+                 "early tallies, although scholars still debate what they were for. Plain tallies "
+                 "become hard to read as they grow, so people grouped them, often in fives. That "
+                 "need to group is the seed of every number system.",
+        "takeaway": "Matching things one-to-one is counting, even without number names.",
+        "visual": "number-systems-explorer", "formula": "one pebble = one animal",
+        "exercises": [
+            question("yc1", "A herder puts one pebble in a bag for each sheep that leaves. In the evening, 3 pebbles are left after matching one to each returning sheep. How many sheep are missing?",
+                     "3", "Each leftover pebble stands for a sheep that did not come back.", "Match each returning sheep to one pebble."),
+            question("yc2", "You make tally marks in bundles of 5. You see 4 full bundles and 3 extra marks. How many things were counted?",
+                     "23", "Four bundles of 5 make 20, and 3 more makes 23.", "Count the bundles first, then the extras."),
+            question("yc3", "Why is a plain row of 87 tally strokes hard to use?",
+                     "It is hard to see the total at a glance without grouping",
+                     "Without groups, you have to count every stroke again each time.", "Think about reading the total quickly.",
+                     ["It is hard to see the total at a glance without grouping", "Strokes cannot show numbers above 50",
+                      "Tallies were never used for counting", "The strokes would have different sizes"]),
+            question("yc4", "How many full bundles of 5 can you make from 37 tally marks?",
+                     "7", "Seven bundles use 35 marks, with 2 left over.", "Divide 37 into groups of 5."),
+        ],
+    },
+    {
+        "id": "history-symbols", "skill": "hist-symbols", "title": "Symbols for bigger numbers",
+        "subtitle": "Why a different picture for 1, 10, and 100 only goes so far.",
+        "duration": 7, "color": "peach", "icon": "graph",
+        "intro": "To write bigger numbers, ancient Egyptian scribes used a different picture for "
+                 "1, 10, 100, and 1,000, and repeated each one as many times as needed. To write "
+                 "243 they used 2 hundred-symbols, 4 ten-symbols, and 3 one-symbols: 9 symbols in "
+                 "all. You find the value by adding, so the order of the symbols did not matter. "
+                 "This works, but it gets long: 999 needs 27 symbols. Roman numerals shorten some "
+                 "numbers with symbols like V and X, but they are also mostly additive, which makes "
+                 "everyday arithmetic awkward. People kept looking for a shorter way to write the "
+                 "same number. Slide the number in the explorer to compare.",
+        "takeaway": "Additive systems repeat symbols, so big numbers get long.",
+        "visual": "number-systems-explorer", "formula": "243 = 100 + 100 + 10 + 10 + 10 + 10 + 1 + 1 + 1",
+        "exercises": [
+            question("ys1", "In an additive system with symbols for 1, 10, and 100, how many symbols are needed to write 312?",
+                     "6", "That is 3 hundreds, 1 ten, and 2 ones: 3 + 1 + 2 = 6 symbols.", "Count hundreds, tens, and ones separately."),
+            question("ys2", "In the same system, how many symbols are needed to write 999?",
+                     "27", "That is 9 hundreds, 9 tens, and 9 ones: 9 + 9 + 9 = 27 symbols.", "Count hundreds, tens, and ones separately."),
+            question("ys3", "In an additive system, does the order of the symbols change the number's value?",
+                     "No, you just add the values", "The value is the sum of all the symbols, whatever the order.",
+                     "How do you find the value of an additive number?",
+                     ["No, you just add the values", "Yes, the first symbol counts double", "Yes, the last symbol counts double"]),
+            question("ys4", "A scribe writes 4 hundred-symbols, 0 ten-symbols, and 5 one-symbols. What number is that?",
+                     "405", "4 hundreds and 5 ones make 405.", "Add the value of each group of symbols."),
+        ],
+    },
+    {
+        "id": "history-place-value", "skill": "hist-place", "title": "Position gives value, and zero holds the place",
+        "subtitle": "The shorter idea that changed how everyone writes numbers.",
+        "duration": 8, "color": "mint", "icon": "graph",
+        "intro": "A much shorter idea is place value: a digit's value depends on where it sits. In "
+                 "305, the 3 means three hundreds because of its position. But then you need a way "
+                 "to show an empty place, or 305 and 35 could look alike. Babylonian scribes, who "
+                 "counted in groups of 60, eventually used a mark as a placeholder. Mathematicians "
+                 "in India developed a base-ten system with a symbol for zero, and around 628 CE "
+                 "Brahmagupta wrote rules for calculating with zero as a number in its own right. "
+                 "These ideas travelled through the Islamic world, where scholars such as "
+                 "al-Khwarizmi wrote about them, and reached Europe in books like Fibonacci's "
+                 "Liber Abaci in 1202. The word algorithm comes from al-Khwarizmi's name.",
+        "takeaway": "Place value writes any number with just ten digits, and zero keeps places in order.",
+        "visual": "number-systems-explorer", "formula": "305 = 3 hundreds + 0 tens + 5 ones",
+        "exercises": [
+            question("yp1", "In the number 3,052, what value does the digit 5 stand for?", "50",
+                     "The 5 is in the tens place, so it means 5 tens, which is 50.", "Which place is the 5 in?"),
+            question("yp2", "What does the zero in 305 show?", "An empty tens place",
+                     "The zero holds the tens place so the 3 stays in the hundreds place.", "Compare 305 with 35.",
+                     ["An empty tens place", "An empty ones place", "An empty hundreds place", "Nothing; it can be ignored"]),
+            question("yp3", "How many digits does place value need to write 999?", "3",
+                     "Place value writes 999 with three digits, compared with 27 symbols in the additive system.", "Count the digits."),
+            question("yp4", "What number has 4 in the hundreds place, 0 in the tens place, and 7 in the ones place?", "407",
+                     "4 hundreds, 0 tens, and 7 ones make 407.", "Write the digits in order of their places."),
+        ],
+    },
+    {
+        "id": "history-arithmetic", "skill": "hist-arith", "title": "Doubling and carrying",
+        "subtitle": "How scribes multiplied with only doubling and adding.",
+        "duration": 8, "color": "blue", "icon": "graph",
+        "intro": "Scribes needed to multiply for taxes, grain, and building. An Egyptian method "
+                 "recorded in the Rhind Papyrus, copied around 1550 BCE, uses only doubling and "
+                 "adding. To find 13 times 12, write the doubles of 12: 12, 24, 48, 96. Since "
+                 "13 = 1 + 4 + 8, add the rows for 1, 4, and 8: 12 + 48 + 96 = 156. It works "
+                 "because every whole number can be built by adding different powers of two. "
+                 "Later, place value allowed the column methods many people learn, where carrying "
+                 "moves ten ones into one ten. Choose two numbers in the explorer and watch which "
+                 "rows are picked.",
+        "takeaway": "Any whole number is a sum of doublings, so multiplying can be done by doubling and adding.",
+        "visual": "doubling-explorer", "formula": "13 x 12 = (1 + 4 + 8) x 12",
+        "exercises": [
+            question("yr1", "Using doubling, the rows for 12 are 1 row is 12, 2 rows is 24, 4 rows is 48, and 8 rows is 96. Which rows add up to 13?",
+                     "1, 4, and 8", "1 + 4 + 8 = 13, so add 12 + 48 + 96.", "Find rows that add to 13.",
+                     ["1, 4, and 8", "2, 4, and 8", "1, 2, and 8", "1, 2, and 4"]),
+            question("yr2", "Use doubling to find 9 times 7. Hint: 9 = 8 + 1.", "63",
+                     "8 times 7 is 56, and 1 times 7 is 7, so the total is 63.", "Double 7 three times, then add the 1 row."),
+            question("yr3", "Using rows 1, 2, 4, 8, and 16, which is the largest row needed to make 20?", "16",
+                     "20 = 16 + 4, so the largest row is 16.", "Take the biggest row that is not more than 20."),
+            question("yr4", "When adding 47 + 38 by hand, how many tens do you carry from the ones column?", "1",
+                     "7 + 8 = 15 ones, which is 1 ten and 5 ones, so you carry 1 ten.", "Add the ones first."),
+        ],
+    },
+    {
+        "id": "history-fractions", "skill": "hist-fractions", "title": "Sharing and measuring",
+        "subtitle": "Why people needed numbers for parts of a whole.",
+        "duration": 8, "color": "violet", "icon": "fraction",
+        "intro": "When grain, land, or loaves had to be shared, whole numbers were not enough. "
+                 "Egyptian scribes wrote most fractions as sums of different unit fractions, which "
+                 "have 1 on top. They wrote three quarters as one half plus one quarter. The Rhind "
+                 "Papyrus includes a table that rewrites 2 divided by odd numbers this way. Other "
+                 "cultures chose other tools: Babylonian scribes used base-60 fractions, which is "
+                 "one reason we still split hours into 60 minutes. A way to write part of a whole "
+                 "let people measure more precisely than counting alone.",
+        "takeaway": "Fractions grew from fair sharing and careful measuring.",
+        "visual": "fraction-explorer", "formula": "3/4 = 1/2 + 1/4",
+        "exercises": [
+            question("yf1", "An Egyptian scribe writes three quarters as 1/2 plus a unit fraction. Which unit fraction completes it?",
+                     "1/4", "1/2 + 1/4 = 2/4 + 1/4 = 3/4.", "Rewrite 1/2 in quarters."),
+            question("yf2", "Add 1/2 + 1/3. What is the total as a fraction?", "5/6",
+                     "In sixths, 3/6 + 2/6 = 5/6.", "Use a common denominator of 6."),
+            question("yf3", "Which sum of different unit fractions equals 7/8?", "1/2 + 1/4 + 1/8",
+                     "In eighths, 4/8 + 2/8 + 1/8 = 7/8.", "Rewrite each choice in eighths where you can.",
+                     ["1/2 + 1/4 + 1/8", "1/2 + 1/3 + 1/6", "1/4 + 1/4 + 1/4", "1/2 + 1/8 + 1/8"]),
+            question("yf4", "A scribe shares 3 loaves equally among 4 workers. How much does each worker get? Enter a fraction.",
+                     "3/4", "Each worker gets 3 divided by 4, which is 3/4 of a loaf.", "Share 3 equally among 4."),
+        ],
+    },
+    {
+        "id": "history-negatives", "skill": "hist-negatives", "title": "Owing, owning, and opposites",
+        "subtitle": "How debts gave negative numbers a meaning.",
+        "duration": 8, "color": "peach", "icon": "graph",
+        "intro": "Merchants and tax collectors had to track both what they had and what they owed. "
+                 "Counting rods in China used one colour for gains and another for losses, and an "
+                 "old Chinese text, the Nine Chapters on the Mathematical Art, includes rules for "
+                 "adding and subtracting them. In the 600s CE the Indian mathematician Brahmagupta "
+                 "wrote rules for fortunes (positive) and debts (negative). Many European "
+                 "mathematicians resisted negative numbers for centuries because they did not seem "
+                 "to measure anything. Money owed gave them a meaning: if you have 3 coins and owe "
+                 "5, your net total is -2. Move the sliders in the explorer.",
+        "takeaway": "A negative number can mean a debt, a loss, or the opposite direction.",
+        "visual": "ledger-explorer", "formula": "have 3, owe 5: 3 - 5 = -2",
+        "exercises": [
+            question("yn1", "You have 3 coins and owe 5 coins. What is your net total in coins?", "-2",
+                     "3 - 5 = -2, meaning you are 2 coins short.", "Subtract what you owe from what you have."),
+            question("yn2", "You owe 8 coins, then someone pays 3 coins of your debt. What is your net total now?", "-5",
+                     "You still owe 5, so the net total is -5.", "Paying a debt moves you toward zero."),
+            question("yn3", "You owe 4 coins and owe another 6 coins. What is your net total?", "-10",
+                     "Two debts add up: -4 + -6 = -10.", "Combine both debts."),
+            question("yn4", "What is the opposite of owing 7 coins?", "Having 7 coins",
+                     "Opposites sit the same distance from zero on opposite sides: -7 and 7.", "Think of a number line.",
+                     ["Having 7 coins", "Owing 14 coins", "Having 0 coins", "Owing 7 coins"]),
+        ],
+    },
+    {
+        "id": "history-algebra", "skill": "hist-algebra", "title": "Solving puzzles by balance",
+        "subtitle": "How restoring and balancing became algebra.",
+        "duration": 9, "color": "mint", "icon": "balance",
+        "intro": "For thousands of years scribes solved puzzles about unknown amounts using words. "
+                 "In Baghdad around 820 CE, al-Khwarizmi wrote a book on solving equations with "
+                 "two moves: al-jabr, restoring, which moves a subtracted amount to the other side "
+                 "as an added amount, and al-muqabala, balancing, which cancels equal amounts. The "
+                 "word algebra comes from al-jabr. Letters for unknowns and the equals sign came "
+                 "much later: Robert Recorde introduced = in 1557 and chose two parallel lines "
+                 "because he thought no two things could be more alike. Try changing the equation "
+                 "in the explorer and watch each step stay balanced.",
+        "takeaway": "Restore, balance, and keep both sides equal.",
+        "visual": "equation-explorer", "formula": "x - 5 = 9  =>  x = 9 + 5",
+        "exercises": [
+            question("ya1", "Restore the subtracted amount: x - 5 = 9. Add 5 to both sides. What is x?", "14",
+                     "x = 9 + 5 = 14.", "Undo subtracting 5 by adding 5."),
+            question("ya2", "Balance by cancelling equal amounts: x + 6 = 6 + 11. What is x?", "11",
+                     "Cancel the 6 on both sides, leaving x = 11.", "What can you remove from both sides?"),
+            question("ya3", "Which symbol did Robert Recorde choose for equality, and why?",
+                     "Two parallel lines, because nothing is more alike",
+                     "He drew two short parallel lines because he thought no two things could be more alike.",
+                     "Think about what the sign is meant to show.",
+                     ["Two parallel lines, because nothing is more alike", "Two crossing lines, because the sides meet",
+                      "A circle, because it has no end", "A dot, because it is small"]),
+            question("ya4", "Solve 2x + 3 = 11.", "4", "Subtract 3 to get 2x = 8, then divide by 2.", "Undo the addition first."),
+        ],
+    },
+    {
+        "id": "history-geometry", "skill": "hist-geometry", "title": "From land to proof to maps",
+        "subtitle": "Measuring fields, proving statements, and putting points on a grid.",
+        "duration": 9, "color": "blue", "icon": "graph",
+        "intro": "Greek writers such as Herodotus said geometry grew from re-measuring farmland "
+                 "after the Nile floods. Surveyors needed square corners and areas. Some "
+                 "historians think rope stretchers made a right angle by knotting a loop of rope "
+                 "into 12 equal sections and pulling it into a triangle with sides of 3, 4, and 5 "
+                 "sections. A Babylonian clay tablet called Plimpton 322, from around 1800 BCE, "
+                 "lists number triples with the same triangle relationship, though scholars debate "
+                 "its purpose. Around 300 BCE, Euclid organised geometry in the Elements by "
+                 "starting from a few simple statements and proving everything else step by step. "
+                 "In 1637 Rene Descartes linked algebra and geometry with coordinates, and Pierre "
+                 "de Fermat developed a similar idea.",
+        "takeaway": "Geometry began with measuring, grew into proof, and joined algebra through coordinates.",
+        "visual": "plane-explorer", "formula": "3 squared + 4 squared = 5 squared",
+        "exercises": [
+            question("yg1", "A rope loop has 12 equal sections. It is pulled into a triangle with sides of 3, 4, and 5 sections. Which angle is the right angle?",
+                     "The angle between the 3 and 4 sides", "The right angle is opposite the longest side, so it sits between the 3 and 4 sides.",
+                     "The longest side is opposite the right angle.",
+                     ["The angle between the 3 and 4 sides", "The angle between the 4 and 5 sides",
+                      "The angle between the 3 and 5 sides", "No angle is a right angle"]),
+            question("yg2", "A right triangle has legs of 6 and 8 rope sections. How long is the longest side?", "10",
+                     "36 + 64 = 100, so the longest side is 10.", "Use the relationship from the 3-4-5 triangle."),
+            question("yg3", "What did Euclid's Elements do for geometry?",
+                     "It organised it by proving statements from a few simple starting ones",
+                     "Euclid showed how to build a whole subject from a few starting statements and careful proofs.",
+                     "Think about proof, not measuring.",
+                     ["It organised it by proving statements from a few simple starting ones", "It invented the number zero",
+                      "It introduced the equals sign", "It measured the Nile floods"]),
+            question("yg4", "A point has coordinates (3, 4). What is its distance from the origin?", "5",
+                     "9 + 16 = 25, so the distance is 5.", "Use the legs 3 and 4."),
+        ],
+    },
+]
+LESSONS.extend(HISTORY_LESSONS)

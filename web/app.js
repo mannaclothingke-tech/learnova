@@ -314,7 +314,60 @@ function polarExplorer() {
   const p = session.polar;
   return `<div class="interactive-canvas polar-explorer"><div class="canvas-header"><span>DISTANCE AND DIRECTION</span><span class="canvas-badge">INTERACTIVE</span></div><div id="polar-model">${polarModel(p.r, p.a)}</div><div class="fraction-controls">${sliderRow("polar", "r", "Distance from the origin", p.r, 1, 6)}${sliderRow("polar", "a", "Angle in degrees", p.a, 0, 345, 15)}</div><p class="canvas-caption">Rings show each step of distance. Turn the angle to swing the point around.<br>This explorer does not submit answers or award mastery.</p></div>`;
 }
+function storyArt(kind) {
+  const art = {
+    pie: () => miniArt("fraction", "violet"),
+    scales: () => miniArt("balance", "mint"),
+    grid: () => miniArt("graph", "blue"),
+    river: () => `<svg class="lesson-art blue" viewBox="0 0 160 110" aria-hidden="true"><path d="M8 62C38 38 62 86 92 62S138 48 152 60" fill="none" class="art-stroke"/><path d="M8 74C38 50 62 98 92 74S138 60 152 72" fill="none" class="art-stroke" opacity=".5"/><rect x="18" y="80" width="46" height="22" rx="4" class="art-light"/><rect x="92" y="10" width="50" height="26" rx="4" class="art-dark"/><path d="M92 23h50M117 10v26" class="art-grid"/></svg>`,
+    circle: () => `<svg class="lesson-art yellow" viewBox="0 0 160 110" aria-hidden="true"><circle cx="80" cy="55" r="40" class="art-light"/><path d="M80 55V15A40 40 0 0 1 120 55Z" class="art-dark"/><path d="M80 15v80M40 55h80M52 27l56 56M108 27L52 83" class="art-grid"/><circle cx="80" cy="55" r="4" class="art-stroke"/></svg>`,
+    rope: () => `<svg class="lesson-art peach" viewBox="0 0 160 110" aria-hidden="true"><path d="M30 92V32L110 92Z" fill="none" class="art-stroke"/><path d="M30 80h12V92" fill="none" class="art-grid"/><circle cx="30" cy="32" r="5" class="art-dark"/><circle cx="30" cy="92" r="5" class="art-dark"/><circle cx="110" cy="92" r="5" class="art-dark"/><circle cx="30" cy="62" r="3.5" class="art-light"/><circle cx="70" cy="62" r="3.5" class="art-light"/><circle cx="70" cy="92" r="3.5" class="art-light"/></svg>`,
+  };
+  return (art[kind] || art.pie)();
+}
+function storyCard(lessonId) {
+  const story = state.stories?.[lessonId];
+  if (!story) return "";
+  return `<aside class="story-card" aria-label="Math history"><div class="story-art">${storyArt(story.art)}</div><div><span class="eyebrow">WHY PEOPLE NEEDED THIS</span><h3>${esc(story.title)}</h3><p>${esc(story.text)}</p></div></aside>`;
+}
+function numberSystemsModel(n) {
+  const h = Math.floor(n / 100), t = Math.floor(n / 10) % 10, u = n % 10;
+  const additive = h + t + u, digits = String(n).length;
+  const rows = [["Tally strokes", n, "#c9bfee", `${n} strokes`], ["Repeated symbols", additive, "#bed8b5", `${additive} symbols`], ["Place value", digits, "#edc3a3", `${digits} digit${digits === 1 ? "" : "s"}`]];
+  const bars = rows.map(([label, value, color, text], i) => `<text x="12" y="${28 + i * 46}" font-size="13" fill="#54664b">${label}</text><rect x="12" y="${34 + i * 46}" width="${Math.max(6, 300 * value / n)}" height="16" rx="5" fill="${color}"/><text x="${Math.max(6, 300 * value / n) + 20}" y="${47 + i * 46}" font-size="13" font-weight="700" fill="#3f5a35">${text}</text>`).join("");
+  return `<svg viewBox="0 0 400 150" role="img" aria-label="To write ${n}: ${n} tally strokes, ${additive} repeated symbols, or ${digits} digits using place value">${bars}</svg><ul class="plane-facts" aria-live="polite"><li>The number ${n} has ${h} hundred${h === 1 ? "" : "s"}, ${t} ten${t === 1 ? "" : "s"}, and ${u} one${u === 1 ? "" : "s"}.</li><li>Tally strokes: ${n}. In bundles of 5, that is ${Math.floor(n / 5)} bundle${Math.floor(n / 5) === 1 ? "" : "s"} and ${n % 5} left over.</li><li>Repeated symbols (${h} + ${t} + ${u}): ${additive}.</li><li>Place value: ${digits} digit${digits === 1 ? "" : "s"}, with a zero holding any empty place.</li></ul>`;
+}
+function numberSystemsExplorer() {
+  return `<div class="interactive-canvas nsys-explorer"><div class="canvas-header"><span>THREE WAYS TO WRITE A NUMBER</span><span class="canvas-badge">INTERACTIVE</span></div><div id="nsys-model">${numberSystemsModel(session.nsys.n)}</div><div class="fraction-controls">${sliderRow("nsys", "n", "The number", session.nsys.n, 1, 999)}</div><p class="canvas-caption">Slide to a big number and see how much shorter place value is.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function doublingModel(a, b) {
+  const rows = [];
+  for (let p = 1; p <= a; p *= 2) rows.push(p);
+  let remaining = a;
+  const chosen = new Set();
+  for (const p of [...rows].reverse()) if (p <= remaining) { chosen.add(p); remaining -= p; }
+  const picked = rows.filter(p => chosen.has(p));
+  const table = rows.map(p => `<tr class="${chosen.has(p) ? "picked" : ""}"><td>${p}</td><td>${p * b}</td><td>${chosen.has(p) ? "\u2713 add" : ""}</td></tr>`).join("");
+  return `<table class="doubling-table"><caption>Doubling ${b}</caption><thead><tr><th scope="col">Rows</th><th scope="col">Amount</th><th scope="col">Use?</th></tr></thead><tbody>${table}</tbody></table><ul class="plane-facts" aria-live="polite"><li>${a} = ${picked.join(" + ")}</li><li>${picked.map(p => p * b).join(" + ")} = ${a * b}</li><li>So ${a} \u00d7 ${b} = ${a * b}</li></ul>`;
+}
+function doublingExplorer() {
+  const d = session.dbl;
+  return `<div class="interactive-canvas dbl-explorer"><div class="canvas-header"><span>MULTIPLY BY DOUBLING</span><span class="canvas-badge">INTERACTIVE</span></div><div id="dbl-model">${doublingModel(d.a, d.b)}</div><div class="fraction-controls">${sliderRow("dbl", "a", "Multiply by", d.a, 1, 20)}${sliderRow("dbl", "b", "The amount", d.b, 1, 20)}</div><p class="canvas-caption">The ticked rows are the doublings that add up to the first number.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function ledgerModel(owned, owed) {
+  const net = owned - owed, x = v => 200 + v * 18;
+  const ticks = Array.from({ length: 21 }, (_, i) => i - 10).map(v => `<path d="M${x(v)} 62v${v % 5 === 0 ? 14 : 8}" stroke="#75866a"/>${v % 5 === 0 ? `<text x="${x(v)}" y="98" font-size="12" text-anchor="middle" fill="#54664b">${v}</text>` : ""}`).join("");
+  const color = net < 0 ? "#c97a3d" : "#3f7a3a";
+  return `<svg viewBox="0 0 400 130" role="img" aria-label="You have ${owned} coins and owe ${owed} coins, so your net total is ${net}"><path d="M20 62h360" stroke="#75866a" stroke-width="3"/>${ticks}<path d="M${x(0)} 62L${x(net)} 62" stroke="${color}" stroke-width="6" stroke-linecap="round"/><circle cx="${x(net)}" cy="62" r="9" fill="${color}"/><text x="${x(net)}" y="40" font-size="16" font-weight="700" text-anchor="middle" fill="${color}">${net}</text></svg><ul class="plane-facts" aria-live="polite"><li>You have ${owned} coin${owned === 1 ? "" : "s"} and owe ${owed} coin${owed === 1 ? "" : "s"}.</li><li>Net total: ${owned} - ${owed} = ${net}${net < 0 ? ` (you are ${-net} short)` : ""}</li></ul>`;
+}
+function ledgerExplorer() {
+  const l = session.ledger;
+  return `<div class="interactive-canvas ledger-explorer"><div class="canvas-header"><span>OWING AND OWNING</span><span class="canvas-badge">INTERACTIVE</span></div><div id="ledger-model">${ledgerModel(l.owned, l.owed)}</div><div class="fraction-controls">${sliderRow("ledger", "owned", "Coins you have", l.owned, 0, 10)}${sliderRow("ledger", "owed", "Coins you owe", l.owed, 0, 10)}</div><p class="canvas-caption">Owing more than you have pushes the total below zero.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
 function visual(lesson) {
+  if (lesson.visual === "number-systems-explorer") return numberSystemsExplorer();
+  if (lesson.visual === "doubling-explorer") return doublingExplorer();
+  if (lesson.visual === "ledger-explorer") return ledgerExplorer();
   if (lesson.visual === "plane-explorer") return planeExplorer();
   if (lesson.visual === "shape-explorer") return shapeExplorer();
   if (lesson.visual === "angle-explorer") return angleExplorer();
@@ -340,7 +393,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 } };
   }
   return session;
 }
@@ -389,8 +442,8 @@ function lessonView(mode, id) {
   return `<div class="lesson-navigation"><a href="#course/${placement.course.id}" class="text-link">&larr; Course</a><a href="#unit/${placement.unit.id}" class="text-link">${esc(placement.unit.title)}</a><span>${lesson.duration} min</span><span class="pill outline">${mode === "review" ? "REVIEW" : "GUIDED LESSON"}</span></div>
     <div class="lesson-title"><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
-    ${session.intro ? `<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
+    ${session.intro ? `${storyCard(lesson.id)}<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
@@ -552,13 +605,13 @@ document.addEventListener("input", event => {
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
     return;
   }
-  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"] };
+  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"] };
   for (const [prefix, names] of Object.entries(explorerIds)) {
     if (!event.target.id.startsWith(prefix) || !names.includes(event.target.id.slice(prefix.length))) continue;
     const key = prefix.slice(0, -1), model = session[key];
     model[event.target.id.slice(prefix.length)] = Number(event.target.value);
     for (const name of names) $(`#${key}-${name}-output`).textContent = model[name];
-    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a) };
+    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed) };
     $(`#${key}-model`).innerHTML = render[key]();
     return;
   }
