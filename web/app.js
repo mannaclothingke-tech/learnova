@@ -63,6 +63,34 @@ function lessonPlacement(id) {
 function stepName(lesson) {
   return state.mastery.find(s => s.id === lesson.skill)?.name || lesson.title;
 }
+function lessonArt(lesson) {
+  const c = lesson.color || "violet";
+  const wrap = body => `<svg class="lesson-art ${c}" viewBox="0 0 160 110" aria-hidden="true">${body}</svg>`;
+  const tray = (x, y, n) => Array.from({ length: 10 }, (_, i) => `<rect x="${x + (i % 5) * 12}" y="${y + Math.floor(i / 5) * 12}" width="12" height="12" class="art-cell"/>${i < n ? `<circle cx="${x + (i % 5) * 12 + 6}" cy="${y + Math.floor(i / 5) * 12 + 6}" r="4.2" class="art-dark"/>` : ""}`).join("");
+  const dots = (x, y, rows, cols, gap) => Array.from({ length: rows * cols }, (_, i) => `<circle cx="${x + (i % cols) * gap}" cy="${y + Math.floor(i / cols) * gap}" r="${gap * 0.34}" class="${Math.floor(i / cols) % 2 ? "art-light" : "art-dark"}"/>`).join("");
+  const grid = `<path d="M30 14v82M56 14v82M82 14v82M108 14v82M134 14v82M22 28h120M22 54h120M22 80h120" class="art-grid"/>`;
+  const art = {
+    "tenframe-explorer": () => wrap(tray(12, 40, 8) + tray(88, 40, 5)),
+    "blocks-explorer": () => wrap(`${[0, 1, 2].map(i => `<rect x="${22 + i * 20}" y="14" width="14" height="80" rx="3" class="art-box"/><path d="M${22 + i * 20} 22h14M${22 + i * 20} 30h14M${22 + i * 20} 38h14M${22 + i * 20} 46h14M${22 + i * 20} 54h14M${22 + i * 20} 62h14M${22 + i * 20} 70h14M${22 + i * 20} 78h14M${22 + i * 20} 86h14" class="art-grid"/>`).join("")}${[0, 1, 2, 3, 4].map(i => `<rect x="${96 + (i % 3) * 20}" y="${52 + Math.floor(i / 3) * 20}" width="16" height="16" rx="3" class="art-dark"/>`).join("")}`),
+    "hops-explorer": () => wrap(`<path d="M12 80h136" class="art-stroke"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${22 + i * 28} 76v8" class="art-stroke"/>`).join("")}${[0, 1, 2, 3].map(i => `<path d="M${26 + i * 28} 76Q${40 + i * 28} 26 ${54 + i * 28} 76" fill="none" class="art-stroke"/>`).join("")}${[0, 1, 2, 3, 4].map(i => `<circle cx="${26 + i * 28}" cy="80" r="5" class="${i === 4 ? "art-dark" : "art-light"}"/>`).join("")}`),
+    "regroup-explorer": () => wrap(`<rect x="16" y="16" width="52" height="30" rx="8" class="art-dark"/><text x="42" y="38">27</text><rect x="16" y="58" width="52" height="30" rx="8" class="art-dark"/><text x="42" y="80">38</text><path d="M82 52h10M87 47v10" class="art-stroke"/><rect x="104" y="36" width="44" height="40" rx="8" class="art-light"/><text x="126" y="64" class="art-text-dark">65</text><circle cx="52" cy="10" r="8" class="art-orange"/>`),
+    "gap-explorer": () => wrap(`<rect x="16" y="22" width="120" height="24" rx="6" class="art-light"/><rect x="16" y="62" width="76" height="24" rx="6" class="art-dark"/><rect x="92" y="62" width="44" height="24" rx="6" fill="none" class="art-stroke" stroke-dasharray="5 4"/>`),
+    "array-explorer": () => wrap(dots(36, 28, 4, 5, 22)),
+    "sharing-explorer": () => wrap(`${[0, 1, 2].map(i => `<rect x="${12 + i * 50}" y="26" width="42" height="52" rx="8" class="art-light"/>${[0, 1, 2, 3].map(k => `<circle cx="${23 + i * 50 + (k % 2) * 18}" cy="${42 + Math.floor(k / 2) * 18}" r="6" class="art-dark"/>`).join("")}`).join("")}<circle cx="30" cy="96" r="5" class="art-orange"/><circle cx="46" cy="96" r="5" class="art-orange"/>`),
+    "number-systems-explorer": () => wrap(`<path d="M20 22v50M32 22v50M44 22v50M56 22v50M12 62L68 34" fill="none" class="art-stroke"/><rect x="82" y="26" width="64" height="44" rx="10" class="art-dark"/><text x="114" y="58">243</text>`),
+    "doubling-explorer": () => wrap(`${[1, 2, 4, 8].map((w, i) => `<rect x="18" y="${16 + i * 22}" width="${w * 14 + 8}" height="16" rx="5" class="${i % 2 ? "art-light" : "art-dark"}"/>`).join("")}`),
+    "ledger-explorer": () => wrap(`<path d="M14 62h132" class="art-stroke"/>${[0, 1, 2, 3, 4, 5, 6].map(i => `<path d="M${20 + i * 20} 58v8" class="art-stroke"/>`).join("")}<path d="M80 62H40" class="art-orange-line"/><circle cx="40" cy="62" r="9" class="art-orange"/>`),
+    "plane-explorer": () => wrap(`${grid}<path d="M30 80L108 28" fill="none" class="art-stroke"/><circle cx="30" cy="80" r="6" class="art-dark"/><circle cx="108" cy="28" r="6" class="art-dark"/>`),
+    "shape-explorer": () => wrap(`${[0, 1, 2, 3].map(i => [0, 1, 2].map(j => `<rect x="${30 + i * 24}" y="${18 + j * 24}" width="24" height="24" class="art-cell"/>`).join("")).join("")}<path d="M30 90L126 90L30 18Z" class="art-dark" fill-opacity=".35"/>`),
+    "angle-explorer": () => wrap(`<path d="M28 88H132M28 88L108 32" fill="none" class="art-stroke"/><path d="M68 88A40 40 0 0 0 55 61" fill="none" class="art-dark" stroke-width="4" stroke-linecap="round"/><circle cx="28" cy="88" r="5" class="art-dark"/>`),
+    "polar-explorer": () => wrap(`<circle cx="80" cy="56" r="40" fill="none" class="art-grid" stroke-width="2"/><circle cx="80" cy="56" r="22" fill="none" class="art-grid" stroke-width="2"/><path d="M80 56L108 28" class="art-stroke"/><path d="M102 56A22 22 0 0 0 96 40" fill="none" class="art-dark" stroke-width="4" stroke-linecap="round"/><circle cx="108" cy="28" r="6" class="art-dark"/><circle cx="80" cy="56" r="4" class="art-stroke"/>`),
+    "fraction-explorer": () => miniArt("fraction", c),
+    "equation-explorer": () => miniArt("balance", c),
+    "line-explorer": () => miniArt("graph", c),
+    graph: () => miniArt("graph", c),
+  };
+  return (art[lesson.visual] || (() => miniArt(lesson.icon, c)))();
+}
 function miniArt(kind, color = "violet") {
   if (kind === "fraction") return `<svg class="lesson-art ${color}" viewBox="0 0 160 110" aria-hidden="true"><circle cx="80" cy="55" r="36" class="art-light"/><path d="M80 19a36 36 0 0 1 0 72z" class="art-dark"/><path d="M80 19v72M44 55h72" class="art-stroke"/></svg>`;
   if (kind === "expression") return `<svg class="lesson-art ${color}" viewBox="0 0 160 110" aria-hidden="true"><rect x="22" y="35" width="32" height="40" rx="8" class="art-dark"/><rect x="61" y="35" width="32" height="40" rx="8" class="art-dark"/><circle cx="120" cy="55" r="17" class="art-light"/><text x="38" y="61">x</text><text x="77" y="61">x</text><text x="120" y="61">2</text></svg>`;
@@ -101,7 +129,7 @@ function card(lesson, index) {
   const done = completed(lesson);
   const started = state.passed[lesson.id].length;
   return `<a class="lesson-card" href="#lesson/${lesson.id}">
-    <div class="card-art ${lesson.color}">${miniArt(lesson.icon, lesson.color)}<span class="card-number">${String(index + 1).padStart(2, "0")}</span>${done ? `<span class="done-badge">${icon("check")} Completed</span>` : ""}</div>
+    <div class="card-art ${lesson.color}">${lessonArt(lesson)}<span class="card-number">${String(index + 1).padStart(2, "0")}</span>${done ? `<span class="done-badge">${icon("check")} Completed</span>` : ""}</div>
     <div class="card-body"><span class="eyebrow small">${esc(stepName(lesson))}</span><h3>${esc(lesson.title)}</h3><p>${esc(lesson.subtitle)}</p><div class="card-meta"><span>${icon("clock")} ${lesson.duration} min</span><span>${started ? `${started}/${lesson.exercises.length} solved` : `${lesson.exercises.length} challenges`} ${icon("arrow")}</span></div></div>
   </a>`;
 }
@@ -134,7 +162,9 @@ function courseStatus(course) {
   return { available: "Available", "in-progress": "Partly available", planned: "Planned" }[course.status];
 }
 function courseCard(course) {
-  return `<a class="catalog-card" href="#course/${course.id}"><div class="catalog-card-top"><span class="eyebrow small">${esc(state.catalog.subjects.find(s => s.id === course.subject_id).title)}</span><span class="status ${course.status}">${courseStatus(course)}</span></div><h3>${esc(course.title)}</h3><p>${esc(course.units[0].objectives[0])}</p><div class="card-meta"><span>${course.units.length} ${course.units.length === 1 ? "unit" : "units"} &middot; ${course.lesson_count} published lessons</span>${icon("arrow")}</div>${course.lesson_count ? `<p class="course-completion">${course.completed_count} / ${course.lesson_count} lessons complete</p>` : '<p class="course-completion">Outline only &middot; not yet playable</p>'}</a>`;
+  const first = course.lesson_count ? state.lessons.find(l => l.id === course.units.flatMap(u => u.lesson_ids)[0]) : null;
+  const band = first ? `<div class="catalog-art ${first.color}">${lessonArt(first)}<span class="level-chip">${esc(course.level)}</span></div>` : `<div class="catalog-art planned"><span class="level-chip">${esc(course.level)}</span><span class="planned-mark">Coming soon</span></div>`;
+  return `<a class="catalog-card" href="#course/${course.id}">${band}<div class="catalog-card-top"><span class="eyebrow small">${esc(state.catalog.subjects.find(s => s.id === course.subject_id).title)}</span><span class="status ${course.status}">${courseStatus(course)}</span></div><h3>${esc(course.title)}</h3><p>${esc(course.units[0].objectives[0])}</p><div class="card-meta"><span>${course.units.length} ${course.units.length === 1 ? "unit" : "units"} &middot; ${course.lesson_count} published lessons</span>${icon("arrow")}</div>${course.lesson_count ? `<p class="course-completion">${course.completed_count} / ${course.lesson_count} lessons complete</p>` : '<p class="course-completion">Outline only &middot; not yet playable</p>'}</a>`;
 }
 function learn(subjectId) {
   if (subjectId && !state.catalog.subjects.some(s => s.id === subjectId)) return notFound();
@@ -179,7 +209,7 @@ function curriculumView() {
 function practice() {
   const next = recommended();
   return `${heading("TURN UNDERSTANDING INTO CONFIDENCE", "A little practice goes a long way.", "Revisit the skills that need attention, at your own pace.")}
-    <section class="practice-hero"><span class="practice-star">&#10038;</span><div><span class="eyebrow">RECOMMENDED FOR YOU</span><h2>${esc(next.title)}</h2><p>${masteryCount() === state.mastery.length ? "Keep your foundations fresh with a review." : "Your earliest skill without enough independent evidence. Start here to strengthen your foundation."}</p><a class="button primary" href="#review/${next.id}">Practice this skill ${icon("arrow")}</a></div>${miniArt(next.icon, next.color)}</section>
+    <section class="practice-hero"><span class="practice-star">&#10038;</span><div><span class="eyebrow">RECOMMENDED FOR YOU</span><h2>${esc(next.title)}</h2><p>${masteryCount() === state.mastery.length ? "Keep your foundations fresh with a review." : "Your earliest skill without enough independent evidence. Start here to strengthen your foundation."}</p><a class="button primary" href="#review/${next.id}">Practice this skill ${icon("arrow")}</a></div>${lessonArt(next)}</section>
     <div class="section-heading"><h2>Choose a skill to revisit</h2><span class="muted">Authored challenges, immediate feedback</span></div>
     <div class="practice-list">${state.lessons.map((lesson, i) => `<a href="#review/${lesson.id}" class="practice-item"><span class="number-badge">${i + 1}</span><div><strong>${esc(stepName(lesson))}</strong><p>${esc(lessonPlacement(lesson.id).course.title)} &middot; ${esc(lesson.subtitle)}</p></div><span class="status ${state.mastery.find(s => s.id === lesson.skill).status}">${statusLabel(state.mastery.find(s => s.id === lesson.skill).status)}</span>${icon("arrow")}</a>`).join("")}</div>
     <div class="notice">${icon("check")}<p>The fractions, equations, linear relationships, and geometry courses have four separate review questions per skill. Starter-course review repeats its lesson questions. These are fixed authored sets, not generated questions. Repeating a question never adds new independent mastery evidence. Hints and retries are recorded.</p></div>`;
@@ -388,7 +418,7 @@ function tenFrameModel(a, b) {
   if (makeTen) lines.push(`Make ten: move ${move} from the second tray to fill the first. That leaves ${b - move}, so ${a} + ${b} = 10 + ${b - move} = ${total}.`);
   else if (total === 10) lines.push("The two trays together make exactly 10.");
   else lines.push(`Together the trays hold ${total}.`);
-  return `<svg viewBox="0 0 400 130" role="img" aria-label="Two ten-frames: ${a} dots in the first and ${b} dots in the second, ${total} in all"><rect x="20" y="20" width="160" height="88" rx="8" fill="none"/>${tenFrame(30, 24, a, "#8e7bbd")}${tenFrame(220, 24, b, "#e0894a")}<text x="100" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#5d4a8a">${a}</text><text x="290" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#b5642a">${b}</text></svg><ul class="plane-facts" aria-live="polite">${lines.map(line => `<li>${line}</li>`).join("")}</ul>`;
+  return `<svg viewBox="0 0 400 112" role="img" aria-label="Two ten-frames: ${a} dots in the first and ${b} dots in the second, ${total} in all"><rect x="20" y="20" width="160" height="88" rx="8" fill="none"/>${tenFrame(30, 20, a, "#8e7bbd")}${tenFrame(220, 20, b, "#e0894a")}<text x="100" y="104" text-anchor="middle" font-size="15" font-weight="700" fill="#5d4a8a">${a}</text><text x="290" y="104" text-anchor="middle" font-size="15" font-weight="700" fill="#b5642a">${b}</text></svg><ul class="plane-facts" aria-live="polite">${lines.map(line => `<li>${line}</li>`).join("")}</ul>`;
 }
 function tenFrameExplorer() {
   const t = session.tf;
@@ -542,7 +572,7 @@ function lessonView(mode, id) {
   if (session.index >= questions.length) return finishView(mode, lesson);
   const question = questions[session.index];
   return `<div class="lesson-navigation"><a href="#course/${placement.course.id}" class="text-link">&larr; Course</a><a href="#unit/${placement.unit.id}" class="text-link">${esc(placement.unit.title)}</a><span>${lesson.duration} min</span><span class="pill outline">${mode === "review" ? "REVIEW" : "GUIDED LESSON"}</span></div>
-    <div class="lesson-title"><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div>
+    <div class="lesson-title"><div><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div><div class="title-art ${lesson.color}" aria-hidden="true">${lessonArt(lesson)}</div></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `${storyCard(lesson.id)}<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
       `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
