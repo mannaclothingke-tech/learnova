@@ -21,6 +21,15 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
+- A warm, illustrated visual design: soft gradient backgrounds, a lesson-specific
+  illustration on every lesson card, lesson header, and playable course card,
+  tactile answer choices, styled sliders, and a small celebration on correct
+  answers. Motion respects the reduced-motion setting. The home hero has floating
+  math symbols, the sidebar shows live lesson progress, and finishing a lesson
+  shows a confetti burst (plus a banner when a whole course is complete).
+  All styling uses external
+  CSS and SVG attributes, because the local server's Content Security Policy
+  blocks inline `style` attributes.
 - Seven subject areas, 69 courses, and subject/course/unit navigation. Courses
   are ordered from simple to complex within each subject, using each course's
   prerequisite chain to assign a Beginner, Intermediate, or Advanced level.

@@ -109,6 +109,9 @@ function heroArt() {
     <g transform="rotate(-8 110 65)"><rect x="43" y="37" width="121" height="48" rx="14" fill="#ece7ff"/><text x="104" y="68" text-anchor="middle" fill="#46376a" font-size="22" font-family="Georgia">y = mx + b</text></g>
     <g transform="rotate(9 295 216)"><rect x="261" y="180" width="68" height="68" rx="18" fill="#d8f36a"/><path d="m277 216 10 10 26-29" fill="none" stroke="#2c3d2b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
     <path d="m310 38 4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#d8f36a"/>
+    <g class="float-a"><rect x="30" y="150" width="34" height="34" rx="10" fill="#ffffff22"/><text x="47" y="174" text-anchor="middle" fill="#d8f36a" font-size="20" font-family="Georgia">&#247;</text></g>
+    <g class="float-b"><rect x="318" y="120" width="34" height="34" rx="10" fill="#ffffff22"/><text x="335" y="145" text-anchor="middle" fill="#ece7ff" font-size="20" font-family="Georgia">&#960;</text></g>
+    <g class="float-c"><rect x="238" y="22" width="34" height="34" rx="10" fill="#ffffff22"/><text x="255" y="46" text-anchor="middle" fill="#d8f36a" font-size="20" font-family="Georgia">&#8730;</text></g>
   </svg>`;
 }
 
@@ -121,6 +124,8 @@ function updateShell(page) {
   $("#profile-name").textContent = name;
   $("#avatar").textContent = name.slice(0, 1).toUpperCase();
   $("#goal-chip").textContent = `${state.profile?.minutes || 10} min / day`;
+  const doneCount = state.lessons.filter(completed).length;
+  $("#side-card").innerHTML = `<span class="spark-icon">&#10038;</span><strong>${doneCount ? `${doneCount} of ${state.lessons.length} lessons done` : "A little curiosity.<br>A lot of possibility."}</strong><progress value="${doneCount}" max="${state.lessons.length}" aria-label="Lessons completed"></progress><p>${doneCount ? "One idea at a time." : "Start with your first lesson."}</p>`;
 }
 function heading(kicker, title, subtitle, trailing = "") {
   return `<div class="page-heading"><div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p>${subtitle}</p></div>${trailing}</div>`;
@@ -560,7 +565,10 @@ function finishView(mode, lesson) {
   const starterSkills = new Set(state.diagnostic.map(q => q.skill));
   const diagnosticMastered = state.mastery.filter(s => starterSkills.has(s.id) && s.status === "mastered").length;
   const mastered = !assessment && state.mastery.find(s => s.id === lesson.skill).status === "mastered";
-  return `<section class="finish-card"><div class="finish-symbol">${icon("check")}</div><span class="eyebrow">${assessment ? "YOUR STARTING POINT IS MAPPED" : "ONE MORE IDEA TO BUILD ON"}</span><h1>${assessment ? "A clearer place to begin." : mode === "review" ? "Practice set complete." : "Look what you figured out."}</h1><p>${assessment ? `${diagnosticMastered} of ${starterSkills.size} starter skills currently have enough independent evidence. This check does not assess the separate fractions course.` : `${mode === "review" ? "Your review questions are finished." : `${esc(lesson.title)} is complete.`} ${mastered ? "You have enough independent evidence for this skill." : "Keep practising: completion and independent mastery are different milestones."}`}</p>${!assessment ? `<blockquote>${esc(lesson.takeaway)}</blockquote>` : ""}<div class="finish-actions"><a class="button primary" href="#${nextLesson ? "lesson" : "review"}/${next.id}">${nextLesson ? "Continue this course" : "Practise this course"} ${icon("arrow")}</a><a class="button secondary" href="#course/${course.id}">Back to course</a></div>${state.course_assessments[course.id] ? `<a class="text-link" href="#course-check/${course.id}">Check your course understanding ${icon("arrow")}</a>` : '<a class="text-link" href="#progress">View skill map</a>'}</section>`;
+  const courseDone = !assessment && mode === "lesson" && !nextLesson;
+  const confetti = !assessment && mode === "lesson" ? `<div class="confetti" aria-hidden="true">${"<i></i>".repeat(18)}</div>` : "";
+  const banner = courseDone ? `<div class="course-complete">${icon("check")} You finished ${esc(course.title)}!</div>` : "";
+  return `<section class="finish-card">${confetti}<div class="finish-symbol">${icon("check")}</div>${banner}<span class="eyebrow">${assessment ? "YOUR STARTING POINT IS MAPPED" : "ONE MORE IDEA TO BUILD ON"}</span><h1>${assessment ? "A clearer place to begin." : mode === "review" ? "Practice set complete." : "Look what you figured out."}</h1><p>${assessment ? `${diagnosticMastered} of ${starterSkills.size} starter skills currently have enough independent evidence. This check does not assess the separate fractions course.` : `${mode === "review" ? "Your review questions are finished." : `${esc(lesson.title)} is complete.`} ${mastered ? "You have enough independent evidence for this skill." : "Keep practising: completion and independent mastery are different milestones."}`}</p>${!assessment ? `<blockquote>${esc(lesson.takeaway)}</blockquote>` : ""}<div class="finish-actions"><a class="button primary" href="#${nextLesson ? "lesson" : "review"}/${next.id}">${nextLesson ? "Continue this course" : "Practise this course"} ${icon("arrow")}</a><a class="button secondary" href="#course/${course.id}">Back to course</a></div>${state.course_assessments[course.id] ? `<a class="text-link" href="#course-check/${course.id}">Check your course understanding ${icon("arrow")}</a>` : '<a class="text-link" href="#progress">View skill map</a>'}</section>`;
 }
 function lessonView(mode, id) {
   const lesson = state.lessons.find(l => l.id === id);
