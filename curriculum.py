@@ -1,4 +1,4 @@
-"""Original Learnova curriculum and explicit prerequisite relationships."""
+"""Learnova curriculum and explicit prerequisite relationships."""
 
 SKILLS = [
     {"id": "fractions", "name": "Fraction sense", "prerequisites": []},
@@ -673,4 +673,238 @@ COURSE_ASSESSMENTS["first-equations"] = [
     ("equation-multistep", question("xc2", "Solve 4(x - 1) = 3x + 5.", "9", "4x - 4 = 3x + 5, so x = 9.", "Distribute the 4.")),
     ("equation-stories", question("xs1", "A gym charges 12 coins to join and 5 coins per visit. A member has paid 52 coins. How many visits is that?", "8", "Solve 5v + 12 = 52.", "Subtract the joining fee first.")),
     ("equation-stories", question("xs2", "The sum of three consecutive whole numbers is 78. What is the largest?", "27", "The smallest is 25, so the largest is 27.", "Let x be the smallest number.")),
+]
+
+SKILLS.extend([
+    {"id": "lin-tables", "name": "Constant change in tables", "prerequisites": []},
+    {"id": "lin-slope", "name": "Slope from two points", "prerequisites": ["lin-tables"]},
+    {"id": "lin-intercept", "name": "Starting values and intercepts", "prerequisites": ["lin-tables"]},
+    {"id": "lin-rule", "name": "Writing a linear rule", "prerequisites": ["lin-slope", "lin-intercept"]},
+    {"id": "lin-graphs", "name": "Reading and using graphs", "prerequisites": ["lin-rule"]},
+    {"id": "lin-compare", "name": "Comparing linear relationships", "prerequisites": ["lin-graphs"]},
+])
+
+LINEAR_LESSONS = [
+    {
+        "id": "linear-patterns", "skill": "lin-tables", "title": "Steady change in a table",
+        "subtitle": "Spot a constant rate by comparing equal steps.",
+        "duration": 8, "color": "blue", "icon": "graph",
+        "intro": "A relationship is linear when equal steps in x always produce the same "
+                 "change in y. In a table where x goes 0, 1, 2, 3 and y goes 5, 8, 11, 14, "
+                 "y rises by 3 each time. That constant change is the rate of change. If x "
+                 "steps are larger, compare the change in y with the change in x: moving "
+                 "from x = 0 to x = 2 while y rises by 6 is still 3 per unit of x. A falling "
+                 "pattern has a negative rate. Use the explorer to see how a table changes "
+                 "when the line changes.",
+        "takeaway": "Linear means the change in y per 1 unit of x never varies.",
+        "visual": "line-explorer", "formula": "rate = change in y / change in x",
+        "exercises": [
+            question("ip1", "A table gives y = 5, 9, 13, 17 for x = 0, 1, 2, 3. By how much does y change each time x increases by 1?",
+                     "4", "Each value is 4 more than the one before it.", "Subtract neighbouring y values."),
+            question("ip2", "Which table shows a constant rate of change?", "x: 1, 2, 3, 4 and y: 2, 5, 8, 11",
+                     "Only the first table changes by 3 every time. The others have changing differences.",
+                     "Check whether all the differences between neighbouring y values match.",
+                     ["x: 1, 2, 3, 4 and y: 2, 5, 8, 11", "x: 1, 2, 3, 4 and y: 1, 4, 9, 16",
+                      "x: 1, 2, 3, 4 and y: 2, 4, 7, 11", "x: 1, 2, 3, 4 and y: 20, 10, 5, 2.5"]),
+            question("ip3", "A table gives y = 1, 7, 13 for x = 0, 2, 4. By how much does y change per 1-unit increase in x?",
+                     "3", "y changes 6 for every 2 units of x, so it changes 3 per unit.",
+                     "Divide the change in y by the change in x."),
+            question("ip4", "A candle is 20 cm tall now, 17 cm after 1 hour, and 14 cm after 2 hours. What is the rate of change in cm per hour?",
+                     "-3", "The height falls 3 cm each hour, so the rate is -3.", "A decreasing quantity has a negative rate."),
+            question("ip5", "A table gives y = 3, 6, 9, 12 for x = 1, 2, 3, 4 and the pattern continues. What is y when x = 10?",
+                     "30", "The pattern is y = 3x, so y is 30 when x is 10.", "Look at how y relates to x."),
+        ],
+    },
+    {
+        "id": "linear-slope", "skill": "lin-slope", "title": "Slope from two points",
+        "subtitle": "Measure steepness using rise over run.",
+        "duration": 9, "color": "violet", "icon": "graph",
+        "intro": "Slope measures how steeply a line rises or falls. Between two points, "
+                 "subtract the y values to find the rise and subtract the x values in the "
+                 "same order to find the run. For (1, 3) and (4, 12), the rise is 9 and the "
+                 "run is 3, so the slope is 3. A line that falls has negative slope. A "
+                 "horizontal line has slope 0 because y never changes. Steepness depends on "
+                 "the size of the slope, so -5 is steeper than 3.",
+        "takeaway": "Slope = (y2 - y1) / (x2 - x1), using the points in the same order.",
+        "visual": "line-explorer", "formula": "m = (y2 - y1) / (x2 - x1)",
+        "exercises": [
+            question("is1", "A line passes through (1, 3) and (4, 12). What is its slope?", "3",
+                     "The rise is 9 and the run is 3, so the slope is 3.", "Subtract the y values and the x values."),
+            question("is2", "A line passes through (2, 10) and (5, 4). What is its slope?", "-2",
+                     "The rise is -6 and the run is 3, so the slope is -2.", "The line falls as x increases."),
+            question("is3", "A line passes through (0, 0) and (4, 6). Enter its slope as a fraction or decimal.", "3/2",
+                     "The rise is 6 and the run is 4, so the slope is 6/4 = 3/2.", "Divide the rise by the run and simplify."),
+            question("is4", "Which line is steepest?", "slope -5",
+                     "Steepness depends on the size of the slope. A slope of -5 falls 5 units per step.",
+                     "Compare the sizes of the slopes, ignoring the signs.",
+                     ["slope 3", "slope -5", "slope 1/2", "slope 4"]),
+            question("is5", "A horizontal line passes through (1, 4) and (6, 4). What is its slope?", "0",
+                     "The rise is 0, so the slope is 0 / 5 = 0.", "How much does y change?"),
+        ],
+    },
+    {
+        "id": "linear-intercept", "skill": "lin-intercept", "title": "Where the line begins",
+        "subtitle": "Find and interpret the value of y when x is zero.",
+        "duration": 9, "color": "yellow", "icon": "graph",
+        "intro": "The y-intercept is the value of y when x is 0, where the line crosses "
+                 "the y-axis. In a story, it is often the starting amount. If a line has "
+                 "rate 3 and passes through (4, 20), step back four units of x: y falls "
+                 "by 12, so the intercept is 8. Given two points, you can also move back to "
+                 "x = 0 using the rate. Always interpret the intercept in context.",
+        "takeaway": "The intercept is the output at x = 0 - often the starting value.",
+        "visual": "line-explorer", "formula": "y-intercept = y when x = 0",
+        "exercises": [
+            question("ii1", "A line's equation is y = 4x + 7. What is y when x = 0?", "7",
+                     "Replacing x with 0 leaves y = 7.", "Substitute 0 for x."),
+            question("ii2", "A line passes through (0, -3) and (2, 1). What is its y-intercept?", "-3",
+                     "The point (0, -3) already has x = 0, so the intercept is -3.", "Look for the point with x = 0."),
+            question("ii3", "A linear relationship has rate 4 and passes through (1, 9). What is y when x = 0?", "5",
+                     "Going back one unit of x lowers y by 4, giving 9 - 4 = 5.", "Move from x = 1 back to x = 0."),
+            question("ii4", "In the model y = 120 - 8x, where y is litres of water after x minutes, what does the y-intercept mean?",
+                     "The amount of water at the start (x = 0)", "At x = 0 no time has passed, so y = 120 is the starting amount.",
+                     "What is true at the moment x equals 0?",
+                     ["The amount of water at the start (x = 0)", "The amount lost each minute",
+                      "How many minutes until the tank is empty", "The amount after 8 minutes"]),
+            question("ii5", "A line has rate 3 and passes through (4, 20). What is its y-intercept?", "8",
+                     "Moving back 4 units of x lowers y by 12, so the intercept is 8.", "Subtract rate times 4 from 20."),
+        ],
+    },
+    {
+        "id": "linear-writing", "skill": "lin-rule", "title": "Write the rule",
+        "subtitle": "Combine slope and intercept into y = mx + b.",
+        "duration": 10, "color": "mint", "icon": "graph",
+        "intro": "Once you know the slope m and the y-intercept b, the line is y = mx + b. "
+                 "If you only know two points, find the slope first, then use one point to "
+                 "find b. For (1, 7) and (3, 13), the slope is 3, so 7 = 3(1) + b and b = 4. "
+                 "The rule y = 3x + 4 predicts y for any x. A fractional slope is fine: if "
+                 "the slope is 1/2 and the line passes through (4, 5), then 5 = 2 + b, so b = 3.",
+        "takeaway": "Find m, then use any point to solve for b.",
+        "visual": "line-explorer", "formula": "y = mx + b",
+        "exercises": [
+            question("iw1", "A line has slope 3 and y-intercept -2. Which equation describes it?", "y = 3x - 2",
+                     "The slope multiplies x and the intercept is added: y = 3x + (-2).", "Match m and b to the equation.",
+                     ["y = 3x - 2", "y = -2x + 3", "y = 3x + 2", "y = x + 1"]),
+            question("iw2", "A line passes through (0, 4) with slope 5. What is y when x = 6?", "34",
+                     "The rule is y = 5x + 4, so y = 30 + 4 = 34.", "Write the rule first."),
+            question("iw3", "A line passes through (1, 7) and (3, 13). Writing it as y = mx + b, what is b?", "4",
+                     "The slope is 3. From 7 = 3(1) + b, b = 4.", "Find the slope, then substitute one point."),
+            question("iw4", "A line has slope 1/2 and passes through (4, 5). What is y when x = 0?", "3",
+                     "From 5 = (1/2)(4) + b, b = 3.", "Substitute the point to find b."),
+            question("iw5", "Which equation fits the table x: 0, 1, 2, 3 and y: 6, 4, 2, 0?", "y = -2x + 6",
+                     "The rate is -2 and y is 6 when x is 0.", "Find the rate and the value at x = 0.",
+                     ["y = -2x + 6", "y = 2x + 6", "y = -6x + 2", "y = 6x - 2"]),
+        ],
+    },
+    {
+        "id": "linear-graphs", "skill": "lin-graphs", "title": "Read the graph",
+        "subtitle": "Connect equations, intercepts, and points on a graph.",
+        "duration": 10, "color": "peach", "icon": "graph",
+        "intro": "A graph shows every point (x, y) that satisfies the rule. The y-intercept "
+                 "is where it crosses the y-axis, and the x-intercept is where y is 0. For "
+                 "y = 2x - 6, set y to 0 to get 2x = 6, so the x-intercept is 3. A point lies on "
+                 "the line when its coordinates satisfy the equation: (5, 4) lies on "
+                 "y = 3x - 11. The slope tells you how the graph moves: y = -x + 6 falls 1 "
+                 "for each step right and crosses the y-axis at 6.",
+        "takeaway": "A point is on the line when its coordinates make the equation true.",
+        "visual": "line-explorer", "formula": "x-intercept: set y = 0",
+        "exercises": [
+            question("ig1", "A graph crosses the y-axis at 3 and rises 2 for every 1 step right. What is y when x = 4?", "11",
+                     "The rule is y = 2x + 3, so y = 8 + 3 = 11.", "Write the rule from the intercept and rate."),
+            question("ig2", "A line crosses the y-axis at 8 and the x-axis at 4. What is its slope?", "-2",
+                     "It passes through (0, 8) and (4, 0), so the slope is -8 / 4 = -2.", "Use the two intercepts as points."),
+            question("ig3", "Which statement describes y = -x + 6?",
+                     "It falls 1 for each step right and crosses the y-axis at 6",
+                     "The slope is -1 and the intercept is 6.", "Read the slope and intercept.",
+                     ["It falls 1 for each step right and crosses the y-axis at 6",
+                      "It rises 1 for each step right and crosses the y-axis at 6",
+                      "It falls 6 for each step right and crosses the y-axis at 1",
+                      "It is horizontal at y = 6"]),
+            question("ig4", "For y = 2x - 6, at what x does the line cross the x-axis?", "3",
+                     "Set y = 0: 2x - 6 = 0, so x = 3.", "The x-axis is where y = 0."),
+            question("ig5", "The point (5, k) lies on y = 3x - 4. What is k?", "11",
+                     "k = 3(5) - 4 = 11.", "Substitute 5 for x."),
+        ],
+    },
+    {
+        "id": "linear-comparison", "skill": "lin-compare", "title": "When lines meet",
+        "subtitle": "Compare two linear relationships and interpret where they cross.",
+        "duration": 10, "color": "violet", "icon": "graph",
+        "intro": "Two lines meet where they have the same x and the same y. Plan A at "
+                 "y = 5x + 10 and Plan B at y = 3x + 20 cost the same when 5x + 10 = 3x + 20, "
+                 "which gives x = 5. Lines with the same slope but different intercepts are "
+                 "parallel and never meet. A line with a greater slope eventually rises "
+                 "faster, even if it starts lower. Always check what the crossing point means "
+                 "in the story.",
+        "takeaway": "Set the two rules equal to find where the lines meet.",
+        "visual": "line-explorer", "formula": "5x + 10 = 3x + 20",
+        "exercises": [
+            question("ic1", "Plan A costs y = 5x + 10 and Plan B costs y = 3x + 20, where x is months. After how many months do they cost the same?", "5",
+                     "Set 5x + 10 = 3x + 20. Then 2x = 10, so x = 5.", "Set the two costs equal."),
+            question("ic2", "The lines y = 2x + 1 and y = 2x + 5 have the same slope. How many points do they share?", "None",
+                     "Parallel lines never meet, since 2x + 1 can never equal 2x + 5.", "What happens when you set the rules equal?",
+                     ["None", "One", "Two", "Infinitely many"]),
+            question("ic3", "Line A is y = 3x and line B is y = x + 8. What is y at their intersection?", "12",
+                     "3x = x + 8 gives x = 4, so y = 12.", "First find the x value where they match."),
+            question("ic4", "Which line rises faster as x increases?", "y = 7x + 1",
+                     "Rising speed depends on the slope, and 7 is greater than 5.", "Compare the slopes, not the intercepts.",
+                     ["y = 7x + 1", "y = 5x + 20", "They rise at the same rate"]),
+            question("ic5", "A runner starts 12 m ahead and runs 2 m/s. A second runner starts at 0 and runs 5 m/s. After how many seconds does the second runner catch up?", "4",
+                     "Solve 12 + 2t = 5t. Then 3t = 12, so t = 4.", "Write each distance in terms of t."),
+        ],
+    },
+]
+LESSONS.extend(LINEAR_LESSONS)
+
+PRACTICE.update({
+    "linear-patterns": [
+        question("jp1", "A table gives y = 2, 7, 12, 17 for x = 0, 1, 2, 3. What is the rate of change?", "5", "Each y is 5 more than the last.", "Subtract neighbouring y values."),
+        question("jp2", "Does a table with x = 1, 2, 3, 4 and y = 3, 6, 12, 24 show a constant rate of change?", "No", "The differences are 3, 6, and 12, so they are not constant.", "Compare all neighbouring differences.", ["Yes", "No"]),
+        question("jp3", "A table gives y = 4, 10, 16 for x = 0, 3, 6. What is the change in y per 1-unit increase in x?", "2", "y changes 6 for every 3 units of x.", "Divide the change in y by the change in x."),
+        question("jp4", "A tank holds 50 L at 0 minutes, 44 L at 1 minute, and 38 L at 2 minutes. What is the rate in litres per minute?", "-6", "The volume falls 6 L each minute.", "A falling quantity has a negative rate."),
+    ],
+    "linear-slope": [
+        question("js1", "A line passes through (0, 2) and (3, 11). What is its slope?", "3", "The rise is 9 over a run of 3.", "Divide rise by run."),
+        question("js2", "A line passes through (1, 8) and (3, 2). What is its slope?", "-3", "The rise is -6 over a run of 2.", "The line falls."),
+        question("js3", "A line passes through (2, 1) and (6, 3). What is its slope?", "1/2", "The rise is 2 over a run of 4.", "Simplify rise over run."),
+        question("js4", "A line passes through (-2, -1) and (2, 7). What is its slope?", "2", "The rise is 8 over a run of 4.", "Subtract the coordinates carefully."),
+    ],
+    "linear-intercept": [
+        question("ji1", "For y = -2x + 9, what is y when x = 0?", "9", "The x term vanishes.", "Substitute 0 for x."),
+        question("ji2", "A line passes through (0, 5) and (3, 11). What is its y-intercept?", "5", "The point with x = 0 shows the intercept.", "Find the point with x = 0."),
+        question("ji3", "A line has rate 5 and passes through (2, 13). What is its y-intercept?", "3", "Moving back 2 units of x lowers y by 10.", "Subtract rate times 2."),
+        question("ji4", "A line has rate -2 and passes through (3, 1). What is its y-intercept?", "7", "Moving back 3 units of x raises y by 6.", "Going back reverses the change."),
+    ],
+    "linear-writing": [
+        question("jw1", "A line has slope 4 and y-intercept 1. What is y when x = 5?", "21", "y = 4(5) + 1 = 21.", "Write y = mx + b first."),
+        question("jw2", "A line passes through (0, -1) with slope 3. What is y when x = 4?", "11", "y = 3x - 1, so y = 11.", "Use the intercept and slope."),
+        question("jw3", "A line passes through (2, 5) and (4, 11). Writing it as y = mx + b, what is b?", "-1", "The slope is 3. From 5 = 3(2) + b, b = -1.", "Find the slope first."),
+        question("jw4", "A line has slope 2/3 and passes through (6, 7). What is y when x = 0?", "3", "From 7 = (2/3)(6) + b, b = 3.", "Substitute the point."),
+    ],
+    "linear-graphs": [
+        question("jg1", "A line crosses the y-axis at 2 and rises 3 for each step right. What is y when x = 5?", "17", "y = 3x + 2, so y = 17.", "Write the rule first."),
+        question("jg2", "A line passes through (0, 6) and (3, 0). What is its slope?", "-2", "The rise is -6 over a run of 3.", "Use the two points."),
+        question("jg3", "For y = x + 5, at what x does the line cross the x-axis?", "-5", "Set y = 0 to get x = -5.", "The x-axis is where y = 0."),
+        question("jg4", "The point (4, k) lies on y = 2x - 1. What is k?", "7", "k = 2(4) - 1 = 7.", "Substitute 4 for x."),
+    ],
+    "linear-comparison": [
+        question("jc1", "The lines y = 2x + 9 and y = 5x intersect. What is x at the intersection?", "3", "2x + 9 = 5x gives 3x = 9.", "Set the rules equal."),
+        question("jc2", "The lines y = -x + 10 and y = x + 2 intersect. What is y at the intersection?", "6", "-x + 10 = x + 2 gives x = 4, so y = 6.", "Find x first."),
+        question("jc3", "How many points do y = 3x + 2 and y = 3x - 4 share?", "None", "They have the same slope and different intercepts.", "Compare the slopes.", ["None", "One", "Infinitely many"]),
+        question("jc4", "A bike starts 15 km from home and rides away at 5 km/h. A car starts at home and travels at 20 km/h in the same direction. After how many hours does the car catch the bike?", "1", "Solve 15 + 5t = 20t.", "Write each distance in terms of t."),
+    ],
+})
+
+COURSE_ASSESSMENTS["linear-relationships"] = [
+    ("linear-patterns", question("kp1", "A table gives y = 6, 11, 16, 21 for x = 0, 1, 2, 3. What is the rate of change?", "5", "Each y is 5 more than the last.", "Subtract neighbouring y values.")),
+    ("linear-patterns", question("kp2", "A table gives y = 10, 4, -2 for x = 0, 1, 2. What is the rate of change?", "-6", "y falls by 6 each step.", "Subtract neighbouring y values.")),
+    ("linear-slope", question("ks1", "A line passes through (2, 5) and (6, 17). What is its slope?", "3", "The rise is 12 over a run of 4.", "Divide rise by run.")),
+    ("linear-slope", question("ks2", "A line passes through (1, 9) and (4, 0). What is its slope?", "-3", "The rise is -9 over a run of 3.", "The line falls.")),
+    ("linear-intercept", question("ki1", "A line has rate 5 and passes through (3, 22). What is its y-intercept?", "7", "Moving back 3 units of x lowers y by 15.", "Subtract rate times 3.")),
+    ("linear-intercept", question("ki2", "A line passes through (0, 12) and (4, 0). What is its y-intercept?", "12", "The point with x = 0 shows the intercept.", "Find the point with x = 0.")),
+    ("linear-writing", question("kw1", "A line passes through (1, 5) and (4, 14). Writing it as y = mx + b, what is b?", "2", "The slope is 3. From 5 = 3(1) + b, b = 2.", "Find the slope first.")),
+    ("linear-writing", question("kw2", "A line has slope -3 and passes through (2, 4). What is y when x = 5?", "-5", "From 4 = -3(2) + b, b = 10, so y = -15 + 10 = -5.", "Find b first.")),
+    ("linear-graphs", question("kg1", "For y = 4x - 12, at what x does the line cross the x-axis?", "3", "Set y = 0: 4x = 12.", "The x-axis is where y = 0.")),
+    ("linear-graphs", question("kg2", "The point (6, k) lies on y = -2x + 15. What is k?", "3", "k = -12 + 15 = 3.", "Substitute 6 for x.")),
+    ("linear-comparison", question("kc1", "The lines y = 3x + 4 and y = 5x - 6 intersect. What is x at the intersection?", "5", "3x + 4 = 5x - 6 gives 10 = 2x.", "Set the rules equal.")),
+    ("linear-comparison", question("kc2", "The lines y = 4x + 1 and y = x + 10 intersect. What is y at the intersection?", "13", "3x = 9 gives x = 3, so y = 13.", "Find x first.")),
 ]

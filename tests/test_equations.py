@@ -110,8 +110,8 @@ class EquationsTests(unittest.TestCase):
         state = self.store.state()
         course = next(c for c in state["catalog"]["courses"] if c["id"] == "first-equations")
         self.assertEqual(course["completed_count"], 6)
-        self.assertTrue(all(s["status"] == "mastered" for s in state["mastery"][12:]))
-        self.assertTrue(all(s["status"] == "not-started" for s in state["mastery"][:12]))
+        self.assertTrue(all(s["status"] == "mastered" for s in state["mastery"][12:18]))
+        self.assertTrue(all(s["status"] == "not-started" for s in state["mastery"][:12] + state["mastery"][18:]))
         for lid, q in COURSE_ASSESSMENTS["first-equations"]:
             self.assertTrue(self.submit("course-assessment", lid, q, course_id="first-equations")["correct"])
         check = Store(self.store.path).state()["course_assessments"]["first-equations"]

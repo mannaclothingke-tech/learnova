@@ -1,4 +1,4 @@
-"""Original course outlines, mapped to a dated public topic inventory."""
+"""Course catalog: subjects, courses, units, and prerequisites."""
 
 from copy import deepcopy
 from curriculum import COURSE_ASSESSMENTS, PRACTICE
@@ -260,6 +260,20 @@ def _courses():
         {"id": "equations-in-context", "title": "Equations in context",
          "objectives": ["Define an unknown, model a situation, and judge the solution in context."],
          "lesson_ids": ["equation-stories"]},
+    ]
+    by_id["linear-relationships"]["level"] = "Beginner"
+    by_id["linear-relationships"]["units"] = [
+        {"id": "linear-change", "title": "Change, slope, and starting values",
+         "objectives": ["Recognize constant rate of change in tables.",
+                        "Calculate slope from two points and interpret intercepts."],
+         "lesson_ids": ["linear-patterns", "linear-slope", "linear-intercept"]},
+        {"id": "linear-rules", "title": "Rules and graphs",
+         "objectives": ["Write a linear rule from slope and intercept or two points.",
+                        "Connect equations, intercepts, and points on a graph."],
+         "lesson_ids": ["linear-writing", "linear-graphs"]},
+        {"id": "linear-meeting-points", "title": "Comparing lines",
+         "objectives": ["Find where two linear relationships meet and interpret the result."],
+         "lesson_ids": ["linear-comparison"]},
     ]
     return courses
 

@@ -1,7 +1,7 @@
 # Learnova
 
-An original, responsive interactive-mathematics MVP inspired by learning through
-discovery. It does not copy Brilliant's lesson content, branding, or artwork.
+An interactive-mathematics learning app with courses, lessons, practice, and
+course checks. It runs locally on your machine.
 
 ## Run on Windows
 
@@ -21,18 +21,14 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
-- Six subject areas, 69 course outlines, and subject/course/unit navigation.
-- A dated coverage map of the 13 topic groups and 68 unique course links on
-  Brilliant's public Topics page, checked on 2026-11-25. Shared course listings
-  are deduplicated. This is **not** a complete inventory of individual lessons,
-  unlisted/legacy courses, or grade-level practice.
-- Three available original courses: the six-lesson starter course, a six-lesson
-  fractions course, and a six-lesson equations course ("First steps with
-  equations"), each organized into three units. The other 66 courses are
-  outlines, not playable courses. Three other reference courses have
-  introductory overlap. No lesson-for-lesson parity with Brilliant is claimed.
+- Six subject areas, 69 courses, and subject/course/unit navigation.
+- A roadmap page listing every planned course by subject and topic group.
+- Four playable courses: the six-lesson starter course, fractions, equations
+  ("First steps with equations"), and linear relationships ("Lines tell a
+  story"), each organized into three units. The other 65 courses are outlines
+  with objectives and proposed prerequisites, not playable courses.
 - Editable local learner profile and daily intention.
-- Eighteen original lessons, 78 lesson challenges, hints, and explanations.
+- Twenty-four lessons, 108 lesson challenges, hints, and explanations.
 - The fractions course covers equal parts, equivalence, comparison, addition,
   subtraction, and fractions of quantities. It includes 30 lesson challenges,
   24 separate authored practice questions, and a twelve-question course check.
@@ -161,8 +157,7 @@ To expand a course:
 4. Add tests for answers, progression, and interaction behavior. Extend the
    diagnostic deliberately rather than implying that existing questions measure
    new skills. New graph/geometry/coding activity types need implementation.
-5. Review the public topic inventory periodically. Keep the reference date and
-   scope honest, and never copy Brilliant's lesson text, exercises, or artwork.
+5. Keep the roadmap current as courses move from outline to playable.
 
 Adding the catalog does not rewrite existing SQLite lesson content, change lesson
 versions, or reset progress. Re-running the server inserts only missing lesson
@@ -175,10 +170,11 @@ answers remain saved. The JSON editor does not edit these source-controlled bank
 Changes to existing bank questions require deliberate version invalidation of
 their associated lessons, or new question IDs for genuinely new questions.
 
-Fractions and equations are now playable. Their authored content has automated
-arithmetic and interaction checks (answers are verified against independent
-calculations), but still needs independent educator/learner review before
-production. The next content milestone is linear relationships.
+Fractions, equations, and linear relationships are playable. Their authored
+content has automated arithmetic and interaction checks (answers are verified
+against independent calculations), but still needs independent educator/learner
+review before production. The next content milestone is a course on exponents
+and radicals or coordinate geometry.
 
 ## Before production
 

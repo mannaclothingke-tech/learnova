@@ -69,7 +69,7 @@ function miniArt(kind, color = "violet") {
   return `<svg class="lesson-art ${color}" viewBox="0 0 160 110" aria-hidden="true"><path d="M30 20v70h106M30 66h106M30 42h106M56 20v70M82 20v70M108 20v70" class="art-grid"/><path d="m35 78 94-52" class="art-line"/><circle cx="78" cy="54" r="6" class="art-dark"/></svg>`;
 }
 function heroArt() {
-  return `<svg class="hero-art" viewBox="0 0 380 280" role="img" aria-label="An original illustration of a rising line and mathematical building blocks">
+  return `<svg class="hero-art" viewBox="0 0 380 280" role="img" aria-label="An illustration of a rising line and mathematical building blocks">
     <defs><pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0v32" fill="none" stroke="#617364" stroke-opacity=".25"/></pattern></defs>
     <rect x="40" y="15" width="290" height="245" rx="24" fill="url(#hero-grid)"/>
     <path d="M66 219h239M91 242V38" stroke="#87968a" stroke-width="1.5"/>
@@ -140,7 +140,7 @@ function learn(subjectId) {
   const summary = state.catalog.summary;
   return `${heading("A PATH, NOT A PLAYLIST", "A whole world to understand.", `${summary.subject_count} subjects. ${summary.course_count} course outlines. ${summary.published_lesson_count} published lessons.`,
     '<a class="text-link" href="#curriculum">View coverage map ' + icon("arrow") + '</a>')}
-    <div class="notice">${icon("learn")}<p>Available courses contain original Learnova lessons. Planned courses show learning objectives only; no lessons or assessments are implied. The catalog is a course-level roadmap, not complete coverage of Brilliant's lessons. <a class="text-link" href="#curriculum">Open the coverage map ${icon("arrow")}</a></p></div>
+    <div class="notice">${icon("learn")}<p>Playable courses contain full lessons, practice, and a course check. Planned courses show learning objectives only; no lessons or assessments are implied. <a class="text-link" href="#curriculum">Open the roadmap ${icon("arrow")}</a></p></div>
     <nav class="subject-filters" aria-label="Filter courses by subject"><a href="#learn" ${!subjectId ? 'aria-current="page"' : ""}>All subjects</a>${state.catalog.subjects.map(s => `<a href="#learn/${s.id}" ${subjectId === s.id ? 'aria-current="page"' : ""}>${esc(s.title)}</a>`).join("")}</nav>
     <div class="catalog-grid">${courses.map(courseCard).join("")}</div>`;
 }
@@ -154,11 +154,11 @@ function courseView(id) {
   return `<a class="text-link" href="#learn/${subject.id}">&larr; ${esc(subject.title)}</a>
     ${heading(esc(subject.title.toUpperCase()), esc(course.title), `${course.units.length} units · ${course.lesson_count} published lessons · ${courseStatus(course)}`)}
     ${course.prerequisites.length ? `<section class="notice"><div><strong>Suggested prerequisites</strong><div class="prerequisite-links">${course.prerequisites.map(cid => `<a class="text-link" href="#course/${cid}">${esc(state.catalog.courses.find(c => c.id === cid).title)} ${icon("arrow")}</a>`).join("")}</div><p>These are Learnova's proposed course prerequisites, not access restrictions. Planned prerequisites are not yet playable.</p></div></section>` : ""}
-    ${course.status !== "available" ? '<div class="notice warning"><p>This is an original course outline. Teaching content, interactive activities, practice, and assessments still need authoring and review.</p></div>' : ""}
+    ${course.status !== "available" ? '<div class="notice warning"><p>This course is an outline. Teaching content, interactive activities, practice, and assessments still need authoring and review.</p></div>' : ""}
     ${state.course_assessments[id] ? `<section class="course-actions"><a class="button primary" href="#lesson/${(courseLessons(course).find(l => !completed(l)) || courseLessons(course)[0]).id}">${course.completed_count ? "Continue or revisit lessons" : "Start the course"} ${icon("arrow")}</a><a class="button secondary" href="#course-check/${id}">${state.course_assessments[id].complete ? "View course check results" : state.course_assessments[id].answered.length ? "Resume course check" : "Take the course check"}</a><p>${courseLessons(course).reduce((count, l) => count + l.exercises.length, 0)} lesson challenges &middot; ${courseLessons(course).reduce((count, l) => count + (state.practice[l.id]?.questions.length || 0), 0)} separate practice questions &middot; ${state.course_assessments[id].questions.length} assessment questions. No timer.</p></section>` : ""}
     ${course.units.map(u => unitBlock(course, u)).join("")}
     ${course.related_lesson_ids.length ? `<section class="unit-block"><h2>Try related starter lessons</h2><p>These introduce some concepts; they do not replace or complete this course's own lessons.</p><div class="cards-grid">${course.related_lesson_ids.map((lid, i) => card(state.lessons.find(l => l.id === lid), i)).join("")}</div></section>` : ""}
-    ${course.reference ? `<div class="notice"><p>Topic reference: <a class="text-link" href="${esc(course.reference.url)}" target="_blank" rel="noopener noreferrer">${esc(course.reference.title)} on Brilliant</a>. Public listing checked ${state.catalog.reference.checked_on}. Learnova's outline and prerequisites are original; no lesson text, problems, or artwork were copied.</p></div>` : ""}`;
+    `;
 }
 function unitView(id) {
   const course = state.catalog.courses.find(c => c.units.some(u => u.id === id));
@@ -168,10 +168,10 @@ function unitView(id) {
 }
 function curriculumView() {
   const summary = state.catalog.summary;
-  return `${heading("BUILDING AN ORIGINAL CURRICULUM", "Our coverage map.", "A transparent roadmap, not a claim of lesson-for-lesson equivalence.")}
-    <section class="notice"><p>Checked <a class="text-link" href="${state.catalog.reference.url}" target="_blank" rel="noopener noreferrer">Brilliant's public Topics page</a> on ${state.catalog.reference.checked_on}: ${summary.topic_count} topic groups and ${summary.reference_course_count} unique course links. Shared listings are counted once. This snapshot excludes unlisted courses and does not inventory individual lessons or grade-level practice.</p></section>
-    <div class="course-intro"><div><h2>${summary.published_lesson_count} lessons live. A much bigger roadmap.</h2><p>${summary.available_course_count} original courses available. ${summary.partial_reference_count} other reference courses have introductory overlap. Availability does not imply lesson-for-lesson parity with Brilliant.</p></div></div>
-    ${state.catalog.subjects.map(subject => `<section class="coverage-section"><h2>${esc(subject.title)}</h2><div class="coverage-table-wrap"><table class="coverage-table"><caption>${esc(subject.description)}</caption><thead><tr><th scope="col">Public course reference</th><th scope="col">Learnova outline</th><th scope="col">Current coverage</th></tr></thead><tbody>${state.catalog.courses.filter(c => c.subject_id === subject.id && c.reference).map(c => `<tr><td><a href="${esc(c.reference.url)}" target="_blank" rel="noopener noreferrer">${esc(c.reference.title)}</a><small>${esc(c.topics.join(" · "))}</small></td><td><a href="#course/${c.id}">${esc(c.title)}</a></td><td>${c.coverage === "original-course" ? "Original course available; parity not verified" : c.coverage === "partial" ? "Introductory overlap only" : "Not authored"}</td></tr>`).join("")}</tbody></table></div></section>`).join("")}
+  return `${heading("COURSE ROADMAP", "Our coverage map.", "Every course in the catalog, and where it stands today.")}
+    <section class="notice"><p>${summary.course_count} courses across ${summary.subject_count} subjects and ${summary.topic_count} topic groups. Courses marked Planned have objectives only and are not yet playable.</p></section>
+    <div class="course-intro"><div><h2>${summary.published_lesson_count} lessons live. A much bigger roadmap.</h2><p>${summary.available_course_count} courses are playable now. ${summary.partial_reference_count} more have introductory lessons.</p></div></div>
+    ${state.catalog.subjects.map(subject => `<section class="coverage-section"><h2>${esc(subject.title)}</h2><div class="coverage-table-wrap"><table class="coverage-table"><caption>${esc(subject.description)}</caption><thead><tr><th scope="col">Course</th><th scope="col">Topic group</th><th scope="col">Status</th></tr></thead><tbody>${state.catalog.courses.filter(c => c.subject_id === subject.id).map(c => `<tr><td><a href="#course/${c.id}">${esc(c.title)}</a></td><td>${esc(c.topics.join(" · "))}</td><td>${c.status === "available" ? "Playable" : c.coverage === "partial" ? "Introductory lessons only" : "Planned"}</td></tr>`).join("")}</tbody></table></div></section>`).join("")}
     <a class="button primary" href="#learn">Explore Learnova courses ${icon("arrow")}</a>`;
 }
 function practice() {
@@ -180,7 +180,7 @@ function practice() {
     <section class="practice-hero"><span class="practice-star">&#10038;</span><div><span class="eyebrow">RECOMMENDED FOR YOU</span><h2>${esc(next.title)}</h2><p>${masteryCount() === state.mastery.length ? "Keep your foundations fresh with a review." : "Your earliest skill without enough independent evidence. Start here to strengthen your foundation."}</p><a class="button primary" href="#review/${next.id}">Practice this skill ${icon("arrow")}</a></div>${miniArt(next.icon, next.color)}</section>
     <div class="section-heading"><h2>Choose a skill to revisit</h2><span class="muted">Authored challenges, immediate feedback</span></div>
     <div class="practice-list">${state.lessons.map((lesson, i) => `<a href="#review/${lesson.id}" class="practice-item"><span class="number-badge">${i + 1}</span><div><strong>${esc(stepName(lesson))}</strong><p>${esc(lessonPlacement(lesson.id).course.title)} &middot; ${esc(lesson.subtitle)}</p></div><span class="status ${state.mastery.find(s => s.id === lesson.skill).status}">${statusLabel(state.mastery.find(s => s.id === lesson.skill).status)}</span>${icon("arrow")}</a>`).join("")}</div>
-    <div class="notice">${icon("check")}<p>The fractions and equations courses have four separate review questions per skill. Starter-course review repeats its lesson questions. These are fixed authored sets, not generated questions. Repeating a question never adds new independent mastery evidence. Hints and retries are recorded.</p></div>`;
+    <div class="notice">${icon("check")}<p>The fractions, equations, and linear relationships courses have four separate review questions per skill. Starter-course review repeats its lesson questions. These are fixed authored sets, not generated questions. Repeating a question never adds new independent mastery evidence. Hints and retries are recorded.</p></div>`;
 }
 function statusLabel(status) {
   return { mastered: "Mastered", developing: "Developing", "not-started": "Not started" }[status];
@@ -237,7 +237,22 @@ function equationExplorer() {
   const { a, b, x } = session.equation;
   return `<div class="interactive-canvas equation-explorer"><div class="canvas-header"><span>EXPLORE THE BALANCE</span><span class="canvas-badge">INTERACTIVE</span></div><p class="canvas-caption">Choose the pieces of an equation. The solution is built in, so each step keeps both sides equal.</p><div id="equation-model">${equationModel(a, b, x)}</div><div class="fraction-controls"><label>Multiplier of x <output id="equation-a-output">${a}</output><input id="equation-a" aria-label="Multiplier of x" type="range" min="1" max="6" value="${a}"></label><label>Number added <output id="equation-b-output">${b}</output><input id="equation-b" aria-label="Number added" type="range" min="0" max="9" value="${b}"></label><label>Solution <output id="equation-x-output">${x}</output><input id="equation-x" aria-label="Solution" type="range" min="1" max="9" value="${x}"></label></div><p class="canvas-caption">This explorer does not submit answers or award mastery.</p></div>`;
 }
+function lineEquation(m, b) {
+  const term = m === 0 ? "" : m === 1 ? "x" : m === -1 ? "-x" : `${m}x`;
+  if (!term) return `y = ${b}`;
+  return `y = ${term}${b === 0 ? "" : ` ${b < 0 ? "-" : "+"} ${Math.abs(b)}`}`;
+}
+function lineModel(m, b) {
+  const value = v => Number.isInteger(v) ? String(v) : v.toFixed(1);
+  const xs = [0, 1, 2, 3, 4];
+  return `<div class="graph-wrap">${graph(m, b)}</div><div class="graph-equation" aria-live="polite">${lineEquation(m, b)}</div><table class="values-table"><caption>Table of values</caption><thead><tr><th scope="row">x</th>${xs.map(x => `<td>${x}</td>`).join("")}</tr></thead><tbody><tr><th scope="row">y</th>${xs.map(x => `<td>${value(m * x + b)}</td>`).join("")}</tr></tbody></table><p class="canvas-caption">Each 1-unit step right changes y by ${value(m)}. The line crosses the y-axis at ${b}.</p>`;
+}
+function lineExplorer() {
+  const { m, b } = session.line;
+  return `<div class="interactive-canvas line-explorer"><div class="canvas-header"><span>EXPLORE THE LINE</span><span class="canvas-badge">INTERACTIVE</span></div><div id="line-model">${lineModel(m, b)}</div><div class="fraction-controls"><label>Slope <output id="line-m-output">${m}</output><input id="line-m" aria-label="Slope" type="range" min="-3" max="3" step="0.5" value="${m}"></label><label>Y-intercept <output id="line-b-output">${b}</output><input id="line-b" aria-label="Y-intercept" type="range" min="-4" max="4" step="1" value="${b}"></label></div><p class="canvas-caption">Watch the table and graph change together.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
 function visual(lesson) {
+  if (lesson.visual === "line-explorer") return lineExplorer();
   if (lesson.visual === "equation-explorer") return equationExplorer();
   if (lesson.visual === "fraction-explorer") return fractionExplorer();
   if (lesson.visual === "graph") return `<div class="interactive-canvas"><div class="canvas-header"><span>${icon("practice")} EXPLORE THE LINE</span><span class="canvas-badge">INTERACTIVE</span></div><div class="graph-wrap">${graph()}</div><div class="graph-equation" id="graph-equation">y = 2x + 1</div><div class="canvas-controls"><label>Slope <output id="slope-output">2</output><input id="slope-control" type="range" min="-3" max="3" step="0.5" value="2" aria-label="Slope"></label><label>Starting value <output id="intercept-output">1</output><input id="intercept-control" type="range" min="-4" max="4" step="1" value="1" aria-label="Starting value"></label></div><p class="canvas-caption">Move a slider. What changes? What stays the same?<br>This exploratory canvas does not submit an answer.</p></div>`;
@@ -258,7 +273,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 } };
   }
   return session;
 }
@@ -308,14 +323,14 @@ function lessonView(mode, id) {
     <div class="lesson-title"><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${lesson.visual === "graph" ? "graph" : lesson.visual === "fraction-explorer" ? "fraction" : "equation"} explorer</summary>${visual(lesson)}</details>` : ""}`}
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${lesson.visual === "graph" ? "graph" : lesson.visual === "fraction-explorer" ? "fraction" : lesson.visual === "equation-explorer" ? "equation" : "line"} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
   getSession("assessment");
   if (session.index >= state.diagnostic.length) return finishView("assessment");
   const q = state.diagnostic[session.index];
-  return `${heading("FIND YOUR STARTING POINT", "Let's see what already clicks.", "12 original questions, two per skill. This first version uses a fixed starting check, not an adaptive diagnostic.")}
+  return `${heading("FIND YOUR STARTING POINT", "Let's see what already clicks.", "12 questions, two per skill. This first version uses a fixed starting check, not an adaptive diagnostic.")}
     <div class="assessment-layout"><div><progress class="assessment-progress" value="${session.index}" max="12" aria-label="Assessment progress"></progress>${exerciseView(q, "assessment", 12)}</div><aside class="assessment-guide"><span>&#10038;</span><h3>No pressure.<br>Just a starting point.</h3><p>Try each question on your own. We use your answers to recommend the earliest skill that needs attention.</p><p>No hints here, and no timer. Your submitted answers are saved automatically.</p><a class="text-link" href="#home">Pause and return home &rarr;</a></aside></div>`;
 }
 function courseCheck(id) {
@@ -333,10 +348,10 @@ function courseCheck(id) {
     const next = recommended(course);
     return `<section class="finish-card"><span class="eyebrow">${esc(course.title.toUpperCase())} &middot; COURSE CHECK</span><h1>Your course check results.</h1><p>${check.correct_count} / ${check.questions.length} correct (${Math.round(check.correct_count / check.questions.length * 100)}%). ${skills.filter(s => s.status === "mastered").length} / ${skills.length} course skills have enough independent evidence across lessons, practice, and this check.</p><p>This fixed check saves one answer per question and lesson version. It does not mark lessons complete or offer retakes of the same questions.</p><ul class="check-skill-results">${skills.map(s => `<li>${esc(s.name)} <span class="status ${s.status}">${statusLabel(s.status)}</span></li>`).join("")}</ul><div class="finish-actions"><a class="button primary" href="#review/${next.id}">Practise a course skill ${icon("arrow")}</a><a class="button secondary" href="#course/${id}">Back to course</a></div></section>`;
   }
-  return `${heading("CHECK YOUR UNDERSTANDING", `${esc(course.title)}: course check`, `${check.questions.length} original questions across ${skills.length} skills. No hints, retries, timer, or AI.`)}<div class="assessment-layout"><section><progress class="assessment-progress" value="${check.answered.length}" max="${check.questions.length}" aria-label="Course check progress"></progress>${exerciseView(check.questions[session.index], "course-check", check.questions.length)}</section><aside class="assessment-guide"><h3>A check, not a race.</h3><p>Each valid answer is saved once, including mistakes. Invalid input is not recorded. Return later to resume at the first unanswered question.</p><p>Scores and lesson completion are separate. Your existing mastery rule still requires distinct independent answers and 80% recent accuracy.</p><a class="text-link" href="#course/${id}">Pause and return to course</a></aside></div>`;
+  return `${heading("CHECK YOUR UNDERSTANDING", `${esc(course.title)}: course check`, `${check.questions.length} questions across ${skills.length} skills. No hints, retries, timer, or AI.`)}<div class="assessment-layout"><section><progress class="assessment-progress" value="${check.answered.length}" max="${check.questions.length}" aria-label="Course check progress"></progress>${exerciseView(check.questions[session.index], "course-check", check.questions.length)}</section><aside class="assessment-guide"><h3>A check, not a race.</h3><p>Each valid answer is saved once, including mistakes. Invalid input is not recorded. Return later to resume at the first unanswered question.</p><p>Scores and lesson completion are separate. Your existing mastery rule still requires distinct independent answers and 80% recent accuracy.</p><a class="text-link" href="#course/${id}">Pause and return to course</a></aside></div>`;
 }
 function studioView() {
-  return `${heading("BEHIND EVERY AHA, A WELL-CRAFTED LESSON", "Your content workshop.", "Preview and publish edits to the original curriculum. Local access only.")}
+  return `${heading("BEHIND EVERY AHA, A WELL-CRAFTED LESSON", "Your content workshop.", "Preview and publish edits to the curriculum. Local access only.")}
     <div class="notice warning">${icon("studio")}<p>Publishing creates a new lesson version. Old attempts remain in history but no longer count toward the revised lesson or its mastery evidence. The lesson IDs, skill graph, visual type, and exercise IDs are fixed in this editor.</p></div>
     <div class="studio-layout"><aside class="studio-list">${state.lessons.map(l => `<button class="studio-item ${studio?.lesson.id === l.id ? "selected" : ""}" data-action="edit-lesson" data-id="${l.id}"><strong>${esc(l.title)}</strong><small>${esc(lessonPlacement(l.id).unit.title)} &middot; Version ${l.version} &middot; ${l.exercises.length} challenges</small>${icon("arrow")}</button>`).join("")}</aside><section class="studio-editor">${studio ? `<div class="editor-header"><div><span class="eyebrow">PUBLISHED VERSION ${studio.version}</span><h2>${esc(studio.lesson.title)}</h2></div><span class="pill outline">JSON EDITOR</span></div><p>Edit teaching text, prompts, answers, explanations, hints, and choice options. Unsupported metadata changes are rejected.</p><form id="studio-form"><label for="lesson-json">Lesson content</label><textarea id="lesson-json" name="content" spellcheck="false" rows="24" required>${esc(JSON.stringify(studio.lesson, null, 2))}</textarea><p class="form-error" id="studio-error" role="alert"></p><div class="editor-actions"><button class="button primary" type="submit">Validate &amp; publish ${icon("check")}</button><a href="#lesson/${studio.lesson.id}" class="button secondary">Preview published lesson</a></div></form>` : `<div class="empty-editor">${icon("studio")}<h2>Choose a lesson to shape.</h2><p>Select a lesson on the left to open its content.</p></div>`}</section></div>`;
 }
@@ -468,6 +483,13 @@ document.addEventListener("input", event => {
     $("#fraction-numerator").value = String(model.numerator);
     for (const name of ["numerator", "denominator", "whole"]) $(`#fraction-${name}-output`).textContent = model[name];
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
+    return;
+  }
+  if (["line-m", "line-b"].includes(event.target.id)) {
+    session.line[event.target.id.replace("line-", "")] = Number(event.target.value);
+    $("#line-m-output").textContent = session.line.m;
+    $("#line-b-output").textContent = session.line.b;
+    $("#line-model").innerHTML = lineModel(session.line.m, session.line.b);
     return;
   }
   if (["equation-a", "equation-b", "equation-x"].includes(event.target.id)) {

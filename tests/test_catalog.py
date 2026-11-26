@@ -19,9 +19,9 @@ class CatalogTests(unittest.TestCase):
     def test_public_inventory_counts_and_deduplication(self):
         catalog = self.store.state()["catalog"]
         self.assertEqual(catalog["summary"], {
-            "subject_count": 6,             "course_count": 69, "available_course_count": 3,
-                        "published_lesson_count": 18, "reference_course_count": 68,
-                        "partial_reference_count": 3, "topic_count": 13,
+            "subject_count": 6,                         "course_count": 69, "available_course_count": 4,
+                        "published_lesson_count": 24, "reference_course_count": 68,
+                        "partial_reference_count": 2, "topic_count": 13,
         })
         self.assertEqual(sum(len(rows) for _, _, rows in TOPICS), 72)
         references = [c["reference"]["url"] for c in catalog["courses"] if c["reference"]]
@@ -37,13 +37,13 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(len(set(ids)), len(ids))
         starter = catalog["courses"][0]
         self.assertEqual(starter["estimated_minutes"], sum(l["duration"] for l in LESSONS[:6]))
-        self.assertEqual(len(ids), 18)
+        self.assertEqual(len(ids), 24)
         self.assertEqual(starter["status"], "available")
         self.assertEqual(len(starter["units"]), 3)
 
     def test_outlines_do_not_pretend_to_be_playable(self):
         state = self.store.state()
-        playable = {"everyday-foundations", "fractions", "first-equations"}
+        playable = {"everyday-foundations", "fractions", "first-equations", "linear-relationships"}
         for course in [c for c in state["catalog"]["courses"] if c["id"] not in playable]:
             self.assertEqual(course["status"], "planned")
             self.assertEqual(course["lesson_count"], 0)
@@ -53,7 +53,7 @@ class CatalogTests(unittest.TestCase):
                 self.assertEqual(unit["status"], "planned")
                 self.assertEqual(unit["lesson_ids"], [])
                 self.assertTrue(unit["objectives"])
-        self.assertEqual(len(state["mastery"]), 18)
+        self.assertEqual(len(state["mastery"]), 24)
         self.assertEqual(len(state["diagnostic"]), 12)
 
     def test_existing_database_content_and_evidence_are_not_migrated(self):
