@@ -908,3 +908,327 @@ COURSE_ASSESSMENTS["linear-relationships"] = [
     ("linear-comparison", question("kc1", "The lines y = 3x + 4 and y = 5x - 6 intersect. What is x at the intersection?", "5", "3x + 4 = 5x - 6 gives 10 = 2x.", "Set the rules equal.")),
     ("linear-comparison", question("kc2", "The lines y = 4x + 1 and y = x + 10 intersect. What is y at the intersection?", "13", "3x = 9 gives x = 3, so y = 13.", "Find x first.")),
 ]
+
+SKILLS.extend([
+    {"id": "geo-measure", "name": "Perimeter and area", "prerequisites": []},
+    {"id": "geo-angles", "name": "Angles and triangles", "prerequisites": ["geo-measure"]},
+    {"id": "geo-points", "name": "Locating and moving points", "prerequisites": ["geo-measure"]},
+    {"id": "geo-grid", "name": "Distances along grid lines", "prerequisites": ["geo-points"]},
+    {"id": "geo-midpoint", "name": "Midpoints", "prerequisites": ["geo-grid"]},
+    {"id": "geo-distance", "name": "Distance between points", "prerequisites": ["geo-grid", "geo-angles"]},
+    {"id": "geo-lines", "name": "Parallel and perpendicular slopes", "prerequisites": ["geo-points"]},
+    {"id": "geo-shapes", "name": "Shapes on the coordinate plane", "prerequisites": ["geo-midpoint", "geo-distance", "geo-lines"]},
+    {"id": "geo-polar", "name": "Coordinates by angle and distance", "prerequisites": ["geo-distance", "geo-angles"]},
+])
+
+GEOMETRY_LESSONS = [
+    {
+        "id": "geom-measure", "skill": "geo-measure", "title": "How big is it?",
+        "subtitle": "Measure the edge of a shape and the space inside it.",
+        "duration": 8, "color": "yellow", "icon": "graph",
+        "intro": "Start with a rectangle. The perimeter is the distance around its edge, like "
+                 "the length of a fence. The area is the flat space inside, like the amount of "
+                 "grass the fence surrounds. Area is counted in squares. A rectangle 4 squares "
+                 "wide and 3 squares tall holds 4 times 3 = 12 squares. Its perimeter adds all "
+                 "four sides: 4 + 3 + 4 + 3 = 14. A triangle covers exactly half of a rectangle "
+                 "with the same base and height. For a shape made of pieces, find each piece "
+                 "and add. Slide the width and height in the explorer and watch both numbers.",
+        "takeaway": "Perimeter is around the edge. Area is the space inside.",
+        "visual": "shape-explorer", "formula": "area = width x height",
+        "exercises": [
+            question("hm1", "A rectangle is 8 cm wide and 5 cm tall. What is its perimeter in cm?", "26",
+                     "Add all four sides: 8 + 5 + 8 + 5 = 26.", "Walk around the edge and add each side."),
+            question("hm2", "A rectangle is 8 cm wide and 5 cm tall. What is its area in square cm?", "40",
+                     "Area is width times height: 8 times 5 = 40.", "Count the squares inside: rows times columns."),
+            question("hm3", "A triangle has a base of 10 cm and a height of 6 cm. What is its area in square cm?", "30",
+                     "A triangle is half of a 10 by 6 rectangle. Half of 60 is 30.", "Find the rectangle's area first, then halve it."),
+            question("hm4", "An L-shaped floor is made of a 6 m by 4 m rectangle and a 3 m by 2 m rectangle that do not overlap. What is its total area in square m?", "30",
+                     "The pieces have areas 24 and 6, and 24 + 6 = 30.", "Find each piece, then add."),
+            question("hm5", "Which measurement is an area?", "25 square cm",
+                     "Area is measured in square units, such as square cm.", "Look for the units that count squares.",
+                     ["25 square cm", "25 cm", "25 cm per second", "25 degrees"]),
+        ],
+    },
+    {
+        "id": "geom-angles", "skill": "geo-angles", "title": "Turns, corners, and triangles",
+        "subtitle": "Measure how far something turns, in degrees.",
+        "duration": 9, "color": "peach", "icon": "graph",
+        "intro": "An angle tells you how far something turns. We measure it in degrees. A "
+                 "full turn is 360 degrees. A straight line is half a turn, 180 degrees. A "
+                 "square corner is a quarter turn, 90 degrees, called a right angle. Two angles "
+                 "that make a square corner together are complementary: they add to 90. Two "
+                 "that make a straight line are supplementary: they add to 180. The three angles "
+                 "of any triangle add to 180, and the four angles of a quadrilateral add to 360. "
+                 "An equilateral triangle has three equal 60 degree angles. Move the slider to "
+                 "turn the second ray.",
+        "takeaway": "A triangle's angles always add to 180 degrees.",
+        "visual": "angle-explorer", "formula": "triangle angles: a + b + c = 180",
+        "exercises": [
+            question("ha1", "What is the complement of a 35 degree angle?", "55",
+                     "Complementary angles add to 90, and 90 - 35 = 55.", "Together they make a square corner."),
+            question("ha2", "What is the supplement of a 110 degree angle?", "70",
+                     "Supplementary angles add to 180, and 180 - 110 = 70.", "Together they make a straight line."),
+            question("ha3", "Two angles of a triangle measure 50 degrees and 65 degrees. What is the third angle?", "65",
+                     "The three angles add to 180. 50 + 65 = 115, and 180 - 115 = 65.", "Add the two you know, then subtract from 180."),
+            question("ha4", "An isosceles triangle has a 40 degree angle between its two equal sides. What is each of the other two angles?", "70",
+                     "The other two angles share 180 - 40 = 140, so each is 70.", "The two remaining angles are equal."),
+            question("ha5", "Three angles of a quadrilateral are 90, 100, and 80 degrees. What is the fourth angle?", "90",
+                     "The four angles add to 360. 90 + 100 + 80 = 270, so the fourth is 90.", "Subtract the three known angles from 360."),
+        ],
+    },
+    {
+        "id": "coord-points", "skill": "geo-points", "title": "Locate and move points",
+        "subtitle": "Read ordered pairs, quadrants, reflections, and moves.",
+        "duration": 8, "color": "blue", "icon": "graph",
+        "intro": "An ordered pair (x, y) names a point: x says how far right or left of the "
+                 "origin, and y says how far up or down. The axes split the plane into four "
+                 "quadrants. A point with negative x and positive y is in Quadrant II. "
+                 "Reflecting across the y-axis changes the sign of x; reflecting across the "
+                 "x-axis changes the sign of y. Moving a point right adds to x, and moving "
+                 "it up adds to y. Drag the sliders in the explorer to place two points.",
+        "takeaway": "Order matters: x first, then y.",
+        "visual": "plane-explorer", "formula": "(x, y)",
+        "exercises": [
+            question("op1", "Which point is 3 units right of the origin and 2 units down?", "(3, -2)",
+                     "Right 3 gives x = 3 and down 2 gives y = -2.", "Right is positive x; down is negative y.",
+                     ["(3, -2)", "(-3, 2)", "(2, -3)", "(-2, 3)"]),
+            question("op2", "In which quadrant is (-4, 5)?", "Quadrant II",
+                     "x is negative and y is positive, which is Quadrant II.", "Check the sign of each coordinate.",
+                     ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"]),
+            question("op3", "Reflect (3, 4) across the y-axis. What is the new x-coordinate?", "-3",
+                     "A reflection across the y-axis flips the sign of x.", "The y-coordinate stays the same."),
+            question("op4", "Reflect (3, 4) across the x-axis. What is the new y-coordinate?", "-4",
+                     "A reflection across the x-axis flips the sign of y.", "The x-coordinate stays the same."),
+            question("op5", "Move the point (2, -1) 3 units right and 4 units up. What is its new y-coordinate?", "3",
+                     "Moving up adds 4 to y: -1 + 4 = 3.", "Only the vertical move changes y."),
+        ],
+    },
+    {
+        "id": "coord-grid", "skill": "geo-grid", "title": "Distance along grid lines",
+        "subtitle": "Measure horizontal and vertical segments and rectangles.",
+        "duration": 8, "color": "mint", "icon": "graph",
+        "intro": "When two points share a y-coordinate, the segment between them is "
+                 "horizontal and its length is the difference of the x-coordinates. When "
+                 "they share an x-coordinate, the segment is vertical and its length is the "
+                 "difference of the y-coordinates. Distance is never negative, so subtract the "
+                 "smaller value from the larger. Across the axis, count both sides: from -4 to 3 "
+                 "is 7 units. A rectangle with sides on grid lines has area width times "
+                 "height and perimeter twice width plus twice height.",
+        "takeaway": "Distance along a grid line is a difference of coordinates.",
+        "visual": "plane-explorer", "formula": "length = |x2 - x1|  or  |y2 - y1|",
+        "exercises": [
+            question("og1", "How far apart are (2, 5) and (9, 5)?", "7", "The y-values match, so subtract the x-values: 9 - 2 = 7.", "Which coordinate is shared?"),
+            question("og2", "How far apart are (-3, 4) and (-3, -2)?", "6", "The x-values match. The y-distance is 4 - (-2) = 6.", "Subtract carefully with a negative."),
+            question("og3", "How far apart are (-4, 1) and (3, 1)?", "7", "3 - (-4) = 7 units.", "Count across the y-axis."),
+            question("og4", "A rectangle has corners (1, 1), (6, 1), (6, 4), and (1, 4). What is its area?", "15", "The width is 5 and the height is 3, so the area is 15.", "Find the width and the height first."),
+            question("og5", "A rectangle has corners (-2, -1), (4, -1), (4, 3), and (-2, 3). What is its perimeter?", "20", "The width is 6 and the height is 4, so the perimeter is 2(6) + 2(4) = 20.", "Add all four side lengths."),
+        ],
+    },
+    {
+        "id": "coord-midpoint", "skill": "geo-midpoint", "title": "Find the middle",
+        "subtitle": "Average coordinates to locate a midpoint.",
+        "duration": 9, "color": "yellow", "icon": "graph",
+        "intro": "The midpoint of a segment is the point exactly halfway between its endpoints. "
+                 "Average the x-coordinates and average the y-coordinates. The midpoint of "
+                 "(2, 3) and (8, 9) is (5, 6). The midpoint can have fractional coordinates: "
+                 "(-5, -1) and (2, 4) have x-midpoint -3/2. If you know the midpoint and one "
+                 "endpoint, you can work backward: doubling the midpoint and subtracting the "
+                 "known endpoint gives the other endpoint.",
+        "takeaway": "Midpoint = (average of x, average of y).",
+        "visual": "plane-explorer", "formula": "M = ((x1 + x2) / 2, (y1 + y2) / 2)",
+        "exercises": [
+            question("om1", "What is the x-coordinate of the midpoint of (2, 3) and (8, 9)?", "5", "The average of 2 and 8 is 5.", "Add the x-values and halve."),
+            question("om2", "What is the y-coordinate of the midpoint of (-4, 6) and (2, -2)?", "2", "The average of 6 and -2 is 2.", "Add the y-values and halve."),
+            question("om3", "M(3, 1) is the midpoint of A(1, -3) and B. What is the x-coordinate of B?", "5", "3 = (1 + x) / 2, so x = 5.", "Double the midpoint, then subtract A."),
+            question("om4", "What is the x-coordinate of the midpoint of (-5, -1) and (2, 4)? Enter a fraction or decimal.", "-3/2", "(-5 + 2) / 2 = -3/2.", "A midpoint can be fractional."),
+            question("om5", "Which statement is true for the midpoint of segment PQ?", "It is equally far from P and Q",
+                     "A midpoint divides the segment into two equal lengths.", "Think about what halfway means.",
+                     ["It is equally far from P and Q", "It always lies on the x-axis",
+                      "Its coordinates are the sums of the coordinates of P and Q", "It has the same y-coordinate as P"]),
+        ],
+    },
+    {
+        "id": "coord-distance", "skill": "geo-distance", "title": "Distance between any two points",
+        "subtitle": "Use a right triangle to measure a slanted segment.",
+        "duration": 10, "color": "peach", "icon": "graph",
+        "intro": "A slanted segment is the longest side of a right triangle whose legs follow "
+                 "the grid. For (0, 0) and (3, 4), the horizontal leg is 3 and the vertical leg "
+                 "is 4. The Pythagorean relationship gives 3 squared plus 4 squared equals 25, so the "
+                 "distance is 5. In general, the squared distance is the sum of the squared "
+                 "horizontal and vertical changes. Many distances are not whole numbers, so the "
+                 "squared distance is a useful exact answer.",
+        "takeaway": "Distance squared = (change in x) squared + (change in y) squared.",
+        "visual": "plane-explorer", "formula": "d squared = dx squared + dy squared",
+        "exercises": [
+            question("od1", "What is the distance between (0, 0) and (3, 4)?", "5", "The legs are 3 and 4, and 9 + 16 = 25, so the distance is 5.", "Draw the right triangle."),
+            question("od2", "What is the distance between (1, 2) and (7, 10)?", "10", "The legs are 6 and 8. Then 36 + 64 = 100, so the distance is 10.", "Find the horizontal and vertical changes."),
+            question("od3", "What is the distance between (-2, 1) and (3, 13)?", "13", "The legs are 5 and 12. Then 25 + 144 = 169, so the distance is 13.", "Subtract coordinates in the same order."),
+            question("od4", "What is the squared distance between (0, 1) and (5, 3)?", "29", "The legs are 5 and 2, and 25 + 4 = 29.", "You do not need a square root."),
+            question("od5", "Which pair of points is exactly 5 units apart?", "(1, 1) and (4, 5)",
+                     "The legs are 3 and 4, so the distance is 5.", "Compute dx squared plus dy squared for each pair.",
+                     ["(1, 1) and (4, 5)", "(1, 1) and (4, 4)", "(0, 0) and (2, 4)", "(0, 0) and (4, 4)"]),
+        ],
+    },
+    {
+        "id": "coord-lines", "skill": "geo-lines", "title": "Parallel and perpendicular",
+        "subtitle": "Compare slopes to describe how lines relate.",
+        "duration": 10, "color": "violet", "icon": "graph",
+        "intro": "Slope is the vertical change divided by the horizontal change between two "
+                 "points. Between (1, 2) and (3, 8), the slope is 6/2 = 3. Parallel lines have "
+                 "the same slope. Perpendicular lines have slopes whose product is -1, so one "
+                 "slope is the negative reciprocal of the other: 4 pairs with -1/4, and 2/5 pairs "
+                 "with -5/2. Neither rule applies to vertical lines, whose slope is undefined.",
+        "takeaway": "Parallel: equal slopes. Perpendicular: negative reciprocals.",
+        "visual": "plane-explorer", "formula": "m1 times m2 = -1",
+        "exercises": [
+            question("ol1", "What is the slope of the line through (1, 2) and (3, 8)?", "3", "The rise is 6 and the run is 2, so the slope is 3.", "Divide the vertical change by the horizontal change."),
+            question("ol2", "A line has slope 2/3. What is the slope of a parallel line?", "2/3", "Parallel lines have equal slopes.", "Compare directions, not positions."),
+            question("ol3", "A line has slope 4. What is the slope of a perpendicular line?", "-1/4", "The negative reciprocal of 4 is -1/4.", "Flip the fraction and change the sign."),
+            question("ol4", "A line has slope 2/5. What is the slope of a perpendicular line?", "-5/2", "The negative reciprocal of 2/5 is -5/2.", "Flip the fraction and change the sign."),
+            question("ol5", "Which pair of slopes describes perpendicular lines?", "3 and -1/3",
+                     "The product of 3 and -1/3 is -1.", "Multiply each pair of slopes.",
+                     ["3 and -1/3", "2 and 1/2", "2 and -2", "5 and 5"]),
+        ],
+    },
+    {
+        "id": "coord-shapes", "skill": "geo-shapes", "title": "Shapes on the plane",
+        "subtitle": "Use lengths, midpoints, and slopes to describe polygons.",
+        "duration": 10, "color": "mint", "icon": "graph",
+        "intro": "Coordinates turn geometry into calculation. A rectangle's diagonals share a "
+                 "midpoint, and a diagonal is the hypotenuse of a right triangle: in a 5 by 12 "
+                 "rectangle it measures 13. To justify a parallelogram, show that opposite sides "
+                 "have equal slopes and equal lengths. Area of a right triangle with legs on the "
+                 "axes is half the product of its legs: legs 6 and 8 give area 24.",
+        "takeaway": "Combine distance, midpoint, and slope to justify a shape.",
+        "visual": "plane-explorer", "formula": "area = (1/2) x base x height",
+        "exercises": [
+            question("os1", "A rectangle has corners (0, 0), (4, 0), (4, 3), and (0, 3). What is the length of its diagonal from (0, 0) to (4, 3)?", "5", "The legs are 4 and 3, so the diagonal is 5.", "Use the distance relationship."),
+            question("os2", "Triangle ABC has vertices A(0, 0), B(6, 0), and C(6, 8). What is the length of side AC?", "10", "The legs are 6 and 8, so AC = 10.", "AC is the slanted side."),
+            question("os3", "A rectangle has corners (0, 0), (4, 0), (4, 3), and (0, 3). What is the x-coordinate of the midpoint of its diagonals?", "2", "The midpoint of (0, 0) and (4, 3) is (2, 3/2).", "Average the x-values of opposite corners."),
+            question("os4", "A(0, 0), B(4, 1), C(5, 4), and D(1, 3) are the corners of a quadrilateral. Which fact best shows it is a parallelogram?",
+                     "Opposite sides AB and DC have equal slope and equal length",
+                     "AB and DC both change by (4, 1), and AD and BC both change by (1, 3).",
+                     "Compare each side with the side opposite it.",
+                     ["Opposite sides AB and DC have equal slope and equal length", "Diagonal AC is longer than AB",
+                      "All four points have positive coordinates", "The midpoint of AB lies on the x-axis"]),
+            question("os5", "A right triangle has vertices (0, 0), (6, 0), and (0, 8). What is its area?", "24", "Half of 6 times 8 is 24.", "Use the two legs along the axes."),
+        ],
+    },
+    {
+        "id": "coord-polar", "skill": "geo-polar", "title": "Angle and distance",
+        "subtitle": "Describe a point by how far away it is and which way it points.",
+        "duration": 10, "color": "blue", "icon": "graph",
+        "intro": "There is another way to say where a point is. Instead of 'right 3, up 4', say "
+                 "how far it is from the origin and which direction it lies in. The distance is "
+                 "r. The direction is an angle measured counterclockwise from the right-hand "
+                 "side of the x-axis: 0 degrees points right, 90 up, 180 left, and 270 down. So "
+                 "a point 5 units from the origin at 90 degrees is straight up at (0, 5). To find "
+                 "r from (x, y), use the distance formula. When you know the angle's ratios, "
+                 "x = r times cos and y = r times sin: if the ratios are 0.6 and 0.8 and r is 10, "
+                 "the point is (6, 8). Turn the angle and stretch the distance in the explorer.",
+        "takeaway": "A point can be (right, up) or (distance, angle).",
+        "visual": "polar-explorer", "formula": "x = r cos, y = r sin",
+        "exercises": [
+            question("hp1", "A point is 7 units from the origin at an angle of 180 degrees. What is its x-coordinate?", "-7",
+                     "180 degrees points left, so the point is at (-7, 0).", "Which way does 180 degrees point?"),
+            question("hp2", "A point is 5 units from the origin at an angle of 90 degrees. What is its y-coordinate?", "5",
+                     "90 degrees points straight up, so the point is (0, 5).", "Which way does 90 degrees point?"),
+            question("hp3", "What is the distance r from the origin to the point (6, 8)?", "10",
+                     "The legs are 6 and 8, and 36 + 64 = 100, so r = 10.", "Use the distance relationship from the origin."),
+            question("hp4", "A point is 10 units from the origin where cos is 0.6 and sin is 0.8. What is its y-coordinate?", "8",
+                     "y = r times sin = 10 times 0.8 = 8.", "Multiply the distance by the sin value."),
+            question("hp5", "Which description matches the point (0, -4)?", "r = 4, angle 270 degrees",
+                     "The point is 4 units from the origin straight down, which is 270 degrees.", "Which way does the point lie from the origin?",
+                     ["r = 4, angle 270 degrees", "r = 4, angle 90 degrees", "r = 4, angle 0 degrees", "r = 4, angle 180 degrees"]),
+        ],
+    },
+]
+LESSONS.extend(GEOMETRY_LESSONS)
+
+PRACTICE.update({
+    "geom-measure": [
+        question("zm1", "A rectangle is 9 cm wide and 3 cm tall. What is its perimeter in cm?", "24", "9 + 3 + 9 + 3 = 24.", "Add all four sides."),
+        question("zm2", "A square has sides of 7 cm. What is its area in square cm?", "49", "7 times 7 is 49.", "A square is a rectangle with equal sides."),
+        question("zm3", "A triangle has a base of 8 cm and a height of 5 cm. What is its area in square cm?", "20", "Half of 8 times 5 is 20.", "Halve the rectangle's area."),
+        question("zm4", "A shape is a 5 m by 5 m square joined to a 2 m by 3 m rectangle, with no overlap. What is its total area in square m?", "31", "25 + 6 = 31.", "Find each piece and add."),
+    ],
+    "geom-angles": [
+        question("za1", "What is the complement of a 62 degree angle?", "28", "90 - 62 = 28.", "Complementary angles add to 90."),
+        question("za2", "What is the supplement of a 45 degree angle?", "135", "180 - 45 = 135.", "Supplementary angles add to 180."),
+        question("za3", "A triangle has angles of 30 degrees and 90 degrees. What is the third angle?", "60", "180 - 120 = 60.", "The three angles add to 180."),
+        question("za4", "Three angles of a quadrilateral are 85, 95, and 110 degrees. What is the fourth angle?", "70", "360 - 290 = 70.", "The four angles add to 360."),
+    ],
+    "coord-polar": [
+        question("zp1", "A point is 9 units from the origin at an angle of 0 degrees. What is its x-coordinate?", "9", "0 degrees points right.", "Which way does 0 degrees point?"),
+        question("zp2", "A point is 6 units from the origin at an angle of 270 degrees. What is its y-coordinate?", "-6", "270 degrees points straight down.", "Down is negative y."),
+        question("zp3", "What is the distance from the origin to (5, 12)?", "13", "25 + 144 = 169.", "Use the legs 5 and 12."),
+        question("zp4", "A point is 20 units from the origin where cos is 0.8 and sin is 0.6. What is its x-coordinate?", "16", "x = 20 times 0.8 = 16.", "Multiply by the cos value."),
+    ],
+})
+
+_geometry_extra = [
+    ("geom-measure", question("wm1", "A rectangle is 14 cm wide and 6 cm tall. What is its perimeter in cm?", "40", "14 + 6 + 14 + 6 = 40.", "Add all four sides.")),
+    ("geom-measure", question("wm2", "A triangle has a base of 12 cm and a height of 7 cm. What is its area in square cm?", "42", "Half of 12 times 7 is 42.", "Halve the rectangle's area.")),
+    ("geom-angles", question("wa1", "A triangle has angles of 72 degrees and 58 degrees. What is the third angle?", "50", "180 - 130 = 50.", "The three angles add to 180.")),
+    ("geom-angles", question("wa2", "How many degrees is each angle of an equilateral triangle?", "60", "Three equal angles share 180, so each is 60.", "The three angles are equal.")),
+    ("coord-polar", question("wp1", "What is the distance from the origin to (-8, 6)?", "10", "64 + 36 = 100.", "Use the legs 8 and 6.")),
+    ("coord-polar", question("wp2", "A point is 13 units from the origin where cos is 5/13 and sin is 12/13. What is its x-coordinate?", "5", "x = 13 times 5/13 = 5.", "Multiply the distance by cos.")),
+]
+
+
+PRACTICE.update({
+    "coord-points": [
+        question("qp1", "Which point is 4 units left and 1 unit up from the origin?", "(-4, 1)", "Left 4 gives x = -4 and up 1 gives y = 1.", "Left is negative x.", ["(-4, 1)", "(4, -1)", "(1, -4)", "(-1, 4)"]),
+        question("qp2", "In which quadrant is (2, -6)?", "Quadrant IV", "x is positive and y is negative.", "Check each sign.", ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"]),
+        question("qp3", "Reflect (-5, 2) across the y-axis. What is the new x-coordinate?", "5", "The sign of x flips.", "Only x changes."),
+        question("qp4", "Move (-3, 2) 5 units right and 6 units down. What is its new y-coordinate?", "-4", "2 - 6 = -4.", "Down subtracts from y."),
+    ],
+    "coord-grid": [
+        question("qg1", "How far apart are (1, 3) and (10, 3)?", "9", "The y-values match, so subtract x-values: 9.", "Which coordinate is shared?"),
+        question("qg2", "How far apart are (5, -2) and (5, 6)?", "8", "6 - (-2) = 8.", "Subtract carefully."),
+        question("qg3", "How far apart are (-6, 2) and (-1, 2)?", "5", "-1 - (-6) = 5.", "Subtract the smaller x from the larger."),
+        question("qg4", "A rectangle has corners (0, 0), (7, 0), (7, 2), and (0, 2). What is its area?", "14", "7 times 2 is 14.", "Find width and height."),
+    ],
+    "coord-midpoint": [
+        question("qm1", "What is the x-coordinate of the midpoint of (0, 4) and (10, 8)?", "5", "The average of 0 and 10 is 5.", "Add and halve."),
+        question("qm2", "What is the y-coordinate of the midpoint of (1, -3) and (5, 9)?", "3", "The average of -3 and 9 is 3.", "Add and halve."),
+        question("qm3", "M(2, -1) is the midpoint of A(-1, 4) and B. What is the y-coordinate of B?", "-6", "-1 = (4 + y) / 2, so y = -6.", "Double M, then subtract A."),
+        question("qm4", "What is the x-coordinate of the midpoint of (-7, 0) and (2, 6)? Enter a fraction or decimal.", "-5/2", "(-7 + 2) / 2 = -5/2.", "Add the x-values and halve."),
+    ],
+    "coord-distance": [
+        question("qd1", "What is the distance between (0, 0) and (6, 8)?", "10", "36 + 64 = 100.", "Use the legs 6 and 8."),
+        question("qd2", "What is the distance between (2, 1) and (5, 5)?", "5", "The legs are 3 and 4.", "Find dx and dy."),
+        question("qd3", "What is the distance between (-3, -2) and (2, 10)?", "13", "The legs are 5 and 12.", "Subtract in the same order."),
+        question("qd4", "What is the squared distance between (1, 2) and (4, 4)?", "13", "9 + 4 = 13.", "dx is 3 and dy is 2."),
+    ],
+    "coord-lines": [
+        question("ql1", "What is the slope of the line through (0, 1) and (4, 9)?", "2", "The rise is 8 and the run is 4.", "Divide rise by run."),
+        question("ql2", "A line has slope -3. What is the slope of a perpendicular line?", "1/3", "The negative reciprocal of -3 is 1/3.", "Flip and change the sign."),
+        question("ql3", "A line has slope 5/2. What is the slope of a perpendicular line?", "-2/5", "The negative reciprocal of 5/2 is -2/5.", "Flip and change the sign."),
+        question("ql4", "Which line is parallel to y = 3x + 1?", "y = 3x - 7", "Parallel lines share a slope of 3.", "Compare the slopes.", ["y = 3x - 7", "y = -3x + 1", "y = x/3 + 1", "y = -x/3 + 1"]),
+    ],
+    "coord-shapes": [
+        question("qs1", "A rectangle has corners (0, 0), (5, 0), (5, 12), and (0, 12). What is the length of its diagonal?", "13", "25 + 144 = 169.", "The sides are the legs."),
+        question("qs2", "A triangle has vertices (0, 0), (3, 0), and (3, 4). What is its perimeter?", "12", "The sides are 3, 4, and 5.", "Find the slanted side first."),
+        question("qs3", "A rectangle has corners (0, 0), (6, 0), (6, 4), and (0, 4). What is the y-coordinate of the midpoint of its diagonals?", "2", "The midpoint of (0, 0) and (6, 4) is (3, 2).", "Average opposite corners."),
+        question("qs4", "A right triangle has vertices (0, 0), (10, 0), and (0, 6). What is its area?", "30", "Half of 10 times 6 is 30.", "Use the legs on the axes."),
+    ],
+})
+
+COURSE_ASSESSMENTS["coordinate-geometry"] = [
+    ("coord-points", question("gp1", "In which quadrant is (-3, -7)?", "Quadrant III", "Both coordinates are negative.", "Check each sign.", ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"])),
+    ("coord-points", question("gp2", "Reflect (6, -2) across the x-axis. What is the new y-coordinate?", "2", "The sign of y flips.", "Only y changes.")),
+    ("coord-grid", question("gg1", "How far apart are (-5, 3) and (2, 3)?", "7", "2 - (-5) = 7.", "Which coordinate is shared?")),
+    ("coord-grid", question("gg2", "A rectangle has corners (-3, -2), (3, -2), (3, 1), and (-3, 1). What is its perimeter?", "18", "The width is 6 and the height is 3, so 2(6) + 2(3) = 18.", "Find width and height.")),
+    ("coord-midpoint", question("gm1", "What is the y-coordinate of the midpoint of (3, -8) and (9, 4)?", "-2", "The average of -8 and 4 is -2.", "Add and halve.")),
+    ("coord-midpoint", question("gm2", "M(-2, 5) is the midpoint of A(4, 1) and B. What is the x-coordinate of B?", "-8", "-2 = (4 + x) / 2, so x = -8.", "Double M, then subtract A.")),
+    ("coord-distance", question("gd1", "What is the distance between (0, 0) and (5, 12)?", "13", "25 + 144 = 169.", "Use the legs 5 and 12.")),
+    ("coord-distance", question("gd2", "What is the distance between (-1, -1) and (7, 5)?", "10", "The legs are 8 and 6, so the distance is 10.", "Find dx and dy.")),
+    ("coord-lines", question("gl1", "A line has slope 1/5. What is the slope of a perpendicular line?", "-5", "The negative reciprocal of 1/5 is -5.", "Flip and change the sign.")),
+    ("coord-lines", question("gl2", "Which pair of slopes describes perpendicular lines?", "3/4 and -4/3", "Their product is -1.", "Multiply each pair.", ["3/4 and -4/3", "3/4 and 4/3", "3/4 and -3/4", "3/4 and 3/4"])),
+    ("coord-shapes", question("gs1", "A right triangle has vertices (0, 0), (8, 0), and (8, 15). What is the length of the side from (0, 0) to (8, 15)?", "17", "64 + 225 = 289.", "The legs are 8 and 15.")),
+    ("coord-shapes", question("gs2", "A right triangle has vertices (0, 0), (9, 0), and (0, 4). What is its area?", "18", "Half of 9 times 4 is 18.", "Use the legs on the axes.")),
+]
+COURSE_ASSESSMENTS["coordinate-geometry"] += _geometry_extra
+_geometry_order = [lesson["id"] for lesson in GEOMETRY_LESSONS]
+COURSE_ASSESSMENTS["coordinate-geometry"].sort(key=lambda item: _geometry_order.index(item[0]))

@@ -24,8 +24,8 @@ TOPICS = [
          "Use inverse operations to find an unknown and check the result.", ["fractions"]),
         ("signed-numbers", "Numbers on both sides of zero", "negative-numbers", "Negative Numbers",
          "Model signed arithmetic as movement along a number line.", []),
-        ("coordinates", "Locate a point", "coordinate-plane", "Coordinate Plane",
-         "Translate between ordered pairs and positions on a coordinate grid.", ["signed-numbers"]),
+        ("coordinate-geometry", "Geometry and coordinates", "coordinate-plane", "Coordinate Plane",
+         "Build geometry from simple to complex: measurement, angles, points, distance, slopes, shapes, and polar coordinates.", ["signed-numbers", "fractions"]),
         ("percents", "Think in hundredths", "percentages", "Percents",
          "Connect fractions, decimals, and percentages in comparison problems.", ["fractions"]),
         ("proportions", "Scale and proportion", "proportional-relationships", "Proportional Reasoning",
@@ -35,9 +35,9 @@ TOPICS = [
         ("linear-equations", "Expressions and equality", "linear-expressions-and-equations", "Linear Equations",
          "Translate situations into expressions and solve linear equations.", ["first-equations"]),
         ("coordinate-geometry", "Geometry on a grid", "coordinate-geometry", "Coordinate Geometry",
-         "Use coordinates to calculate distances and explain geometric relationships.", ["coordinates"]),
+         "Use coordinates to calculate distances and explain geometric relationships.", ["signed-numbers"]),
         ("linear-relationships", "Lines tell a story", "linear-functions", "Linear Relationships",
-         "Connect tables, graphs, and equations through slope and intercept.", ["linear-equations", "coordinates"]),
+         "Connect tables, graphs, and equations through slope and intercept.", ["linear-equations", "coordinate-geometry"]),
         ("powers-roots", "Powers and roots", "exponents-and-radicals", "Exponents and Radicals",
          "Explain exponent rules and use roots to reverse powers.", ["signed-numbers"]),
         ("visual-algebra", "See algebra work", "systems-of-equations", "Visual Algebra",
@@ -64,10 +64,10 @@ TOPICS = [
          "Connect geometric definitions of conic sections to their equations.", ["quadratics", "coordinate-geometry"]),
         ("logarithms", "Undo exponential growth", "logarithms", "Logarithms",
          "Interpret logarithms as inverse exponents and solve growth equations.", ["exponentials"]),
-        ("polar", "Coordinates by angle and distance", "polar-coordinate-plane", "Polar Coordinate Plane",
-         "Convert between Cartesian and polar descriptions of a point.", ["trigonometry"]),
+        ("coordinate-geometry", "Coordinates by angle and distance", "polar-coordinate-plane", "Polar Coordinate Plane",
+         "Convert between Cartesian and polar descriptions of a point.", ["coordinate-geometry"]),
         ("complex", "Numbers beyond the real line", "complex-plane", "Complex Numbers",
-         "Represent complex arithmetic as movement and rotation in a plane.", ["powers-roots", "coordinates"]),
+         "Represent complex arithmetic as movement and rotation in a plane.", ["powers-roots", "coordinate-geometry"]),
     ]),
     ("Calculus", "math", [
         ("limits", "Approach a value", "limits", "Limits",
@@ -96,7 +96,7 @@ TOPICS = [
          "Compare summaries and identify misleading numerical claims.", []),
         ("chance", "Make sense of chance", "winning-with-probability", "Probability and Chance",
          "Compare outcomes using sample spaces and expected value.", ["fractions"]),
-        ("measurement", "Measure the world", "geometry-fundamentals", "Geometry and Measurement",
+        ("coordinate-geometry", "Measure the world", "geometry-fundamentals", "Geometry and Measurement",
          "Choose units and calculate lengths, areas, and volumes from models.", ["fractions"]),
         ("everyday-algebra", "Model everyday decisions", "using-variables", "Real-World Algebra",
          "Choose variables and build equations for costs, rates, and constraints.", ["linear-equations"]),
@@ -112,12 +112,12 @@ TOPICS = [
          "Compare infinite sets through one-to-one correspondences.", ["deduction"]),
         ("number-theory", "Explore divisibility", "basic-number-theory", "Number Theory",
          "Use primes, factors, and modular arithmetic to explain integer patterns.", []),
-        ("geometric-thinking", "Find structure in shapes", "basic-2d-geometry", "Geometric Thinking",
-         "Use symmetry and decomposition to justify geometric relationships.", ["measurement"]),
+        ("coordinate-geometry", "Find structure in shapes", "basic-2d-geometry", "Geometric Thinking",
+         "Use symmetry and decomposition to justify geometric relationships.", ["fractions"]),
         ("bayes", "Update a belief with evidence", "knowledge-and-uncertainty", "Bayesian Probability",
          "Distinguish prior and posterior probabilities using conditional evidence.", ["probability"]),
         ("contest-math", "Solve unfamiliar math problems", "math-competition-fundamentals", "Contest Math",
-         "Choose and justify counting, algebraic, and geometric problem-solving strategies.", ["linear-equations", "number-theory", "measurement"]),
+         "Choose and justify counting, algebraic, and geometric problem-solving strategies.", ["linear-equations", "number-theory", "coordinate-geometry"]),
     ]),
     ("Programming & CS", "computing", [
         ("code-thinking", "Think in instructions", "thinking-in-code", "Thinking in Code",
@@ -198,10 +198,29 @@ RELATED_LESSONS = {
 }
 
 
+def _ordered(courses):
+    """Assign a difficulty stage from the prerequisite chain and order simple to complex."""
+    by_id = {course["id"]: course for course in courses}
+    stages = {}
+
+    def stage(cid):
+        if cid not in stages:
+            parents = by_id[cid]["prerequisites"]
+            stages[cid] = 1 + max(stage(p) for p in parents) if parents else 0
+        return stages[cid]
+
+    for course in courses:
+        course["stage"] = stage(course["id"])
+        course["level"] = ("Beginner" if course["stage"] <= 1 else
+                           "Intermediate" if course["stage"] <= 3 else "Advanced")
+    subject_order = {subject["id"]: i for i, subject in enumerate(SUBJECTS)}
+    return sorted(courses, key=lambda c: (subject_order[c["subject_id"]], c["stage"]))
+
+
 def _courses():
     courses = [{
         "id": "everyday-foundations", "subject_id": "math",
-        "title": "Foundations of everyday math", "level": "Beginner",
+        "title": "Foundations of everyday math",
         "prerequisites": [], "topics": ["Learnova starter course"], "reference": None,
         "related_lesson_ids": [],
         "units": [
@@ -224,7 +243,7 @@ def _courses():
                 continue
             course = {
                 "id": cid, "subject_id": subject_id, "title": title,
-                "level": "Outlined", "prerequisites": prerequisites, "topics": [topic],
+                "prerequisites": prerequisites, "topics": [topic],
                 "reference": {"title": reference_title,
                               "url": f"https://brilliant.org/courses/{slug}/"},
                 "related_lesson_ids": RELATED_LESSONS.get(cid, []),
@@ -233,7 +252,6 @@ def _courses():
             }
             by_id[cid] = course
             courses.append(course)
-    by_id["fractions"]["level"] = "Beginner"
     by_id["fractions"]["units"] = [
         {"id": "fractions-meaning", "title": "Wholes, parts, and equivalence",
          "objectives": ["Define equal parts and locate fractions on a number line.",
@@ -247,7 +265,6 @@ def _courses():
          "objectives": ["Find a fraction of a quantity and recover a whole from a known part."],
          "lesson_ids": ["fraction-quantities"]},
     ]
-    by_id["first-equations"]["level"] = "Beginner"
     by_id["first-equations"]["units"] = [
         {"id": "equations-one-step", "title": "Balance and undo",
          "objectives": ["Explain solutions as values that make an equation true.",
@@ -261,7 +278,6 @@ def _courses():
          "objectives": ["Define an unknown, model a situation, and judge the solution in context."],
          "lesson_ids": ["equation-stories"]},
     ]
-    by_id["linear-relationships"]["level"] = "Beginner"
     by_id["linear-relationships"]["units"] = [
         {"id": "linear-change", "title": "Change, slope, and starting values",
          "objectives": ["Recognize constant rate of change in tables.",
@@ -275,7 +291,26 @@ def _courses():
          "objectives": ["Find where two linear relationships meet and interpret the result."],
          "lesson_ids": ["linear-comparison"]},
     ]
-    return courses
+    by_id["coordinate-geometry"]["units"] = [
+        {"id": "shapes-and-measure", "title": "Shapes and measurement",
+         "objectives": ["Calculate perimeter and area, including composite shapes.",
+                        "Use angle relationships in lines, triangles, and quadrilaterals."],
+         "lesson_ids": ["geom-measure", "geom-angles"]},
+        {"id": "points-and-grids", "title": "Points, grids, and midpoints",
+         "objectives": ["Locate, reflect, and move points on the coordinate plane.",
+                        "Measure grid distances and find midpoints."],
+         "lesson_ids": ["coord-points", "coord-grid", "coord-midpoint"]},
+        {"id": "distance-slope-shapes", "title": "Distance, slope, and shapes",
+         "objectives": ["Measure the distance between any two points.",
+                        "Use slopes to identify parallel and perpendicular lines.",
+                        "Justify properties of shapes using lengths, midpoints, and slopes."],
+         "lesson_ids": ["coord-distance", "coord-lines", "coord-shapes"]},
+        {"id": "angle-and-distance", "title": "Coordinates by angle and distance",
+         "objectives": ["Describe a point by its distance from the origin and its angle.",
+                        "Convert between polar and rectangular descriptions."],
+         "lesson_ids": ["coord-polar"]},
+    ]
+    return _ordered(courses)
 
 
 COURSES = _courses()

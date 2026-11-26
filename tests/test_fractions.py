@@ -175,7 +175,7 @@ class FractionsTests(unittest.TestCase):
         self.assertEqual(reloaded.author("balance")["version"], 2)
         self.assertEqual(reloaded.author("balance")["lesson"]["title"], "My existing lesson")
         self.assertEqual(reloaded.state()["passed"]["balance"], ["b1"])
-        self.assertEqual(len(reloaded.state()["lessons"]), 24)
+        self.assertEqual(len(reloaded.state()["lessons"]), 33)
 
     def test_public_banks_do_not_leak_answers_hints_or_explanations(self):
         state = self.store.state()

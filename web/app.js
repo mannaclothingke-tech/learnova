@@ -180,7 +180,7 @@ function practice() {
     <section class="practice-hero"><span class="practice-star">&#10038;</span><div><span class="eyebrow">RECOMMENDED FOR YOU</span><h2>${esc(next.title)}</h2><p>${masteryCount() === state.mastery.length ? "Keep your foundations fresh with a review." : "Your earliest skill without enough independent evidence. Start here to strengthen your foundation."}</p><a class="button primary" href="#review/${next.id}">Practice this skill ${icon("arrow")}</a></div>${miniArt(next.icon, next.color)}</section>
     <div class="section-heading"><h2>Choose a skill to revisit</h2><span class="muted">Authored challenges, immediate feedback</span></div>
     <div class="practice-list">${state.lessons.map((lesson, i) => `<a href="#review/${lesson.id}" class="practice-item"><span class="number-badge">${i + 1}</span><div><strong>${esc(stepName(lesson))}</strong><p>${esc(lessonPlacement(lesson.id).course.title)} &middot; ${esc(lesson.subtitle)}</p></div><span class="status ${state.mastery.find(s => s.id === lesson.skill).status}">${statusLabel(state.mastery.find(s => s.id === lesson.skill).status)}</span>${icon("arrow")}</a>`).join("")}</div>
-    <div class="notice">${icon("check")}<p>The fractions, equations, and linear relationships courses have four separate review questions per skill. Starter-course review repeats its lesson questions. These are fixed authored sets, not generated questions. Repeating a question never adds new independent mastery evidence. Hints and retries are recorded.</p></div>`;
+    <div class="notice">${icon("check")}<p>The fractions, equations, linear relationships, and geometry courses have four separate review questions per skill. Starter-course review repeats its lesson questions. These are fixed authored sets, not generated questions. Repeating a question never adds new independent mastery evidence. Hints and retries are recorded.</p></div>`;
 }
 function statusLabel(status) {
   return { mastered: "Mastered", developing: "Developing", "not-started": "Not started" }[status];
@@ -251,7 +251,74 @@ function lineExplorer() {
   const { m, b } = session.line;
   return `<div class="interactive-canvas line-explorer"><div class="canvas-header"><span>EXPLORE THE LINE</span><span class="canvas-badge">INTERACTIVE</span></div><div id="line-model">${lineModel(m, b)}</div><div class="fraction-controls"><label>Slope <output id="line-m-output">${m}</output><input id="line-m" aria-label="Slope" type="range" min="-3" max="3" step="0.5" value="${m}"></label><label>Y-intercept <output id="line-b-output">${b}</output><input id="line-b" aria-label="Y-intercept" type="range" min="-4" max="4" step="1" value="${b}"></label></div><p class="canvas-caption">Watch the table and graph change together.<br>This explorer does not submit answers or award mastery.</p></div>`;
 }
+function slopeText(dy, dx) {
+  if (dx === 0) return dy === 0 ? "undefined (same point)" : "undefined (vertical line)";
+  if (dy === 0) return "0";
+  const divisor = ((a, b) => { while (b) [a, b] = [b, a % b]; return a; })(Math.abs(dy), Math.abs(dx));
+  let num = dy / divisor, den = dx / divisor;
+  if (den < 0) { num = -num; den = -den; }
+  return den === 1 ? String(num) : `${num}/${den}`;
+}
+function planeGrid() {
+  const sx = v => 200 + v * 30, sy = v => 200 - v * 30;
+  const lines = Array.from({ length: 13 }, (_, i) => i - 6).map(n => `<path d="M${sx(n)} 20v360M20 ${sy(n)}h360" class="graph-grid"/>`).join("");
+  const labels = [-6, -4, -2, 2, 4, 6].map(n => `<text x="${sx(n)}" y="216" font-size="11" text-anchor="middle" fill="#7a8a70">${n}</text><text x="186" y="${sy(n) + 4}" font-size="11" text-anchor="end" fill="#7a8a70">${n}</text>`).join("");
+  return `${lines}<path d="M20 200h360M200 20v360" class="graph-axis"/>${labels}`;
+}
+function planeModel({ x1, y1, x2, y2 }) {
+  const sx = v => 200 + v * 30, sy = v => 200 - v * 30;
+  const fmt = v => Number.isInteger(v) ? String(v) : v.toFixed(1);
+  const dx = x2 - x1, dy = y2 - y1, squared = dx * dx + dy * dy, root = Math.sqrt(squared);
+  const distance = squared === 0 ? "0" : Number.isInteger(root) ? String(root) : `\u221a${squared} \u2248 ${root.toFixed(2)}`;
+  const guide = `<path d="M${sx(x1)} ${sy(y1)}H${sx(x2)}V${sy(y2)}" fill="none" stroke="#c9bfee" stroke-width="3" stroke-dasharray="6 5"/>`;
+  return `<svg viewBox="0 0 400 400" role="img" aria-label="Coordinate plane with point A at (${x1}, ${y1}) and point B at (${x2}, ${y2})">${planeGrid()}${guide}<path d="M${sx(x1)} ${sy(y1)}L${sx(x2)} ${sy(y2)}" class="graph-plot"/><circle cx="${sx(x1)}" cy="${sy(y1)}" r="7" class="graph-point"/><circle cx="${sx(x2)}" cy="${sy(y2)}" r="7" fill="#8e7bbd"/><text x="${sx(x1) + 10}" y="${sy(y1) - 10}" font-size="16" font-weight="700" fill="#3f5a35">A</text><text x="${sx(x2) + 10}" y="${sy(y2) - 10}" font-size="16" font-weight="700" fill="#5d4a8a">B</text></svg><ul class="plane-facts" aria-live="polite"><li>A = (${x1}, ${y1}) and B = (${x2}, ${y2})</li><li>Across: ${dx}. Up or down: ${dy}. (The dashed purple path.)</li><li>Distance AB: ${distance}</li><li>Midpoint: (${fmt((x1 + x2) / 2)}, ${fmt((y1 + y2) / 2)})</li><li>Slope: ${slopeText(dy, dx)}</li></ul>`;
+}
+function sliderRow(prefix, name, label, value, min, max, step = 1) {
+  return `<label>${label} <output id="${prefix}-${name}-output">${value}</output><input id="${prefix}-${name}" aria-label="${label}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></label>`;
+}
+function planeExplorer() {
+  const p = session.plane;
+  return `<div class="interactive-canvas plane-explorer"><div class="canvas-header"><span>EXPLORE THE PLANE</span><span class="canvas-badge">INTERACTIVE</span></div><div id="plane-model">${planeModel(p)}</div><div class="fraction-controls">${sliderRow("plane", "x1", "Point A: across", p.x1, -6, 6)}${sliderRow("plane", "y1", "Point A: up or down", p.y1, -6, 6)}${sliderRow("plane", "x2", "Point B: across", p.x2, -6, 6)}${sliderRow("plane", "y2", "Point B: up or down", p.y2, -6, 6)}</div><p class="canvas-caption">Move the points and watch the distance, midpoint, and slope change.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function shapeModel(w, h) {
+  const unit = 24, x0 = 60, y0 = 20;
+  const cells = Array.from({ length: w * h }, (_, i) => `<rect x="${x0 + (i % w) * unit}" y="${y0 + Math.floor(i / w) * unit}" width="${unit}" height="${unit}" fill="${(i % w + Math.floor(i / w)) % 2 ? "#f8efcf" : "#f1e3a5"}" stroke="#d8c97b" stroke-width="1"/>`).join("");
+  const W = w * unit, H = h * unit;
+  return `<svg viewBox="0 0 400 280" role="img" aria-label="A rectangle ${w} squares wide and ${h} squares tall, with area ${w * h} and perimeter ${2 * (w + h)}">${cells}<path d="M${x0} ${y0 + H}L${x0 + W} ${y0 + H}L${x0} ${y0}Z" fill="#8e7bbd" fill-opacity=".28" stroke="#6a5599" stroke-width="2" stroke-dasharray="6 5"/><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="none" stroke="#3f7a3a" stroke-width="4"/><text x="${x0 + W / 2}" y="${y0 + H + 22}" text-anchor="middle" font-size="14" fill="#3f5a35">${w}</text><text x="${x0 - 12}" y="${y0 + H / 2 + 5}" text-anchor="end" font-size="14" fill="#3f5a35">${h}</text></svg><ul class="plane-facts" aria-live="polite"><li>Perimeter, the green edge: ${w} + ${h} + ${w} + ${h} = ${2 * (w + h)}</li><li>Area, the squares inside: ${w} \u00d7 ${h} = ${w * h}</li><li>The purple triangle covers half: ${w * h / 2}</li></ul>`;
+}
+function shapeExplorer() {
+  const s = session.shape;
+  return `<div class="interactive-canvas shape-explorer"><div class="canvas-header"><span>COUNT THE SQUARES</span><span class="canvas-badge">INTERACTIVE</span></div><div id="shape-model">${shapeModel(s.w, s.h)}</div><div class="fraction-controls">${sliderRow("shape", "w", "Squares across", s.w, 1, 10)}${sliderRow("shape", "h", "Squares up", s.h, 1, 10)}</div><p class="canvas-caption">Make the rectangle wider or taller and watch both numbers.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function angleModel(a) {
+  const ox = 110, oy = 210, len = 200, rad = a * Math.PI / 180;
+  const ex = ox + len * Math.cos(rad), ey = oy - len * Math.sin(rad);
+  const arc = a === 0 ? "" : `<path d="M${ox + 56} ${oy}A56 56 0 0 0 ${(ox + 56 * Math.cos(rad)).toFixed(1)} ${(oy - 56 * Math.sin(rad)).toFixed(1)}" fill="none" stroke="#c97a3d" stroke-width="5" stroke-linecap="round"/>`;
+  const square = a === 90 ? `<path d="M${ox + 22} ${oy}V${oy - 22}H${ox}" fill="none" stroke="#3f7a3a" stroke-width="3"/>` : "";
+  const kind = a === 0 ? "no turn" : a < 90 ? "acute: smaller than a square corner" : a === 90 ? "right angle: a square corner" : a < 180 ? "obtuse: wider than a square corner" : "straight line";
+  return `<svg viewBox="0 0 400 250" role="img" aria-label="An angle of ${a} degrees between two rays"><path d="M${ox} ${oy}H${ox + len}" stroke="#75866a" stroke-width="5" stroke-linecap="round"/><path d="M${ox} ${oy}L${ex.toFixed(1)} ${ey.toFixed(1)}" stroke="#6a5599" stroke-width="5" stroke-linecap="round"/>${arc}${square}<circle cx="${ox}" cy="${oy}" r="7" fill="#3f5a35"/><text x="${ox + 70}" y="${oy - 14}" font-size="20" font-weight="700" fill="#c97a3d">${a}\u00b0</text></svg><ul class="plane-facts" aria-live="polite"><li>This angle is ${kind}.</li><li>${a <= 90 ? `Its complement is ${90 - a}\u00b0 (together they make a square corner).` : "It is bigger than a square corner, so it has no complement."}</li><li>Its supplement is ${180 - a}\u00b0 (together they make a straight line).</li></ul>`;
+}
+function angleExplorer() {
+  return `<div class="interactive-canvas angle-explorer"><div class="canvas-header"><span>TURN THE RAY</span><span class="canvas-badge">INTERACTIVE</span></div><div id="angle-model">${angleModel(session.angle.a)}</div><div class="fraction-controls">${sliderRow("angle", "a", "Angle in degrees", session.angle.a, 0, 180, 5)}</div><p class="canvas-caption">Try 90 for a square corner and 180 for a straight line.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function polarModel(r, a) {
+  const sx = v => 200 + v * 30, sy = v => 200 - v * 30;
+  const rad = a * Math.PI / 180, clean = v => { const n = Math.round(v * 100) / 100; return Object.is(n, -0) ? 0 : n; };
+  const x = clean(r * Math.cos(rad)), y = clean(r * Math.sin(rad));
+  const R = 36, large = a > 180 ? 1 : 0;
+  const arc = a === 0 || a === 360 ? "" : `<path d="M${200 + R} 200A${R} ${R} 0 ${large} 0 ${(200 + R * Math.cos(rad)).toFixed(1)} ${(200 - R * Math.sin(rad)).toFixed(1)}" fill="none" stroke="#c97a3d" stroke-width="4" stroke-linecap="round"/>`;
+  const rings = [1, 2, 3, 4, 5, 6].map(n => `<circle cx="200" cy="200" r="${n * 30}" fill="none" stroke="#d6e2c9" stroke-width="1"/>`).join("");
+  return `<svg viewBox="0 0 400 400" role="img" aria-label="A point ${r} units from the origin at an angle of ${a} degrees, at about (${x}, ${y})">${planeGrid()}${rings}${arc}<path d="M200 200L${sx(x)} ${sy(y)}" stroke="#6a5599" stroke-width="4" stroke-linecap="round"/><circle cx="${sx(x)}" cy="${sy(y)}" r="8" class="graph-point"/><circle cx="200" cy="200" r="5" fill="#3f5a35"/></svg><ul class="plane-facts" aria-live="polite"><li>Distance and angle: (r, \u03b8) = (${r}, ${a}\u00b0)</li><li>Right and up: (x, y) \u2248 (${x}, ${y})</li><li>Check: x\u00b2 + y\u00b2 \u2248 ${clean(x * x + y * y)}, and r\u00b2 = ${r * r}</li></ul>`;
+}
+function polarExplorer() {
+  const p = session.polar;
+  return `<div class="interactive-canvas polar-explorer"><div class="canvas-header"><span>DISTANCE AND DIRECTION</span><span class="canvas-badge">INTERACTIVE</span></div><div id="polar-model">${polarModel(p.r, p.a)}</div><div class="fraction-controls">${sliderRow("polar", "r", "Distance from the origin", p.r, 1, 6)}${sliderRow("polar", "a", "Angle in degrees", p.a, 0, 345, 15)}</div><p class="canvas-caption">Rings show each step of distance. Turn the angle to swing the point around.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
 function visual(lesson) {
+  if (lesson.visual === "plane-explorer") return planeExplorer();
+  if (lesson.visual === "shape-explorer") return shapeExplorer();
+  if (lesson.visual === "angle-explorer") return angleExplorer();
+  if (lesson.visual === "polar-explorer") return polarExplorer();
   if (lesson.visual === "line-explorer") return lineExplorer();
   if (lesson.visual === "equation-explorer") return equationExplorer();
   if (lesson.visual === "fraction-explorer") return fractionExplorer();
@@ -273,7 +340,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 } };
   }
   return session;
 }
@@ -323,7 +390,7 @@ function lessonView(mode, id) {
     <div class="lesson-title"><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${lesson.visual === "graph" ? "graph" : lesson.visual === "fraction-explorer" ? "fraction" : lesson.visual === "equation-explorer" ? "equation" : "line"} explorer</summary>${visual(lesson)}</details>` : ""}`}
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
@@ -483,6 +550,16 @@ document.addEventListener("input", event => {
     $("#fraction-numerator").value = String(model.numerator);
     for (const name of ["numerator", "denominator", "whole"]) $(`#fraction-${name}-output`).textContent = model[name];
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
+    return;
+  }
+  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"] };
+  for (const [prefix, names] of Object.entries(explorerIds)) {
+    if (!event.target.id.startsWith(prefix) || !names.includes(event.target.id.slice(prefix.length))) continue;
+    const key = prefix.slice(0, -1), model = session[key];
+    model[event.target.id.slice(prefix.length)] = Number(event.target.value);
+    for (const name of names) $(`#${key}-${name}-output`).textContent = model[name];
+    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a) };
+    $(`#${key}-model`).innerHTML = render[key]();
     return;
   }
   if (["line-m", "line-b"].includes(event.target.id)) {
