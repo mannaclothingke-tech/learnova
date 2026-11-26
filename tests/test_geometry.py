@@ -72,8 +72,8 @@ class GeometryTests(unittest.TestCase):
         for course in courses:
             for prerequisite in course["prerequisites"]:
                 self.assertLess(by_id[prerequisite]["stage"], course["stage"], course["id"])
-        self.assertEqual(courses[0]["id"], "everyday-foundations")
-        self.assertEqual(courses[1]["id"], "fractions")
+        self.assertEqual(courses[0]["id"], "counting-numbers")
+        self.assertEqual([c["id"] for c in courses if c["stage"] == 0 and c["subject_id"] == "math"][:1], ["counting-numbers"])
 
     def test_assessment_follows_lesson_order(self):
         order = [l["id"] for l in GEOMETRY_LESSONS]

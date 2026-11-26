@@ -43,7 +43,8 @@ function completed(lesson) {
   return lesson.exercises.every(q => state.passed[lesson.id].includes(q.id));
 }
 function recommended(course) {
-  const lessons = course ? courseLessons(course) : state.lessons;
+  const lessons = course ? courseLessons(course) :
+    state.catalog.courses.filter(c => c.subject_id === "math" && c.lesson_count).flatMap(courseLessons);
   return lessons.find(lesson => state.mastery.find(s => s.id === lesson.skill).status !== "mastered") || lessons[0];
 }
 function masteryCount() {
@@ -108,9 +109,10 @@ function home() {
   const next = recommended();
   const name = state.profile?.name;
   const done = state.lessons.filter(completed).length;
-  const starter = state.catalog.courses.find(c => c.id === "everyday-foundations");
-  const starterLessons = courseLessons(starter);
-  const starterDone = starterLessons.filter(completed).length;
+  const pathCourse = lessonPlacement(next.id).course;
+  const pathLessons = courseLessons(pathCourse);
+  const pathDone = pathLessons.filter(completed).length;
+  const pathStart = Math.max(0, pathLessons.findIndex(l => l.id === next.id));
   const recent = [];
   for (let offset = 6; offset >= 0; offset--) {
     const date = new Date();
@@ -124,8 +126,8 @@ function home() {
     <section class="week-card"><div class="section-label">YOUR LEARNING RHYTHM <span>&#10038;</span></div><div class="streak-value">${state.activity.streak}<span>day${state.activity.streak === 1 ? "" : "s"} of momentum</span></div><p>Consistency starts with showing up.</p><div class="week-days">${recent.join("")}</div><hr><div class="daily-goal">${icon("clock")}<span>Daily intention<strong>${state.profile?.minutes || 10} minutes of curiosity</strong></span><button class="icon-button" data-action="profile" aria-label="Edit daily intention">${icon("studio")}</button></div></section></div>
     <section class="stats-row"><div>${icon("learn")}<span><strong>${done}<small> / ${state.lessons.length}</small></strong>Lessons completed</span></div><div>${icon("check")}<span><strong>${masteryCount()}<small> / ${state.mastery.length}</small></strong>Skills mastered</span></div><div>${icon("practice")}<span><strong>${state.activity.attempts}</strong>Answers explored</span></div><div><span class="tiny-spark">&#10038;</span><span><strong>A little every day</strong>Progress, not perfection</span></div></section>
     <div class="section-heading"><div><span class="eyebrow">YOUR GUIDED PATH</span><h2>From little pieces to big ideas</h2></div><a class="text-link" href="#learn">Explore all lessons ${icon("arrow")}</a></div>
-    <a class="path-banner" href="#course/${starter.id}"><span class="path-icon">${icon("learn")}</span><div><strong>${esc(starter.title)}</strong><p>${starter.units.length} units &middot; ${starterLessons.length} published lessons</p></div><div class="path-progress"><span>${starterDone} of ${starterLessons.length} complete</span><progress value="${starterDone}" max="${starterLessons.length}" aria-label="Starter course completion"></progress></div></a>
-    <div class="cards-grid">${starterLessons.slice(0, 3).map(card).join("")}</div>
+    <a class="path-banner" href="#course/${pathCourse.id}"><span class="path-icon">${icon("learn")}</span><div><strong>${esc(pathCourse.title)}</strong><p>${pathCourse.units.length} units &middot; ${pathLessons.length} lessons &middot; ${esc(pathCourse.level)}</p></div><div class="path-progress"><span>${pathDone} of ${pathLessons.length} complete</span><progress value="${pathDone}" max="${pathLessons.length}" aria-label="Course completion"></progress></div></a>
+    <div class="cards-grid">${pathLessons.slice(pathStart, pathStart + 3).map((lesson, i) => card(lesson, pathStart + i)).join("")}</div>
     <section class="assessment-banner"><div class="assessment-symbol">?</div><div><span class="eyebrow">FIND YOUR STARTING POINT</span><h3>Already know a little? Let's find out.</h3><p>A 12-question starting check maps these six skills. No timer. No pressure.</p></div><a class="button secondary" href="#assessment">${state.diagnostic_answered.length === 12 ? "See your results" : "Check my skills"} ${icon("arrow")}</a></section>`;
 }
 function courseStatus(course) {
@@ -322,6 +324,12 @@ function storyArt(kind) {
     river: () => `<svg class="lesson-art blue" viewBox="0 0 160 110" aria-hidden="true"><path d="M8 62C38 38 62 86 92 62S138 48 152 60" fill="none" class="art-stroke"/><path d="M8 74C38 50 62 98 92 74S138 60 152 72" fill="none" class="art-stroke" opacity=".5"/><rect x="18" y="80" width="46" height="22" rx="4" class="art-light"/><rect x="92" y="10" width="50" height="26" rx="4" class="art-dark"/><path d="M92 23h50M117 10v26" class="art-grid"/></svg>`,
     circle: () => `<svg class="lesson-art yellow" viewBox="0 0 160 110" aria-hidden="true"><circle cx="80" cy="55" r="40" class="art-light"/><path d="M80 55V15A40 40 0 0 1 120 55Z" class="art-dark"/><path d="M80 15v80M40 55h80M52 27l56 56M108 27L52 83" class="art-grid"/><circle cx="80" cy="55" r="4" class="art-stroke"/></svg>`,
     rope: () => `<svg class="lesson-art peach" viewBox="0 0 160 110" aria-hidden="true"><path d="M30 92V32L110 92Z" fill="none" class="art-stroke"/><path d="M30 80h12V92" fill="none" class="art-grid"/><circle cx="30" cy="32" r="5" class="art-dark"/><circle cx="30" cy="92" r="5" class="art-dark"/><circle cx="110" cy="92" r="5" class="art-dark"/><circle cx="30" cy="62" r="3.5" class="art-light"/><circle cx="70" cy="62" r="3.5" class="art-light"/><circle cx="70" cy="92" r="3.5" class="art-light"/></svg>`,
+    tally: () => `<svg class="lesson-art yellow" viewBox="0 0 160 110" aria-hidden="true"><path d="M26 24v54M42 24v54M58 24v54M74 24v54M18 66L84 36" fill="none" class="art-stroke"/><path d="M100 24v54M116 24v54M132 24v54" fill="none" class="art-stroke"/><ellipse cx="40" cy="96" rx="10" ry="6" class="art-light"/><ellipse cx="64" cy="98" rx="9" ry="5" class="art-dark"/><ellipse cx="86" cy="96" rx="10" ry="6" class="art-light"/></svg>`,
+    hands: () => `<svg class="lesson-art mint" viewBox="0 0 160 110" aria-hidden="true">${[0, 1, 2, 3, 4].map(i => `<rect x="${24 + i * 12}" y="${22 - (i === 2 ? 6 : i % 4 === 0 ? 0 : 3)}" width="9" height="${i === 0 || i === 4 ? 34 : 42}" rx="4.5" class="art-dark"/>`).join("")}${[0, 1, 2, 3, 4].map(i => `<rect x="${88 + i * 12}" y="${22 - (i === 2 ? 6 : i % 4 === 0 ? 0 : 3)}" width="9" height="${i === 0 || i === 4 ? 34 : 42}" rx="4.5" class="art-dark"/>`).join("")}<rect x="22" y="62" width="62" height="34" rx="12" class="art-light"/><rect x="86" y="62" width="62" height="34" rx="12" class="art-light"/></svg>`,
+    abacus: () => `<svg class="lesson-art violet" viewBox="0 0 160 110" aria-hidden="true"><rect x="22" y="14" width="116" height="82" rx="8" fill="none" class="art-stroke"/>${[0, 1, 2].map(i => `<path d="M${54 + i * 34} 14v82" class="art-stroke"/>${Array.from({ length: [4, 6, 3][i] }, (_, k) => `<circle cx="${54 + i * 34}" cy="${26 + k * 13}" r="6" class="${k % 2 ? "art-light" : "art-dark"}"/>`).join("")}`).join("")}</svg>`,
+    coins: () => `<svg class="lesson-art yellow" viewBox="0 0 160 110" aria-hidden="true"><circle cx="50" cy="62" r="26" class="art-dark"/><circle cx="50" cy="62" r="18" class="art-light"/><circle cx="104" cy="52" r="22" class="art-light"/><circle cx="104" cy="52" r="14" class="art-dark"/><circle cx="116" cy="84" r="14" class="art-dark"/></svg>`,
+    baskets: () => `<svg class="lesson-art peach" viewBox="0 0 160 110" aria-hidden="true">${[0, 1, 2].map(i => `<path d="M${14 + i * 48} 52h38c0 24-8 40-19 40s-19-16-19-40z" class="art-dark"/>${[0, 1, 2, 3].map(k => `<circle cx="${23 + i * 48 + (k % 2) * 20}" cy="${40 + Math.floor(k / 2) * -10 + 8}" r="6" class="art-light"/>`).join("")}`).join("")}</svg>`,
+    share: () => `<svg class="lesson-art blue" viewBox="0 0 160 110" aria-hidden="true">${[0, 1, 2].map(i => `<rect x="${12 + i * 50}" y="30" width="42" height="50" rx="8" class="art-light"/>${[0, 1, 2, 3].map(k => `<circle cx="${23 + i * 50 + (k % 2) * 18}" cy="${46 + Math.floor(k / 2) * 18}" r="6" class="art-dark"/>`).join("")}`).join("")}</svg>`,
   };
   return (art[kind] || art.pie)();
 }
@@ -364,7 +372,101 @@ function ledgerExplorer() {
   const l = session.ledger;
   return `<div class="interactive-canvas ledger-explorer"><div class="canvas-header"><span>OWING AND OWNING</span><span class="canvas-badge">INTERACTIVE</span></div><div id="ledger-model">${ledgerModel(l.owned, l.owed)}</div><div class="fraction-controls">${sliderRow("ledger", "owned", "Coins you have", l.owned, 0, 10)}${sliderRow("ledger", "owed", "Coins you owe", l.owed, 0, 10)}</div><p class="canvas-caption">Owing more than you have pushes the total below zero.<br>This explorer does not submit answers or award mastery.</p></div>`;
 }
+function tenFrame(x, y, count, color) {
+  const cell = 28, spots = Array.from({ length: 10 }, (_, i) => {
+    const cx = x + (i % 5) * cell + cell / 2, cy = y + Math.floor(i / 5) * cell + cell / 2;
+    return `<rect x="${x + (i % 5) * cell}" y="${y + Math.floor(i / 5) * cell}" width="${cell}" height="${cell}" fill="#fffdf4" stroke="#b9ad84" stroke-width="2"/>${i < count ? `<circle cx="${cx}" cy="${cy}" r="10" fill="${color}"/>` : ""}`;
+  });
+  return spots.join("");
+}
+function tenFrameModel(a, b) {
+  const total = a + b;
+  const makeTen = a < 10 && b > 0 && total > 10;
+  const move = 10 - a;
+  const lines = [`${a} + ${b} = ${total}`,
+    `First tray: ${a} dot${a === 1 ? "" : "s"}, ${10 - a} empty. Second tray: ${b} dot${b === 1 ? "" : "s"}, ${10 - b} empty.`];
+  if (makeTen) lines.push(`Make ten: move ${move} from the second tray to fill the first. That leaves ${b - move}, so ${a} + ${b} = 10 + ${b - move} = ${total}.`);
+  else if (total === 10) lines.push("The two trays together make exactly 10.");
+  else lines.push(`Together the trays hold ${total}.`);
+  return `<svg viewBox="0 0 400 130" role="img" aria-label="Two ten-frames: ${a} dots in the first and ${b} dots in the second, ${total} in all"><rect x="20" y="20" width="160" height="88" rx="8" fill="none"/>${tenFrame(30, 24, a, "#8e7bbd")}${tenFrame(220, 24, b, "#e0894a")}<text x="100" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#5d4a8a">${a}</text><text x="290" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#b5642a">${b}</text></svg><ul class="plane-facts" aria-live="polite">${lines.map(line => `<li>${line}</li>`).join("")}</ul>`;
+}
+function tenFrameExplorer() {
+  const t = session.tf;
+  return `<div class="interactive-canvas tf-explorer"><div class="canvas-header"><span>FILL THE TEN-FRAMES</span><span class="canvas-badge">INTERACTIVE</span></div><div id="tf-model">${tenFrameModel(t.a, t.b)}</div><div class="fraction-controls">${sliderRow("tf", "a", "Purple dots", t.a, 0, 10)}${sliderRow("tf", "b", "Orange dots", t.b, 0, 10)}</div><p class="canvas-caption">A full row is 5 and a full tray is 10. Try 8 and 5 to see make-ten.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function blocksModel(n) {
+  const tens = Math.floor(n / 10), ones = n % 10;
+  const rods = Array.from({ length: tens }, (_, i) => `<rect x="${16 + i * 30}" y="14" width="22" height="112" rx="4" fill="#bed8b5" stroke="#5d8361" stroke-width="2"/>${Array.from({ length: 9 }, (_, k) => `<path d="M${16 + i * 30} ${14 + (k + 1) * 11.2}h22" stroke="#5d8361" stroke-width="1"/>`).join("")}`).join("");
+  const cubes = Array.from({ length: ones }, (_, j) => `<rect x="${300 + (j % 3) * 30}" y="${22 + Math.floor(j / 3) * 30}" width="24" height="24" rx="4" fill="#f4c27a" stroke="#b5642a" stroke-width="2"/>`).join("");
+  return `<svg viewBox="0 0 400 140" role="img" aria-label="${n} shown as ${tens} tens rods and ${ones} ones cubes">${rods}${cubes}<text x="290" y="132" text-anchor="end" font-size="12" fill="#54664b">${tens} ten${tens === 1 ? "" : "s"}</text><text x="392" y="132" text-anchor="end" font-size="12" fill="#54664b">${ones} one${ones === 1 ? "" : "s"}</text></svg><ul class="plane-facts" aria-live="polite"><li>${n} = ${tens} ten${tens === 1 ? "" : "s"} and ${ones} one${ones === 1 ? "" : "s"}</li><li>${tens > 0 ? `The ${tens} is worth ${tens * 10}` : "There are no tens, so the tens place is empty"}, and the ${ones} is worth ${ones}.</li><li>${ones === 9 ? "One more cube makes 10 cubes. Trade them for 1 rod!" : "Ten cubes can always be traded for one rod."}</li></ul>`;
+}
+function blocksExplorer() {
+  return `<div class="interactive-canvas blocks-explorer"><div class="canvas-header"><span>RODS AND CUBES</span><span class="canvas-badge">INTERACTIVE</span></div><div id="blocks-model">${blocksModel(session.blocks.n)}</div><div class="fraction-controls">${sliderRow("blocks", "n", "The number", session.blocks.n, 0, 99)}</div><p class="canvas-caption">Slide past 9, 19, and 29 and watch cubes turn into a rod.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function hopsModel(step, hops) {
+  const end = step * hops, max = end <= 20 ? 20 : end <= 50 ? 50 : 100, ux = 360 / max, x = v => 20 + v * ux;
+  const points = Array.from({ length: hops + 1 }, (_, i) => i * step);
+  const arcs = points.slice(1).map((p, i) => `<path d="M${x(points[i])} 70Q${(x(points[i]) + x(p)) / 2} 14 ${x(p)} 70" fill="none" stroke="#7299c5" stroke-width="3" stroke-linecap="round"/>`).join("");
+  const labelEvery = max / 10;
+  const ticks = Array.from({ length: 11 }, (_, i) => i * labelEvery).map(v => `<path d="M${x(v)} 70v10" stroke="#75866a"/><text x="${x(v)}" y="96" font-size="11" text-anchor="middle" fill="#7a8a70">${v}</text>`).join("");
+  const dots = points.map(p => `<circle cx="${x(p)}" cy="70" r="6" fill="${p === end ? "#e0894a" : "#7299c5"}"/>`).join("");
+  return `<svg viewBox="0 0 400 110" role="img" aria-label="${hops} hops of ${step} on a number line, landing on ${end}"><path d="M20 70h360" stroke="#75866a" stroke-width="3"/>${ticks}${arcs}${dots}</svg><ul class="plane-facts" aria-live="polite"><li>Landing spots: ${points.join(", ")}</li><li>${hops} hop${hops === 1 ? "" : "s"} of ${step} lands on ${end}.</li><li>${hops} \u00d7 ${step} = ${end}</li></ul>`;
+}
+function hopsExplorer() {
+  const h = session.hops;
+  return `<div class="interactive-canvas hops-explorer"><div class="canvas-header"><span>HOP ALONG THE LINE</span><span class="canvas-badge">INTERACTIVE</span></div><div id="hops-model">${hopsModel(h.step, h.hops)}</div><div class="fraction-controls">${sliderRow("hops", "step", "Size of each hop", h.step, 1, 10)}${sliderRow("hops", "hops", "Number of hops", h.hops, 0, 10)}</div><p class="canvas-caption">Try hops of 2, 5, and 10. Notice where you land.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function regroupModel(a, b) {
+  const ones = a % 10 + b % 10, carry = ones >= 10 ? 1 : 0, tens = Math.floor(a / 10) + Math.floor(b / 10) + carry, total = a + b;
+  const digits = String(total).padStart(3, " ").split("");
+  const col = [150, 190, 230];
+  const carryMark = carry ? `<text x="190" y="38" font-size="24" font-weight="700" fill="#e0894a" text-anchor="middle">1</text>` : "";
+  return `<svg viewBox="0 0 400 200" role="img" aria-label="${a} plus ${b} equals ${total}">${carryMark}<g font-size="38" font-family="Consolas, monospace" fill="#3f5a35" text-anchor="middle"><text x="190" y="82">${Math.floor(a / 10)}</text><text x="230" y="82">${a % 10}</text><text x="110" y="124" fill="#7299c5">+</text><text x="190" y="124">${Math.floor(b / 10)}</text><text x="230" y="124">${b % 10}</text>${digits.map((d, i) => d === " " ? "" : `<text x="${col[i]}" y="182" fill="#5d4a8a">${d}</text>`).join("")}</g><path d="M100 138h160" stroke="#3f5a35" stroke-width="3"/></svg><ul class="plane-facts" aria-live="polite"><li>Ones: ${a % 10} + ${b % 10} = ${ones}${carry ? `. That is 1 ten and ${ones - 10} ones, so write ${ones - 10} and carry 1 ten.` : ". No ten to carry."}</li><li>Tens: ${Math.floor(a / 10)} + ${Math.floor(b / 10)}${carry ? " + 1 (carried)" : ""} = ${tens}</li><li>${a} + ${b} = ${total}</li></ul>`;
+}
+function regroupExplorer() {
+  const r = session.regroup;
+  return `<div class="interactive-canvas regroup-explorer"><div class="canvas-header"><span>ADD AND CARRY</span><span class="canvas-badge">INTERACTIVE</span></div><div id="regroup-model">${regroupModel(r.a, r.b)}</div><div class="fraction-controls">${sliderRow("regroup", "a", "First number", r.a, 10, 99)}${sliderRow("regroup", "b", "Second number", r.b, 10, 99)}</div><p class="canvas-caption">The orange 1 shows a ten being carried. When does it appear?<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function gapModel(a, b) {
+  const big = Math.max(a, b), small = Math.min(a, b), gap = big - small, u = 16;
+  const bar = (v, y, color, label) => `<rect x="30" y="${y}" width="${v * u}" height="30" rx="6" fill="${color}"/><text x="${30 + v * u + 8}" y="${y + 20}" font-size="14" font-weight="700" fill="#3f5a35">${label} ${v}</text>`;
+  return `<svg viewBox="0 0 400 130" role="img" aria-label="Two towers of ${a} and ${b} blocks with a gap of ${gap}">${bar(a, 16, "#bcd0ea", "A")}${bar(b, 70, "#f4c27a", "B")}${gap ? `<rect x="${30 + small * u}" y="${a >= b ? 70 : 16}" width="${gap * u}" height="30" rx="6" fill="none" stroke="#3f7a3a" stroke-width="3" stroke-dasharray="6 5"/>` : ""}</svg><ul class="plane-facts" aria-live="polite"><li>The gap: ${big} - ${small} = ${gap}</li><li>Check by adding: ${small} + ${gap} = ${big}</li><li>Fact family: ${small} + ${gap} = ${big}, ${gap} + ${small} = ${big}, ${big} - ${small} = ${gap}, ${big} - ${gap} = ${small}</li></ul>`;
+}
+function gapExplorer() {
+  const g = session.gap;
+  return `<div class="interactive-canvas gap-explorer"><div class="canvas-header"><span>FIND THE GAP</span><span class="canvas-badge">INTERACTIVE</span></div><div id="gap-model">${gapModel(g.a, g.b)}</div><div class="fraction-controls">${sliderRow("gap", "a", "Tower A", g.a, 0, 20)}${sliderRow("gap", "b", "Tower B", g.b, 0, 20)}</div><p class="canvas-caption">The dashed green part is the gap. Adding it back gives the taller tower.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function arrayModel(r, c) {
+  const gap = 26, x0 = 30, y0 = 24;
+  const dots = Array.from({ length: r * c }, (_, i) => `<circle cx="${x0 + (i % c) * gap}" cy="${y0 + Math.floor(i / c) * gap}" r="10" fill="${Math.floor(i / c) % 2 ? "#7eac87" : "#8e7bbd"}"/>`).join("");
+  return `<svg viewBox="0 0 330 ${y0 + r * gap}" role="img" aria-label="An array of ${r} rows with ${c} dots in each row, ${r * c} dots in all">${dots}</svg><ul class="plane-facts" aria-live="polite"><li>${r} row${r === 1 ? "" : "s"} of ${c}: ${Array(r).fill(c).join(" + ")} = ${r * c}</li><li>${r} \u00d7 ${c} = ${r * c}</li><li>Turned on its side: ${c} \u00d7 ${r} = ${r * c}</li></ul>`;
+}
+function arrayExplorer() {
+  const a = session.array;
+  return `<div class="interactive-canvas array-explorer"><div class="canvas-header"><span>BUILD AN ARRAY</span><span class="canvas-badge">INTERACTIVE</span></div><div id="array-model">${arrayModel(a.r, a.c)}</div><div class="fraction-controls">${sliderRow("array", "r", "Rows", a.r, 1, 10)}${sliderRow("array", "c", "Dots in each row", a.c, 1, 10)}</div><p class="canvas-caption">Swap the two sliders. The total stays the same.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
+function sharingModel(total, groups) {
+  const each = Math.floor(total / groups), rem = total % groups;
+  const boxes = Array.from({ length: groups }, (_, g) => {
+    const bx = 15 + (g % 3) * 128, by = 10 + Math.floor(g / 3) * 92;
+    const dots = Array.from({ length: each }, (_, k) => `<circle cx="${bx + 14 + (k % 7) * 14}" cy="${by + 18 + Math.floor(k / 7) * 14}" r="5.5" fill="#8e7bbd"/>`).join("");
+    return `<rect x="${bx}" y="${by}" width="116" height="80" rx="10" fill="#f4f1fb" stroke="#c9bfee" stroke-width="2"/>${dots}`;
+  }).join("");
+  const leftover = Array.from({ length: rem }, (_, k) => `<circle cx="${22 + k * 14}" cy="${groups > 3 ? 214 : 122}" r="5.5" fill="#e0894a"/>`).join("");
+  return `<svg viewBox="0 0 400 ${groups > 3 ? 232 : 140}" role="img" aria-label="${total} shared among ${groups} groups gives ${each} each with ${rem} left over">${boxes}${leftover}</svg><ul class="plane-facts" aria-live="polite"><li>${total} \u00f7 ${groups} = ${each}${rem ? `, with ${rem} left over (orange)` : ", with none left over"}</li><li>Each group gets ${each}.</li><li>Check: ${each} \u00d7 ${groups}${rem ? ` + ${rem}` : ""} = ${total}</li></ul>`;
+}
+function sharingExplorer() {
+  const s = session.share;
+  return `<div class="interactive-canvas share-explorer"><div class="canvas-header"><span>SHARE EQUALLY</span><span class="canvas-badge">INTERACTIVE</span></div><div id="share-model">${sharingModel(s.total, s.groups)}</div><div class="fraction-controls">${sliderRow("share", "total", "Things to share", s.total, 1, 30)}${sliderRow("share", "groups", "Number of groups", s.groups, 1, 6)}</div><p class="canvas-caption">Orange dots are left over when the sharing cannot be exactly equal.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
 function visual(lesson) {
+  if (lesson.visual === "tenframe-explorer") return tenFrameExplorer();
+  if (lesson.visual === "blocks-explorer") return blocksExplorer();
+  if (lesson.visual === "hops-explorer") return hopsExplorer();
+  if (lesson.visual === "regroup-explorer") return regroupExplorer();
+  if (lesson.visual === "gap-explorer") return gapExplorer();
+  if (lesson.visual === "array-explorer") return arrayExplorer();
+  if (lesson.visual === "sharing-explorer") return sharingExplorer();
   if (lesson.visual === "number-systems-explorer") return numberSystemsExplorer();
   if (lesson.visual === "doubling-explorer") return doublingExplorer();
   if (lesson.visual === "ledger-explorer") return ledgerExplorer();
@@ -393,7 +495,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 }, tf: { a: 8, b: 5 }, blocks: { n: 34 }, hops: { step: 5, hops: 4 }, regroup: { a: 27, b: 38 }, gap: { a: 15, b: 9 }, array: { r: 3, c: 4 }, share: { total: 14, groups: 3 } };
   }
   return session;
 }
@@ -443,7 +545,7 @@ function lessonView(mode, id) {
     <div class="lesson-title"><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `${storyCard(lesson.id)}<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
@@ -605,13 +707,13 @@ document.addEventListener("input", event => {
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
     return;
   }
-  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"] };
+  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"], "tf-": ["a", "b"], "blocks-": ["n"], "hops-": ["step", "hops"], "regroup-": ["a", "b"], "gap-": ["a", "b"], "array-": ["r", "c"], "share-": ["total", "groups"] };
   for (const [prefix, names] of Object.entries(explorerIds)) {
     if (!event.target.id.startsWith(prefix) || !names.includes(event.target.id.slice(prefix.length))) continue;
     const key = prefix.slice(0, -1), model = session[key];
     model[event.target.id.slice(prefix.length)] = Number(event.target.value);
     for (const name of names) $(`#${key}-${name}-output`).textContent = model[name];
-    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed) };
+    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed), tf: () => tenFrameModel(model.a, model.b), blocks: () => blocksModel(model.n), hops: () => hopsModel(model.step, model.hops), regroup: () => regroupModel(model.a, model.b), gap: () => gapModel(model.a, model.b), array: () => arrayModel(model.r, model.c), share: () => sharingModel(model.total, model.groups) };
     $(`#${key}-model`).innerHTML = render[key]();
     return;
   }

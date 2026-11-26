@@ -75,4 +75,52 @@ STORIES = {
                 "all describe versions of it, and builders used it to make square corners. The "
                 "distance formula is the same idea on a grid.",
     },
+    "num-count": {
+        "title": "Counting by matching",
+        "art": "tally",
+        "text": "People first kept track of things by matching: one pebble or one notch for each "
+                "animal or day. Marks grouped in fives, like the two rows of five in a ten-frame, "
+                "make a big count easy to read at a glance. The tray is a modern tool, but the idea "
+                "of grouping to see a number quickly is very old.",
+    },
+    "num-place": {
+        "title": "Why we count in tens",
+        "art": "hands",
+        "text": "Many cultures count in tens, probably because people have ten fingers, although "
+                "some have used twenties or sixties. Grouping by ten means any number can be written "
+                "with just ten digits, and where a digit sits tells its worth. That idea, place "
+                "value, took people many centuries to develop.",
+    },
+    "add-regroup": {
+        "title": "Carrying on the abacus",
+        "art": "abacus",
+        "text": "Long before written arithmetic, many people added with counting boards or an "
+                "abacus, where beads in one column stand for ones and the next column for tens. "
+                "When ten beads filled a column, one bead moved to the next column. That move is "
+                "exactly what carrying means when you add on paper.",
+    },
+    "sub-gap": {
+        "title": "Counting up the change",
+        "art": "coins",
+        "text": "Shopkeepers often make change by counting up from the price to the amount paid, "
+                "which finds the gap between two numbers. If something costs 7 coins and you pay "
+                "10, counting 8, 9, 10 gives 3 coins back. Thinking of subtraction as finding the "
+                "gap is a natural way to see it.",
+    },
+    "mul-groups": {
+        "title": "Counting in equal groups",
+        "art": "baskets",
+        "text": "Traders and farmers often count things in equal groups, like baskets of eggs or "
+                "bundles of grain, because it is quicker than counting one by one. Multiplication "
+                "is the same idea: when the groups are equal, repeated adding turns into a single "
+                "fast calculation.",
+    },
+    "div-share": {
+        "title": "Sharing fairly",
+        "art": "share",
+        "text": "Sharing food fairly is one of the oldest reasons to divide. When a group shares "
+                "equally and a few items are left over, people had to decide what to do with them. "
+                "That is where the idea of a remainder comes from, and it shows up in everyday "
+                "sharing today.",
+    },
 }

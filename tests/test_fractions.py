@@ -32,7 +32,7 @@ class FractionsTests(unittest.TestCase):
             ids = [q["id"] for q in lesson["exercises"] + PRACTICE[lesson["id"]] +
                    [q for lid, q in COURSE_ASSESSMENTS["fractions"] if lid == lesson["id"]]]
             self.assertEqual(len(set(ids)), 11)
-        course = self.store.state()["catalog"]["courses"][1]
+        course = next(c for c in self.store.state()["catalog"]["courses"] if c["id"] == "fractions")
         self.assertEqual(course["status"], "available")
         self.assertEqual(course["coverage"], "original-course")
         self.assertEqual(course["lesson_count"], 6)
@@ -80,7 +80,7 @@ class FractionsTests(unittest.TestCase):
             for q in lesson["exercises"]:
                 self.assertTrue(self.submit("lesson", lesson["id"], q)["correct"])
         state = self.store.state()
-        course = state["catalog"]["courses"][1]
+        course = next(c for c in state["catalog"]["courses"] if c["id"] == "fractions")
         self.assertEqual(course["completed_count"], 6)
         self.assertEqual([u["completed_count"] for u in course["units"]], [2, 3, 1])
         self.assertTrue(all(s["status"] == "mastered" for s in state["mastery"][6:12]))
@@ -144,7 +144,7 @@ class FractionsTests(unittest.TestCase):
         self.assertTrue(check["complete"])
         self.assertEqual(check["correct_count"], 12)
         self.assertTrue(all(s["status"] == "mastered" for s in state["mastery"][6:12]))
-        self.assertEqual(state["catalog"]["courses"][1]["completed_count"], 0)
+        self.assertEqual(next(c for c in state["catalog"]["courses"] if c["id"] == "fractions")["completed_count"], 0)
 
     def test_lesson_versions_invalidate_only_their_practice_and_check_evidence(self):
         lid = "fraction-parts"
@@ -175,7 +175,7 @@ class FractionsTests(unittest.TestCase):
         self.assertEqual(reloaded.author("balance")["version"], 2)
         self.assertEqual(reloaded.author("balance")["lesson"]["title"], "My existing lesson")
         self.assertEqual(reloaded.state()["passed"]["balance"], ["b1"])
-        self.assertEqual(len(reloaded.state()["lessons"]), 41)
+        self.assertEqual(len(reloaded.state()["lessons"]), 50)
 
     def test_public_banks_do_not_leak_answers_hints_or_explanations(self):
         state = self.store.state()

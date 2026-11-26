@@ -27,7 +27,7 @@ class StoreTests(unittest.TestCase):
 
     def test_seed_and_public_questions_have_no_answer_keys(self):
         state = self.store.state()
-        self.assertEqual(len(state["lessons"]), 41)
+        self.assertEqual(len(state["lessons"]), 50)
         self.assertEqual(len(state["diagnostic"]), 12)
         self.assertFalse(state["tutor"]["enabled"])
         for q in state["diagnostic"] + [
@@ -100,7 +100,7 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(len(state["diagnostic_answered"]), 12)
         self.assertTrue(all(s["status"] == "mastered" for s in state["mastery"][:6]))
         self.assertTrue(all(s["status"] == "not-started" for s in state["mastery"][6:]))
-        self.assertEqual(len(state["mastery"]), 41)
+        self.assertEqual(len(state["mastery"]), 50)
         self.assertTrue(all(not passed for passed in state["passed"].values()))
 
     def test_versioning_excludes_stale_evidence_and_checks_conflict(self):
@@ -221,7 +221,7 @@ class HttpTests(unittest.TestCase):
     def test_get_state_and_post_answer(self):
         status, _, body = self.request("GET", "/api/state")
         self.assertEqual(status, 200)
-        self.assertEqual(len(json.loads(body)["lessons"]), 41)
+        self.assertEqual(len(json.loads(body)["lessons"]), 50)
         self.assertEqual(json.loads(body)["catalog"]["summary"]["reference_course_count"], 64)
         status, _, body = self.post("/api/attempt", {
             "source": "lesson", "lesson_id": "balance", "version": 1,

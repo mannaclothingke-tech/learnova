@@ -21,24 +21,34 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
-- Seven subject areas, 66 courses, and subject/course/unit navigation. Courses
+- Seven subject areas, 69 courses, and subject/course/unit navigation. Courses
   are ordered from simple to complex within each subject, using each course's
   prerequisite chain to assign a Beginner, Intermediate, or Advanced level.
 - A roadmap page listing every course by subject and topic group.
-- Six playable courses: the six-lesson starter course, fractions, equations
-  ("First steps with equations"), linear relationships ("Lines tell a story"),
-  a combined geometry course ("Geometry and coordinates", nine lessons from
-  perimeter and angles through slopes, shapes, and polar coordinates), and a
-  math history course ("How math was invented"). The other 60 courses are
-  outlines with objectives and proposed prerequisites, not playable courses.
-- Math history in two forms. Story cards ("Why people needed this") open nine
-  lessons with a short account and illustration. They are display-only: not
-  graded, and they never affect progress. The history course follows the chain of
-  needs from counting to geometry in eight low-stakes lessons, with no graded
-  course check. History text is written in hedged language where scholars
-  disagree and should be fact-checked against reputable sources before release.
+- A beginner path for people starting with no foundation, taught in this order:
+  "Counting and number sense", "Adding and subtracting", and "Multiplying and
+  dividing" (three lessons each). Fractions and negative numbers now depend on
+  it, and the home screen's Start button points at the first lesson you have not
+  yet mastered, beginning with counting. Each lesson has a hands-on explorer
+  (ten-frames, tens-and-ones blocks, number-line hops, carrying, a gap between
+  towers, dot arrays, and sharing), 4 lesson challenges, 4 practice questions,
+  and a six-question course check.
+- Nine playable courses: the beginner path above, the six-lesson starter
+  course, fractions, equations ("First steps with equations"), linear
+  relationships ("Lines tell a story"), a combined geometry course ("Geometry and
+  coordinates", nine lessons from perimeter and angles through slopes, shapes,
+  and polar coordinates), and a math history course ("How math was invented").
+  The other 60 courses are outlines with objectives and proposed prerequisites,
+  not playable courses.
+- Math history in two forms. Story cards ("Why people needed this") open
+  fifteen lessons with a short account and illustration. They are display-only:
+  not graded, and they never affect progress. The history course follows the
+  chain of needs from counting to geometry in eight low-stakes lessons, with no
+  graded course check. History text is written in hedged language where
+  scholars disagree and should be fact-checked against reputable sources before
+  release.
 - Editable local learner profile and daily intention.
-- Forty-one lessons, 185 lesson challenges, hints, and explanations.
+- Fifty lessons, 221 lesson challenges, hints, and explanations.
 - The fractions course covers equal parts, equivalence, comparison, addition,
   subtraction, and fractions of quantities. It includes 30 lesson challenges,
   24 separate authored practice questions, and a twelve-question course check.
@@ -135,7 +145,7 @@ HTTP connections:
 
 ```powershell
 $env:PYTHONPATH = "tests"
-python -m unittest test_app.StoreTests test_catalog.CatalogTests test_fractions.FractionsTests test_equations.EquationsTests test_linear.LinearTests test_geometry.GeometryTests test_history.HistoryTests -v
+python -m unittest test_app.StoreTests test_catalog.CatalogTests test_fractions.FractionsTests test_equations.EquationsTests test_linear.LinearTests test_geometry.GeometryTests test_history.HistoryTests test_beginner.BeginnerPathTests -v
 ```
 
 This does not replace the HTTP tests, which still need an environment with
@@ -184,10 +194,10 @@ The playable courses have automated arithmetic and interaction checks
 (answers are verified against independent calculations), but still need
 independent educator/learner review before production, and the history text
 needs a fact-check. Learnova is meant for people who are struggling with math or
-starting with no foundation, so the next content milestone is a true beginner
-path before fractions: counting and number sense, adding and subtracting, and
-multiplying and dividing, each with large, friendly illustrations, hands-on
-activities, and story cards.
+starting with no foundation, so the beginner path now comes first. The next
+content milestone is to test it with real beginners, then extend it with more
+hands-on lessons (for example, comparing and rounding, money and time, and
+word problems) before fractions.
 
 ## Before production
 

@@ -1468,3 +1468,269 @@ HISTORY_LESSONS = [
     },
 ]
 LESSONS.extend(HISTORY_LESSONS)
+
+SKILLS.extend([
+    {"id": "num-count", "name": "Counting and seeing numbers", "prerequisites": []},
+    {"id": "num-place", "name": "Tens and ones", "prerequisites": ["num-count"]},
+    {"id": "num-line", "name": "The number line and skip counting", "prerequisites": ["num-place"]},
+    {"id": "add-facts", "name": "Putting amounts together", "prerequisites": ["num-line"]},
+    {"id": "add-regroup", "name": "Adding bigger numbers", "prerequisites": ["add-facts", "num-place"]},
+    {"id": "sub-gap", "name": "Taking away and finding the gap", "prerequisites": ["add-regroup"]},
+    {"id": "mul-groups", "name": "Equal groups and arrays", "prerequisites": ["add-facts"]},
+    {"id": "mul-tables", "name": "Patterns in the times tables", "prerequisites": ["mul-groups"]},
+    {"id": "div-share", "name": "Sharing and grouping", "prerequisites": ["mul-tables", "sub-gap"]},
+])
+
+BEGINNER_LESSONS = [
+    {
+        "id": "num-count", "skill": "num-count", "title": "Count and see numbers",
+        "subtitle": "Use a ten-frame to see how many without counting every dot.",
+        "duration": 6, "color": "yellow", "icon": "fraction",
+        "intro": "Counting means saying one number for each thing, exactly once. A ten-frame is a "
+                 "tray with two rows of five spots. When a row is full you can see 5 without "
+                 "counting, and when the whole tray is full you can see 10. Numbers past 10 start a "
+                 "second tray. Seeing 7 as 5 and 2 more is faster than counting seven dots one by "
+                 "one, and it helps with adding later. Slide the dots and watch the trays fill.",
+        "takeaway": "Group dots in fives and tens, and you can see a number at a glance.",
+        "visual": "tenframe-explorer", "formula": "10 = 5 + 5",
+        "exercises": [
+            question("nc1", "A ten-frame has 6 dots. How many empty spots are left?", "4",
+                     "The tray holds 10, and 10 - 6 = 4.", "Count the empty spots, or think: what goes with 6 to make 10?"),
+            question("nc2", "One full ten-frame and 3 dots in a second tray. How many dots in all?", "13",
+                     "10 and 3 more make 13.", "A full tray is 10."),
+            question("nc3", "The top row of a ten-frame is full and the bottom row has 2 dots. What number is shown?", "7",
+                     "A full row is 5, and 5 + 2 = 7.", "A full row is 5."),
+            question("nc4", "What number is one more than 19?", "20",
+                     "One more than 19 is 20.", "Count on one step.", ["18", "20", "29", "91"]),
+        ],
+    },
+    {
+        "id": "num-place", "skill": "num-place", "title": "Tens and ones",
+        "subtitle": "Trade ten small cubes for one long rod.",
+        "duration": 7, "color": "mint", "icon": "fraction",
+        "intro": "Ten ones make one ten. We draw a ten as a long rod and a one as a small cube. "
+                 "The number 34 is 3 rods and 4 cubes: 3 tens and 4 ones. The place a digit sits "
+                 "tells its worth. In 34, the 3 is worth 30 and the 4 is worth 4. When you collect "
+                 "10 cubes, trade them for 1 rod. Slide the number and watch the rods and cubes "
+                 "change.",
+        "takeaway": "A digit's place tells its worth: tens first, then ones.",
+        "visual": "blocks-explorer", "formula": "34 = 3 tens + 4 ones",
+        "exercises": [
+            question("np1", "How many tens are in 47?", "4", "47 is 4 tens and 7 ones.", "Look at the first digit."),
+            question("np2", "In the number 58, what is the value of the 5?", "50", "The 5 is in the tens place, so it means 5 tens: 50.", "Which place is the 5 in?"),
+            question("np3", "3 tens and 6 ones make what number?", "36", "30 and 6 make 36.", "Write the tens, then the ones."),
+            question("np4", "Which number has 2 tens and 9 ones?", "29", "2 tens and 9 ones make 29.", "Tens come first.", ["92", "29", "209", "11"]),
+        ],
+    },
+    {
+        "id": "num-line", "skill": "num-line", "title": "The number line and skipping",
+        "subtitle": "Hop along a line to count by 2s, 5s, and 10s.",
+        "duration": 7, "color": "blue", "icon": "fraction",
+        "intro": "A number line puts numbers in order along a line with equal spaces. Counting up "
+                 "moves right, and counting down moves left. Skip counting hops the same distance "
+                 "each time: by 2s you land on 2, 4, 6, 8, and by 5s you land on 5, 10, 15. The "
+                 "farther right a number sits, the bigger it is, so you can compare any two numbers "
+                 "by looking at where they sit. Change the hop size and the number of hops.",
+        "takeaway": "Numbers further right on the line are bigger.",
+        "visual": "hops-explorer", "formula": "4 hops of 3 = 12",
+        "exercises": [
+            question("nl1", "Skip count by 5s: 5, 10, 15, 20, 25, ... What number comes next?", "30", "25 + 5 = 30.", "Hop 5 more."),
+            question("nl2", "Start at 0 and make 4 hops of 3. Where do you land?", "12", "3, 6, 9, 12.", "Count the hops."),
+            question("nl3", "Which number is greater, 47 or 39?", "47", "47 has more tens than 39, so it sits further right.", "Compare the tens first.", ["47", "39", "They are equal"]),
+            question("nl4", "Count by 10s: 40, 50, 60, ... What number comes after 90?", "100", "90 + 10 = 100.", "Hop 10 more."),
+        ],
+    },
+    {
+        "id": "add-facts", "skill": "add-facts", "title": "Putting amounts together",
+        "subtitle": "Make a ten to add quickly.",
+        "duration": 8, "color": "peach", "icon": "fraction",
+        "intro": "Adding means putting amounts together to find how many in all. Two ten-frames "
+                 "show a smart trick called make ten: move dots from one tray to fill the other to "
+                 "10, then count what is left. For 8 + 5, move 2 dots to fill the first tray, "
+                 "leaving 3: that is 10 + 3 = 13. The order does not matter, so 8 + 5 is the same "
+                 "as 5 + 8. Try different pairs with the sliders.",
+        "takeaway": "Make a ten first, then add the rest.",
+        "visual": "tenframe-explorer", "formula": "8 + 5 = 10 + 3",
+        "exercises": [
+            question("af1", "What is 6 + 4?", "10", "6 and 4 fill a ten-frame exactly.", "What goes with 6 to make 10?"),
+            question("af2", "What is 8 + 5? Make ten first: 8 + 2 = 10.", "13", "8 + 2 = 10, then 3 more makes 13.", "Split the 5 into 2 and 3."),
+            question("af3", "What is 7 + 8?", "15", "7 + 3 = 10, then 5 more makes 15.", "Make ten first."),
+            question("af4", "Which sum is equal to 5 + 9?", "9 + 5", "Adding in a different order gives the same total.", "Does the order matter when adding?", ["9 + 5", "9 - 5", "5 - 9", "5 + 5"]),
+        ],
+    },
+    {
+        "id": "add-regroup", "skill": "add-regroup", "title": "Adding bigger numbers",
+        "subtitle": "Carry a ten when the ones add up to ten or more.",
+        "duration": 9, "color": "violet", "icon": "fraction",
+        "intro": "To add 27 + 38, add the ones first: 7 + 8 = 15. That is 1 ten and 5 ones, so "
+                 "write 5 in the ones place and carry 1 ten. Then add the tens: 2 + 3 + the 1 you "
+                 "carried makes 6 tens. The answer is 65. Carrying is just trading 10 ones for 1 "
+                 "ten, like trading 10 cubes for a rod. Try some pairs in the explorer and watch "
+                 "when a ten gets carried.",
+        "takeaway": "When ones reach ten, trade them for one ten and carry it.",
+        "visual": "regroup-explorer", "formula": "27 + 38 = 65",
+        "exercises": [
+            question("ar1", "What is 27 + 38?", "65", "7 + 8 = 15, write 5 and carry 1. Then 2 + 3 + 1 = 6 tens.", "Add the ones first."),
+            question("ar2", "When adding 46 + 29, how many tens do you carry from the ones?", "1", "6 + 9 = 15 ones, which is 1 ten and 5 ones.", "Add the ones first."),
+            question("ar3", "What is 45 + 36?", "81", "5 + 6 = 11, carry 1. Then 4 + 3 + 1 = 8 tens, so 81.", "Add the ones, then the tens."),
+            question("ar4", "What is 58 + 47?", "105", "8 + 7 = 15, carry 1. Then 5 + 4 + 1 = 10 tens, which is 100, so 105.", "Carry the ten, then add the tens."),
+        ],
+    },
+    {
+        "id": "sub-gap", "skill": "sub-gap", "title": "Taking away and finding the gap",
+        "subtitle": "Two ways to think about subtracting, and how they connect to adding.",
+        "duration": 9, "color": "mint", "icon": "fraction",
+        "intro": "Subtracting can mean taking away or finding the gap between two numbers. If you "
+                 "have 12 apples and eat 5, then 12 - 5 = 7 are left. If one tower has 12 blocks "
+                 "and another has 5, the gap between them is also 7. Adding and subtracting undo "
+                 "each other: because 5 + 7 = 12, we know 12 - 5 = 7 and 12 - 7 = 5. For 52 - 27 "
+                 "you may need to trade 1 ten for 10 ones: 52 is 4 tens and 12 ones, and taking "
+                 "away 2 tens and 7 ones leaves 2 tens and 5 ones, which is 25.",
+        "takeaway": "Subtracting finds what is left or the gap, and adding checks it.",
+        "visual": "gap-explorer", "formula": "5 + 7 = 12, so 12 - 5 = 7",
+        "exercises": [
+            question("sg1", "What is 12 - 5?", "7", "12 take away 5 leaves 7.", "Count back, or think 5 + ? = 12."),
+            question("sg2", "Two towers have 15 and 9 blocks. How many more blocks does the taller tower have?", "6", "The gap is 15 - 9 = 6.", "Find the gap between the two heights."),
+            question("sg3", "5 + 7 = 12. What is 12 - 7?", "5", "Adding and subtracting undo each other, so 12 - 7 = 5.", "Use the fact you know."),
+            question("sg4", "What is 52 - 27?", "25", "Trade 1 ten for 10 ones: 4 tens and 12 ones minus 2 tens and 7 ones is 2 tens and 5 ones.", "You may need to trade a ten."),
+        ],
+    },
+    {
+        "id": "mul-groups", "skill": "mul-groups", "title": "Equal groups and arrays",
+        "subtitle": "A fast way to add the same number again and again.",
+        "duration": 8, "color": "yellow", "icon": "fraction",
+        "intro": "Multiplying is a quick way to add equal groups. Three baskets with 4 apples each "
+                 "makes 4 + 4 + 4 = 12, and we write 3 x 4 = 12. An array arranges objects in "
+                 "rows and columns: 3 rows with 4 dots in each row. Turn the array on its side and "
+                 "you get 4 rows of 3. The total stays the same, so 3 x 4 = 4 x 3. Use the sliders "
+                 "to build arrays and see both ways to read them.",
+        "takeaway": "Equal groups: rows times how many in each row.",
+        "visual": "array-explorer", "formula": "3 x 4 = 4 + 4 + 4 = 12",
+        "exercises": [
+            question("mg1", "There are 4 baskets with 5 apples in each. How many apples in all?", "20", "4 groups of 5 is 4 x 5 = 20.", "Add 5 four times."),
+            question("mg2", "An array has 3 rows with 6 dots in each row. How many dots?", "18", "3 x 6 = 18.", "Add 6 three times."),
+            question("mg3", "What is 7 x 2?", "14", "Two groups of 7, or 7 + 7, is 14.", "Double 7."),
+            question("mg4", "Which one equals 3 x 8?", "8 x 3", "Turning the array on its side swaps the numbers.", "Does the order matter in multiplying?", ["8 x 3", "8 + 3", "3 + 8", "8 - 3"]),
+        ],
+    },
+    {
+        "id": "mul-tables", "skill": "mul-tables", "title": "Patterns in the times tables",
+        "subtitle": "Spot the patterns and learn the tables faster.",
+        "duration": 8, "color": "peach", "icon": "fraction",
+        "intro": "The times tables are full of patterns. Times 2 doubles a number: 2 x 7 = 14. "
+                 "Times 10 puts a zero on the end: 10 x 6 = 60. Times 5 always ends in 0 or 5: "
+                 "5, 10, 15, 20. For times 9, the digits of the answer add up to 9: 9 x 4 = 36, "
+                 "and 3 + 6 = 9. Knowing 6 x 4 = 24 also tells you 4 x 6 = 24. Build an array in "
+                 "the explorer and look for the pattern.",
+        "takeaway": "Patterns make the tables easier: doubles, tens, fives, and nines.",
+        "visual": "array-explorer", "formula": "9 x 4 = 36, and 3 + 6 = 9",
+        "exercises": [
+            question("mt1", "What is 10 x 7?", "70", "Times 10 puts a zero on the end of 7.", "Put a zero after the 7."),
+            question("mt2", "What is 5 x 8?", "40", "Times 5 ends in 0 or 5: 5, 10, ..., 40.", "Count by 5s eight times."),
+            question("mt3", "What is 9 x 3?", "27", "2 + 7 = 9, the nines pattern.", "Count by 9s three times."),
+            question("mt4", "What is double 9? That is, 2 x 9.", "18", "Doubling 9 gives 18.", "Add 9 and 9."),
+        ],
+    },
+    {
+        "id": "div-share", "skill": "div-share", "title": "Sharing and grouping",
+        "subtitle": "Share equally, and see what is left over.",
+        "duration": 9, "color": "blue", "icon": "fraction",
+        "intro": "Dividing means sharing equally or making equal groups. If 12 cookies are shared "
+                 "among 3 friends, each gets 4, so 12 / 3 = 4. You can also ask how many groups of "
+                 "3 fit in 12: that is 4 groups. Division undoes multiplication, because "
+                 "3 x 4 = 12. Sometimes a few items are left over. That is called the remainder: "
+                 "14 cookies shared among 3 friends gives 4 each, with 2 left over. Change the "
+                 "numbers in the explorer and watch the sharing.",
+        "takeaway": "Division shares equally, and the remainder is what is left over.",
+        "visual": "sharing-explorer", "formula": "12 / 3 = 4",
+        "exercises": [
+            question("ds1", "12 cookies are shared equally among 3 friends. How many does each friend get?", "4", "12 / 3 = 4.", "Share one cookie at a time."),
+            question("ds2", "How many groups of 5 can you make from 20 stickers?", "4", "4 groups use all 20 stickers, since 4 x 5 = 20.", "Count by 5s up to 20."),
+            question("ds3", "3 x 7 = 21. What is 21 / 3?", "7", "Division undoes multiplication.", "Use the fact you know."),
+            question("ds4", "14 cookies are shared equally among 3 friends. How many cookies are left over?", "2", "Each friend gets 4, which uses 12 cookies, so 2 are left over.", "Find the biggest share that fits, then see what remains."),
+        ],
+    },
+]
+LESSONS.extend(BEGINNER_LESSONS)
+
+PRACTICE.update({
+    "num-count": [
+        question("tc1", "A ten-frame shows 8 dots. How many more dots fill it up?", "2", "10 - 8 = 2.", "What goes with 8 to make 10?"),
+        question("tc2", "Two full ten-frames. How many dots are there?", "20", "10 and 10 make 20.", "A full frame is 10."),
+        question("tc3", "The top row is full and the bottom row has 4 dots. What number is shown?", "9", "5 + 4 = 9.", "A full row is 5."),
+        question("tc4", "What number is one less than 30?", "29", "One less than 30 is 29.", "Count back one step."),
+    ],
+    "num-place": [
+        question("tp1", "How many ones are in 63?", "3", "63 is 6 tens and 3 ones.", "Look at the last digit."),
+        question("tp2", "6 tens and 0 ones make what number?", "60", "6 tens is 60.", "Tens first, then ones."),
+        question("tp3", "10 ones can be traded for how many tens?", "1", "10 ones make 1 ten.", "Trade cubes for a rod."),
+        question("tp4", "In 71, what is the value of the 7?", "70", "The 7 is in the tens place.", "Which place is the 7 in?"),
+    ],
+    "num-line": [
+        question("tl1", "Skip count by 2s: 2, 4, 6, 8, 10, 12, ... What comes next?", "14", "12 + 2 = 14.", "Hop 2 more."),
+        question("tl2", "Start at 0 and make 6 hops of 5. Where do you land?", "30", "5, 10, 15, 20, 25, 30.", "Count the hops."),
+        question("tl3", "Which number is smaller, 62 or 26?", "26", "26 has fewer tens, so it sits further left.", "Compare the tens first.", ["62", "26", "They are equal"]),
+        question("tl4", "Count by 10s: 10, 20, 30, ... What number comes after 70?", "80", "70 + 10 = 80.", "Hop 10 more."),
+    ],
+    "add-facts": [
+        question("ta1", "What is 9 + 3?", "12", "9 + 1 = 10, then 2 more makes 12.", "Make ten first."),
+        question("ta2", "What is 6 + 7?", "13", "6 + 4 = 10, then 3 more makes 13.", "Make ten first."),
+        question("ta3", "What is 8 + 8?", "16", "Doubling 8 gives 16.", "Add 8 and 8."),
+        question("ta4", "What is 5 + 9?", "14", "9 + 1 = 10, then 4 more makes 14.", "Start from the bigger number."),
+    ],
+    "add-regroup": [
+        question("tr1", "What is 34 + 28?", "62", "4 + 8 = 12, carry 1. Then 3 + 2 + 1 = 6 tens.", "Add the ones first."),
+        question("tr2", "What is 19 + 17?", "36", "9 + 7 = 16, carry 1. Then 1 + 1 + 1 = 3 tens.", "Add the ones first."),
+        question("tr3", "What is 65 + 29?", "94", "5 + 9 = 14, carry 1. Then 6 + 2 + 1 = 9 tens.", "Add the ones first."),
+        question("tr4", "What is 77 + 25?", "102", "7 + 5 = 12, carry 1. Then 7 + 2 + 1 = 10 tens.", "Carry the ten."),
+    ],
+    "sub-gap": [
+        question("ts1", "What is 14 - 6?", "8", "14 take away 6 leaves 8.", "Think 6 + ? = 14."),
+        question("ts2", "Two towers have 20 and 13 blocks. How many more blocks does the taller tower have?", "7", "20 - 13 = 7.", "Find the gap."),
+        question("ts3", "8 + 9 = 17. What is 17 - 9?", "8", "Subtracting undoes adding.", "Use the fact you know."),
+        question("ts4", "What is 61 - 38?", "23", "Trade 1 ten for 10 ones: 5 tens and 11 ones minus 3 tens and 8 ones is 2 tens and 3 ones.", "You may need to trade a ten."),
+    ],
+    "mul-groups": [
+        question("tg1", "There are 5 bags with 3 sweets in each. How many sweets in all?", "15", "5 x 3 = 15.", "Add 3 five times."),
+        question("tg2", "An array has 4 rows with 7 dots in each row. How many dots?", "28", "4 x 7 = 28.", "Add 7 four times."),
+        question("tg3", "What is 6 x 2?", "12", "Double 6.", "Add 6 and 6."),
+        question("tg4", "What is 9 x 1?", "9", "One group of 9 is 9.", "Just one group."),
+    ],
+    "mul-tables": [
+        question("tm1", "What is 10 x 4?", "40", "Put a zero after the 4.", "Times 10 adds a zero."),
+        question("tm2", "What is 5 x 6?", "30", "Times 5 ends in 0 or 5.", "Count by 5s six times."),
+        question("tm3", "What is 9 x 5?", "45", "The digits 4 and 5 add to 9.", "Count by 9s five times."),
+        question("tm4", "What is 2 x 8?", "16", "Double 8.", "Add 8 and 8."),
+    ],
+    "div-share": [
+        question("td1", "What is 15 / 5?", "3", "Three groups of 5 make 15.", "Count by 5s up to 15."),
+        question("td2", "How many groups of 4 can you make from 24 pencils?", "6", "6 x 4 = 24.", "Count by 4s up to 24."),
+        question("td3", "8 x 6 = 48. What is 48 / 8?", "6", "Division undoes multiplication.", "Use the fact you know."),
+        question("td4", "17 sweets are shared equally among 5 friends. How many sweets are left over?", "2", "Each friend gets 3, using 15 sweets, so 2 are left over.", "Find the biggest share that fits."),
+    ],
+})
+
+COURSE_ASSESSMENTS["counting-numbers"] = [
+    ("num-count", question("vc1", "A ten-frame has 3 dots. How many more dots make 10?", "7", "10 - 3 = 7.", "What goes with 3 to make 10?")),
+    ("num-count", question("vc2", "One full ten-frame and 6 more dots. How many dots in all?", "16", "10 and 6 make 16.", "A full frame is 10.")),
+    ("num-place", question("vp1", "5 tens and 8 ones make what number?", "58", "50 and 8 make 58.", "Tens first, then ones.")),
+    ("num-place", question("vp2", "In 82, what is the value of the 8?", "80", "The 8 is in the tens place.", "Which place is the 8 in?")),
+    ("num-line", question("vl1", "Start at 0 and make 5 hops of 4. Where do you land?", "20", "4, 8, 12, 16, 20.", "Count the hops.")),
+    ("num-line", question("vl2", "Which number is greater, 81 or 18?", "81", "81 has more tens, so it sits further right.", "Compare the tens first.", ["81", "18", "They are equal"])),
+]
+COURSE_ASSESSMENTS["add-subtract"] = [
+    ("add-facts", question("vf1", "What is 7 + 5?", "12", "7 + 3 = 10, then 2 more makes 12.", "Make ten first.")),
+    ("add-facts", question("vf2", "What is 9 + 6?", "15", "9 + 1 = 10, then 5 more makes 15.", "Make ten first.")),
+    ("add-regroup", question("vr1", "What is 48 + 35?", "83", "8 + 5 = 13, carry 1. Then 4 + 3 + 1 = 8 tens.", "Add the ones first.")),
+    ("add-regroup", question("vr2", "What is 69 + 24?", "93", "9 + 4 = 13, carry 1. Then 6 + 2 + 1 = 9 tens.", "Add the ones first.")),
+    ("sub-gap", question("vs1", "What is 17 - 8?", "9", "17 take away 8 leaves 9.", "Think 8 + ? = 17.")),
+    ("sub-gap", question("vs2", "What is 73 - 46?", "27", "Trade 1 ten: 6 tens and 13 ones minus 4 tens and 6 ones is 2 tens and 7 ones.", "You may need to trade a ten.")),
+]
+COURSE_ASSESSMENTS["multiply-divide"] = [
+    ("mul-groups", question("vg1", "There are 6 baskets with 4 apples in each. How many apples in all?", "24", "6 x 4 = 24.", "Add 4 six times.")),
+    ("mul-groups", question("vg2", "An array has 5 rows with 5 dots in each row. How many dots?", "25", "5 x 5 = 25.", "Add 5 five times.")),
+    ("mul-tables", question("vt1", "What is 9 x 7?", "63", "The digits 6 and 3 add to 9.", "Count by 9s seven times.")),
+    ("mul-tables", question("vt2", "What is 5 x 9?", "45", "Times 5 ends in 0 or 5.", "Count by 5s nine times.")),
+    ("div-share", question("vd1", "What is 18 / 6?", "3", "3 x 6 = 18.", "How many 6s make 18?")),
+    ("div-share", question("vd2", "23 marbles are shared equally among 4 friends. How many marbles are left over?", "3", "Each friend gets 5, using 20 marbles, so 3 are left over.", "Find the biggest share that fits.")),
+]

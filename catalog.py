@@ -21,11 +21,11 @@ SUBJECTS = [
 TOPICS = [
     ("Math Foundations", "math", [
         ("fractions", "Fractions as quantities", "math-fundamentals", "Fractions",
-         "Represent, compare, and combine fractions using equal-part models.", []),
+         "Represent, compare, and combine fractions using equal-part models.", ["multiply-divide"]),
         ("first-equations", "First steps with equations", "pre-algebra", "Solving Equations",
          "Use inverse operations to find an unknown and check the result.", ["fractions"]),
         ("signed-numbers", "Numbers on both sides of zero", "negative-numbers", "Negative Numbers",
-         "Model signed arithmetic as movement along a number line.", []),
+         "Model signed arithmetic as movement along a number line.", ["add-subtract"]),
         ("coordinate-geometry", "Geometry and coordinates", "coordinate-plane", "Coordinate Plane",
          "Build geometry from simple to complex: measurement, angles, points, distance, slopes, shapes, and polar coordinates.", ["signed-numbers", "fractions"]),
         ("percents", "Think in hundredths", "percentages", "Percents",
@@ -213,17 +213,59 @@ def _ordered(courses):
 
     for course in courses:
         course["stage"] = stage(course["id"])
-        course["level"] = ("Beginner" if course["stage"] <= 1 else
-                           "Intermediate" if course["stage"] <= 3 else "Advanced")
+        course["level"] = ("Beginner" if course["stage"] <= 4 else
+                           "Intermediate" if course["stage"] <= 7 else "Advanced")
     subject_order = {subject["id"]: i for i, subject in enumerate(SUBJECTS)}
     return sorted(courses, key=lambda c: (subject_order[c["subject_id"]], c["stage"]))
 
 
 def _courses():
     courses = [{
+        "id": "counting-numbers", "subject_id": "math",
+        "title": "Counting and number sense",
+        "prerequisites": [], "topics": ["Beginner path"], "reference": None,
+        "related_lesson_ids": [],
+        "units": [
+            {"id": "counting-start", "title": "Seeing and counting numbers",
+             "objectives": ["Count and see numbers to 20 using ten-frames.",
+                            "Read tens and ones in two-digit numbers."],
+             "lesson_ids": ["num-count", "num-place"]},
+            {"id": "counting-line", "title": "The number line",
+             "objectives": ["Skip count by 2s, 5s, and 10s, and compare numbers on a number line."],
+             "lesson_ids": ["num-line"]},
+        ],
+    }, {
+        "id": "add-subtract", "subject_id": "math",
+        "title": "Adding and subtracting",
+        "prerequisites": ["counting-numbers"], "topics": ["Beginner path"], "reference": None,
+        "related_lesson_ids": [],
+        "units": [
+            {"id": "adding-start", "title": "Putting amounts together",
+             "objectives": ["Add within 20 by making a ten.",
+                            "Add two-digit numbers, carrying a ten when needed."],
+             "lesson_ids": ["add-facts", "add-regroup"]},
+            {"id": "subtracting-start", "title": "Taking away and finding the gap",
+             "objectives": ["Subtract by taking away and by finding the gap, and check with adding."],
+             "lesson_ids": ["sub-gap"]},
+        ],
+    }, {
+        "id": "multiply-divide", "subject_id": "math",
+        "title": "Multiplying and dividing",
+        "prerequisites": ["add-subtract"], "topics": ["Beginner path"], "reference": None,
+        "related_lesson_ids": [],
+        "units": [
+            {"id": "multiplying-start", "title": "Equal groups and patterns",
+             "objectives": ["Multiply using equal groups and arrays.",
+                            "Use patterns to learn the times tables."],
+             "lesson_ids": ["mul-groups", "mul-tables"]},
+            {"id": "dividing-start", "title": "Sharing and grouping",
+             "objectives": ["Divide by sharing and grouping, and describe a remainder."],
+             "lesson_ids": ["div-share"]},
+        ],
+    }, {
         "id": "everyday-foundations", "subject_id": "math",
         "title": "Foundations of everyday math",
-        "prerequisites": [], "topics": ["Learnova starter course"], "reference": None,
+        "prerequisites": ["multiply-divide"], "topics": ["Learnova starter course"], "reference": None,
         "related_lesson_ids": [],
         "units": [
             {"id": "quantities", "title": "Parts and quantities",
