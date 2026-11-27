@@ -126,7 +126,7 @@ function updateShell(page) {
   $("#avatar").textContent = name.slice(0, 1).toUpperCase();
   $("#goal-chip").textContent = `${state.profile?.minutes || 10} min / day`;
   const doneCount = state.lessons.filter(completed).length;
-  $("#side-card").innerHTML = `<span class="spark-icon">&#10038;</span><strong>${doneCount ? `${doneCount} of ${state.lessons.length} lessons done` : "A little curiosity.<br>A lot of possibility."}</strong><progress value="${doneCount}" max="${state.lessons.length}" aria-label="Lessons completed"></progress><p>${doneCount ? "One idea at a time." : "Start with your first lesson."}</p>`;
+  $("#side-card").innerHTML = `${robot(doneCount ? "happy" : "sleep", "bot-sm")}<strong>${doneCount ? `${doneCount} / ${state.lessons.length}` : "Ready when you are"}</strong><progress value="${doneCount}" max="${state.lessons.length}" aria-label="Lessons completed"></progress>`;
 }
 function heading(kicker, title, subtitle, trailing = "") {
   return `<div class="page-heading"><div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p>${subtitle}</p></div>${trailing}</div>`;
@@ -156,7 +156,7 @@ function home() {
   }
   return `${heading("LET'S KEEP YOUR CURIOSITY GOING", name ? `Welcome back, ${esc(name)} <span class="wave">&#10038;</span>` : 'Your next "aha" starts here.', "Build understanding, one small discovery at a time.",
     `<a class="text-link" href="#progress">View your progress ${icon("arrow")}</a>`)}
-    <div class="dashboard-grid"><section class="hero"><div class="hero-copy"><span class="pill">LEARN BY DOING</span><h2>Make the next<br>idea <em>click.</em></h2><p>Not just the answer. The understanding.<br>Explore the math hiding in everyday things.</p><a class="button lime" href="#lesson/${next.id}">${state.activity.attempts ? "Continue your path" : "Start exploring"} ${icon("arrow")}</a><span class="hero-foot">${icon("clock")} One lesson. A fresh perspective.</span></div>${heroArt()}</section>
+    <div class="dashboard-grid"><section class="hero"><div class="hero-copy"><span class="pill">LEARN BY DOING</span><h2>Make the next<br>idea <em>click.</em></h2><p>Not just the answer. The understanding.<br>Explore the math hiding in everyday things.</p><a class="button lime" href="#lesson/${next.id}">${state.activity.attempts ? "Continue your path" : "Start exploring"} ${icon("arrow")}</a><span class="hero-foot">${icon("clock")} One lesson. A fresh perspective.</span></div>${heroArt()}<div class="hero-bot" aria-hidden="true">${robot("happy", "bot-xl")}</div></section>
     <section class="week-card"><div class="section-label">YOUR LEARNING RHYTHM <span>&#10038;</span></div><div class="streak-value">${state.activity.streak}<span>day${state.activity.streak === 1 ? "" : "s"} of momentum</span></div><p>Consistency starts with showing up.</p><div class="week-days">${recent.join("")}</div><hr><div class="daily-goal">${icon("clock")}<span>Daily intention<strong>${state.profile?.minutes || 10} minutes of curiosity</strong></span><button class="icon-button" data-action="profile" aria-label="Edit daily intention">${icon("studio")}</button></div></section></div>
     <section class="stats-row"><div>${icon("learn")}<span><strong>${done}<small> / ${state.lessons.length}</small></strong>Lessons completed</span></div><div>${icon("check")}<span><strong>${masteryCount()}<small> / ${state.mastery.length}</small></strong>Skills mastered</span></div><div>${icon("practice")}<span><strong>${state.activity.attempts}</strong>Answers explored</span></div><div><span class="tiny-spark">&#10038;</span><span><strong>A little every day</strong>Progress, not perfection</span></div></section>
     <div class="section-heading"><div><span class="eyebrow">YOUR GUIDED PATH</span><h2>From little pieces to big ideas</h2></div><a class="text-link" href="#learn">Explore all lessons ${icon("arrow")}</a></div>
@@ -554,8 +554,69 @@ function getSession(mode, lesson) {
   }
   return session;
 }
+function robot(mood = "happy", size = "") {
+  const mouths = {
+    happy: '<path d="M44 78q16 14 32 0" class="bot-mouth"/>',
+    think: '<path d="M48 82h24" class="bot-mouth"/><circle cx="84" cy="60" r="3" class="bot-spark"/>',
+    cheer: '<path d="M42 76q18 20 36 0z" class="bot-mouth-open"/>',
+    sleep: '<path d="M48 82h24" class="bot-mouth"/>',
+  };
+  const eyes = mood === "sleep"
+    ? '<path d="M38 62h16M66 62h16" class="bot-eye-closed"/>'
+    : '<g class="bot-eyes"><circle cx="46" cy="62" r="8" class="bot-eye"/><circle cx="74" cy="62" r="8" class="bot-eye"/><circle cx="49" cy="59" r="2.6" class="bot-shine"/><circle cx="77" cy="59" r="2.6" class="bot-shine"/></g>';
+  const arms = mood === "cheer"
+    ? '<path d="M24 112L8 90M96 112l16-22" class="bot-arm"/><circle cx="8" cy="88" r="6" class="bot-hand"/><circle cx="112" cy="88" r="6" class="bot-hand"/>'
+    : '<path d="M24 118l-12 14M96 118l12 14" class="bot-arm"/><circle cx="10" cy="134" r="6" class="bot-hand"/><circle cx="110" cy="134" r="6" class="bot-hand"/>';
+  return `<svg class="bot ${mood} ${size}" viewBox="0 0 120 160" role="img" aria-label="Pip the robot is ${mood === "think" ? "thinking" : mood === "sleep" ? "resting" : mood === "cheer" ? "cheering" : "smiling"}"><g class="bot-body">
+    <path d="M60 18V8" class="bot-stem"/><circle cx="60" cy="6" r="6" class="bot-bulb"/>
+    <rect x="22" y="22" width="76" height="70" rx="26" class="bot-head"/><rect x="30" y="40" width="60" height="50" rx="20" class="bot-visor"/>${eyes}${mouths[mood] || mouths.happy}
+    <rect x="14" y="52" width="8" height="22" rx="4" class="bot-ear"/><rect x="98" y="52" width="8" height="22" rx="4" class="bot-ear"/>
+    <rect x="32" y="98" width="56" height="44" rx="16" class="bot-torso"/><rect x="44" y="108" width="32" height="20" rx="7" class="bot-screen"/><path d="M52 118h6M64 118h4M62 113v10" class="bot-plus"/>${arms}</g></svg>`;
+}
+function bubble(text, mood = "happy") {
+  return `<div class="coach">${robot(mood, "bot-md")}<p class="bubble">${esc(text)}</p></div>`;
+}
+function chip(value, role) {
+  const text = String(value);
+  return `<span class="chip ${role}${text.length > 4 ? " long" : ""}">${esc(text)}</span>`;
+}
+function machineStrip({ ins, op, kind, out, aria }) {
+  const outs = Array.isArray(out) ? out : [out];
+  const gears = `<svg class="gears" viewBox="0 0 100 70" aria-hidden="true"><g class="gear g1"><circle cx="34" cy="38" r="20"/><circle cx="34" cy="38" r="7" class="hub"/>${[0, 45, 90, 135].map(r => `<rect x="30" y="12" width="8" height="52" rx="3" transform="rotate(${r} 34 38)"/>`).join("")}</g><g class="gear g2"><circle cx="72" cy="26" r="13"/><circle cx="72" cy="26" r="5" class="hub"/>${[0, 60, 120].map(r => `<rect x="69" y="8" width="6" height="36" rx="3" transform="rotate(${r} 72 26)"/>`).join("")}</g></svg>`;
+  return `<div class="machine-strip kind-${kind}" role="img" aria-label="${esc(aria)}"><div class="slots">${ins.map(v => chip(v, "in")).join("")}</div><span class="pipe" aria-hidden="true"></span><div class="machine">${gears}<span class="op-badge">${esc(op)}</span></div><span class="pipe" aria-hidden="true"></span><div class="slots">${outs.map(v => chip(v, "out")).join("")}</div></div>`;
+}
+const withMachine = (model, strip) => (...args) => strip(...args) + model(...args);
+tenFrameModel = withMachine(tenFrameModel, (a, b) => machineStrip({ ins: [a, b], op: "+", kind: "add", out: a + b, aria: `${a} plus ${b} equals ${a + b}` }));
+blocksModel = withMachine(blocksModel, n => machineStrip({ ins: [n], op: "10s", kind: "place", out: [`${Math.floor(n / 10)} tens`, `${n % 10} ones`], aria: `${n} is ${Math.floor(n / 10)} tens and ${n % 10} ones` }));
+hopsModel = withMachine(hopsModel, (s, h) => machineStrip({ ins: [s, h], op: "\u00d7", kind: "mul", out: s * h, aria: `${h} hops of ${s} land on ${s * h}` }));
+regroupModel = withMachine(regroupModel, (a, b) => machineStrip({ ins: [a, b], op: "+", kind: "add", out: a + b, aria: `${a} plus ${b} equals ${a + b}` }));
+gapModel = withMachine(gapModel, (a, b) => machineStrip({ ins: [a, b], op: "\u2212", kind: "sub", out: Math.abs(a - b), aria: `The gap between ${a} and ${b} is ${Math.abs(a - b)}` }));
+arrayModel = withMachine(arrayModel, (r, c) => machineStrip({ ins: [r, c], op: "\u00d7", kind: "mul", out: r * c, aria: `${r} rows of ${c} make ${r * c}` }));
+sharingModel = withMachine(sharingModel, (t, g) => machineStrip({ ins: [t, g], op: "\u00f7", kind: "div", out: t % g ? [Math.floor(t / g), `r ${t % g}`] : Math.floor(t / g), aria: `${t} shared among ${g} is ${Math.floor(t / g)} each, ${t % g} left over` }));
+storyModel = withMachine(storyModel, (type, a, b) => {
+  const t = Math.min(4, Math.max(1, type)), bb = t === 2 && b > a ? a : b;
+  const kinds = { 1: ["+", "add", a + bb], 2: ["\u2212", "sub", a - bb], 3: ["\u00d7", "mul", a * bb], 4: ["\u00f7", "div", bb ? (a % bb ? [Math.floor(a / bb), `r ${a % bb}`] : Math.floor(a / bb)) : 0] };
+  const [op, kind, out] = kinds[t];
+  return machineStrip({ ins: [a, bb], op, kind, out, aria: `${a} ${op} ${bb}` });
+});
+ledgerModel = withMachine(ledgerModel, (o, w) => machineStrip({ ins: [o, w], op: "\u2212", kind: "sub", out: o - w, aria: `${o} owned minus ${w} owed is ${o - w}` }));
+doublingModel = withMachine(doublingModel, (a, b) => machineStrip({ ins: [a, b], op: "\u00d7", kind: "mul", out: a * b, aria: `${a} times ${b} equals ${a * b}` }));
+numberSystemsModel = withMachine(numberSystemsModel, n => machineStrip({ ins: [n], op: "123", kind: "place", out: [`${String(n).length} digits`], aria: `${n} needs ${String(n).length} digits` }));
+equationModel = withMachine(equationModel, (a, b, x) => machineStrip({ ins: [a, b, x], op: "=", kind: "eq", out: a * x + b, aria: `${a} times ${x} plus ${b} equals ${a * x + b}` }));
+fractionModel = withMachine(fractionModel, (n, d, whole) => machineStrip({ ins: [n, d], op: "/", kind: "div", out: `${n}/${d}`, aria: `${n} of ${d} equal parts` }));
+shapeModel = withMachine(shapeModel, (w, h) => machineStrip({ ins: [w, h], op: "\u00d7", kind: "mul", out: [`area ${w * h}`, `edge ${2 * (w + h)}`], aria: `Area ${w * h}, perimeter ${2 * (w + h)}` }));
+angleModel = withMachine(angleModel, a => machineStrip({ ins: [`${a}\u00b0`], op: "90 180", kind: "eq", out: [`${a <= 90 ? 90 - a : "\u2014"}\u00b0`, `${180 - a}\u00b0`], aria: `Angle ${a}: complement ${a <= 90 ? 90 - a : "none"}, supplement ${180 - a}` }));
+polarModel = withMachine(polarModel, (r, a) => {
+  const rad = a * Math.PI / 180, c = v => { const n = Math.round(v * 100) / 100; return Object.is(n, -0) ? 0 : n; };
+  return machineStrip({ ins: [r, `${a}\u00b0`], op: "x y", kind: "eq", out: [c(r * Math.cos(rad)), c(r * Math.sin(rad))], aria: `Polar to right and up` });
+});
+planeModel = withMachine(planeModel, ({ x1, y1, x2, y2 }) => {
+  const dx = x2 - x1, dy = y2 - y1, sq = dx * dx + dy * dy, root = Math.sqrt(sq);
+  return machineStrip({ ins: [`(${x1}, ${y1})`, `(${x2}, ${y2})`], op: "A B", kind: "eq", out: [Number.isInteger(root) ? root : `\u221a${sq}`, slopeText(dy, dx).split(" ")[0]], aria: "Distance and slope between the points" });
+});
+lineModel = withMachine(lineModel, (m, b) => machineStrip({ ins: [m, b], op: "mx+b", kind: "eq", out: lineEquation(m, b).replace("y = ", ""), aria: lineEquation(m, b) }));
 function tutorPanel() {
-  return `<aside class="tutor-panel"><div class="tutor-title"><span class="tutor-face">&#10038;</span><div><strong>Your learning companion</strong><small>AI integration &middot; not configured</small></div></div><div class="tutor-disabled">${icon("lock")}<span>AI tutoring is currently off</span></div><p>The tutor connection is ready for a provider integration. No AI responses are generated in this version.</p><div class="authored-help"><span class="eyebrow">HELP YOU CAN USE NOW</span><h3>A nudge, not a shortcut.</h3><p>Each lesson has carefully written hints. Using one is recorded so your mastery reflects what you can do independently.</p><div class="help-tip"><span>&#10038;</span>Ask yourself: what do I know, and what am I trying to find?</div></div><div class="tutor-input"><span>Configure a provider to ask the tutor</span>${icon("arrow")}</div><small class="privacy-note">No message or learner data is sent to an AI service.</small></aside>`;
+  return `<aside class="tutor-panel compact" aria-label="Guide">${robot("sleep", "bot-sm")}<span class="tutor-note">${icon("lock")} AI tutor off. Hints are ready.</span></aside>`;
 }
 function exerciseView(question, mode, total) {
   const s = session;
@@ -568,7 +629,7 @@ function exerciseView(question, mode, total) {
       `<label for="answer-input">Your answer</label><input id="answer-input" name="answer" value="${esc(s.answer)}" placeholder="Enter a number or fraction" required maxlength="100" autocomplete="off" ${s.feedback ? "disabled" : ""}><small>Use a number or fraction, for example -2, 0.5, or 1/2.</small>`}</div>
       ${s.error ? `<p class="form-error" role="alert">${esc(s.error)}</p>` : ""}
       ${s.hint ? `<div class="hint-box"><span class="eyebrow">AUTHORED LESSON HINT</span><p>${esc(s.hint)}</p></div>` : ""}
-      ${s.feedback ? `<div class="answer-feedback ${correct ? "correct" : "incorrect"}" role="status"><strong>${correct ? "That's it. The idea is clicking." : "Not quite. Keep exploring."}</strong><p>${esc(s.feedback.message)}</p>${correct && s.feedback.assisted ? "<small>Saved as assisted progress, not independent mastery evidence.</small>" : ""}</div>` : ""}
+      ${s.feedback ? `<div class="answer-feedback ${correct ? "correct" : "incorrect"}" role="status">${robot(correct ? "cheer" : "think", "bot-sm")}<div><strong>${correct ? "That's it!" : "Not yet. Try again."}</strong><p>${esc(s.feedback.message)}</p>${correct && s.feedback.assisted ? "<small>Saved as assisted progress, not independent mastery evidence.</small>" : ""}</div></div>` : ""}
       <div class="exercise-actions">${s.feedback ? (correct || isAssessment ?
         `<button class="button primary" type="button" data-action="next" ${busy ? "disabled" : ""}>${s.index + 1 === total ? "See my results" : "Next question"} ${icon("arrow")}</button>` :
         `<button class="button primary" type="button" data-action="retry">Try again ${icon("arrow")}</button>`) :
@@ -588,7 +649,7 @@ function finishView(mode, lesson) {
   const courseDone = !assessment && mode === "lesson" && !nextLesson;
   const confetti = !assessment && mode === "lesson" ? `<div class="confetti" aria-hidden="true">${"<i></i>".repeat(18)}</div>` : "";
   const banner = courseDone ? `<div class="course-complete">${icon("check")} You finished ${esc(course.title)}!</div>` : "";
-  return `<section class="finish-card">${confetti}<div class="finish-symbol">${icon("check")}</div>${banner}<span class="eyebrow">${assessment ? "YOUR STARTING POINT IS MAPPED" : "ONE MORE IDEA TO BUILD ON"}</span><h1>${assessment ? "A clearer place to begin." : mode === "review" ? "Practice set complete." : "Look what you figured out."}</h1><p>${assessment ? `${diagnosticMastered} of ${starterSkills.size} starter skills currently have enough independent evidence. This check does not assess the separate fractions course.` : `${mode === "review" ? "Your review questions are finished." : `${esc(lesson.title)} is complete.`} ${mastered ? "You have enough independent evidence for this skill." : "Keep practising: completion and independent mastery are different milestones."}`}</p>${!assessment ? `<blockquote>${esc(lesson.takeaway)}</blockquote>` : ""}<div class="finish-actions"><a class="button primary" href="#${nextLesson ? "lesson" : "review"}/${next.id}">${nextLesson ? "Continue this course" : "Practise this course"} ${icon("arrow")}</a><a class="button secondary" href="#course/${course.id}">Back to course</a></div>${state.course_assessments[course.id] ? `<a class="text-link" href="#course-check/${course.id}">Check your course understanding ${icon("arrow")}</a>` : '<a class="text-link" href="#progress">View skill map</a>'}</section>`;
+  return `<section class="finish-card">${confetti}<div class="finish-symbol">${robot("cheer", "bot-lg")}</div>${banner}<span class="eyebrow">${assessment ? "YOUR STARTING POINT IS MAPPED" : "ONE MORE IDEA TO BUILD ON"}</span><h1>${assessment ? "A clearer place to begin." : mode === "review" ? "Practice set complete." : "Look what you figured out."}</h1><p>${assessment ? `${diagnosticMastered} of ${starterSkills.size} starter skills currently have enough independent evidence. This check does not assess the separate fractions course.` : `${mode === "review" ? "Your review questions are finished." : `${esc(lesson.title)} is complete.`} ${mastered ? "You have enough independent evidence for this skill." : "Keep practising: completion and independent mastery are different milestones."}`}</p>${!assessment ? `<blockquote>${esc(lesson.takeaway)}</blockquote>` : ""}<div class="finish-actions"><a class="button primary" href="#${nextLesson ? "lesson" : "review"}/${next.id}">${nextLesson ? "Continue this course" : "Practise this course"} ${icon("arrow")}</a><a class="button secondary" href="#course/${course.id}">Back to course</a></div>${state.course_assessments[course.id] ? `<a class="text-link" href="#course-check/${course.id}">Check your course understanding ${icon("arrow")}</a>` : '<a class="text-link" href="#progress">View skill map</a>'}</section>`;
 }
 function lessonView(mode, id) {
   const lesson = state.lessons.find(l => l.id === id);
@@ -602,7 +663,7 @@ function lessonView(mode, id) {
   return `<div class="lesson-navigation"><a href="#course/${placement.course.id}" class="text-link">&larr; Course</a><a href="#unit/${placement.unit.id}" class="text-link">${esc(placement.unit.title)}</a><span>${lesson.duration} min</span><span class="pill outline">${mode === "review" ? "REVIEW" : "GUIDED LESSON"}</span></div>
     <div class="lesson-title"><div><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div><div class="title-art ${lesson.color}" aria-hidden="true">${lessonArt(lesson)}</div></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
-    ${session.intro ? `${storyCard(lesson.id)}<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
+    ${session.intro ? `<div class="explanation-card"><h2 class="formula">${esc(lesson.formula)}</h2>${visual(lesson)}${bubble(lesson.takeaway)}${storyCard(lesson.id)}<details class="read-more"><summary>Read the idea</summary><p>${esc(lesson.intro)}</p></details><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
       `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer", "story-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing", "story-explorer": "story" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }

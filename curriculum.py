@@ -1485,7 +1485,7 @@ BEGINNER_LESSONS = [
     {
         "id": "num-count", "skill": "num-count", "title": "Count and see numbers",
         "subtitle": "Use a ten-frame to see how many without counting every dot.",
-        "duration": 6, "color": "yellow", "icon": "fraction",
+        "duration": 6, "color": "blue", "icon": "fraction",
         "intro": "Counting means saying one number for each thing, exactly once. A ten-frame is a "
                  "tray with two rows of five spots. When a row is full you can see 5 without "
                  "counting, and when the whole tray is full you can see 10. Numbers past 10 start a "
@@ -1543,7 +1543,7 @@ BEGINNER_LESSONS = [
     {
         "id": "add-facts", "skill": "add-facts", "title": "Putting amounts together",
         "subtitle": "Make a ten to add quickly.",
-        "duration": 8, "color": "peach", "icon": "fraction",
+        "duration": 8, "color": "mint", "icon": "fraction",
         "intro": "Adding means putting amounts together to find how many in all. Two ten-frames "
                  "show a smart trick called make ten: move dots from one tray to fill the other to "
                  "10, then count what is left. For 8 + 5, move 2 dots to fill the first tray, "
@@ -1561,7 +1561,7 @@ BEGINNER_LESSONS = [
     {
         "id": "add-regroup", "skill": "add-regroup", "title": "Adding bigger numbers",
         "subtitle": "Carry a ten when the ones add up to ten or more.",
-        "duration": 9, "color": "violet", "icon": "fraction",
+        "duration": 9, "color": "mint", "icon": "fraction",
         "intro": "To add 27 + 38, add the ones first: 7 + 8 = 15. That is 1 ten and 5 ones, so "
                  "write 5 in the ones place and carry 1 ten. Then add the tens: 2 + 3 + the 1 you "
                  "carried makes 6 tens. The answer is 65. Carrying is just trading 10 ones for 1 "
@@ -1579,7 +1579,7 @@ BEGINNER_LESSONS = [
     {
         "id": "sub-gap", "skill": "sub-gap", "title": "Taking away and finding the gap",
         "subtitle": "Two ways to think about subtracting, and how they connect to adding.",
-        "duration": 9, "color": "mint", "icon": "fraction",
+        "duration": 9, "color": "peach", "icon": "fraction",
         "intro": "Subtracting can mean taking away or finding the gap between two numbers. If you "
                  "have 12 apples and eat 5, then 12 - 5 = 7 are left. If one tower has 12 blocks "
                  "and another has 5, the gap between them is also 7. Adding and subtracting undo "
@@ -1598,7 +1598,7 @@ BEGINNER_LESSONS = [
     {
         "id": "mul-groups", "skill": "mul-groups", "title": "Equal groups and arrays",
         "subtitle": "A fast way to add the same number again and again.",
-        "duration": 8, "color": "yellow", "icon": "fraction",
+        "duration": 8, "color": "violet", "icon": "fraction",
         "intro": "Multiplying is a quick way to add equal groups. Three baskets with 4 apples each "
                  "makes 4 + 4 + 4 = 12, and we write 3 x 4 = 12. An array arranges objects in "
                  "rows and columns: 3 rows with 4 dots in each row. Turn the array on its side and "
@@ -1616,7 +1616,7 @@ BEGINNER_LESSONS = [
     {
         "id": "mul-tables", "skill": "mul-tables", "title": "Patterns in the times tables",
         "subtitle": "Spot the patterns and learn the tables faster.",
-        "duration": 8, "color": "peach", "icon": "fraction",
+        "duration": 8, "color": "violet", "icon": "fraction",
         "intro": "The times tables are full of patterns. Times 2 doubles a number: 2 x 7 = 14. "
                  "Times 10 puts a zero on the end: 10 x 6 = 60. Times 5 always ends in 0 or 5: "
                  "5, 10, 15, 20. For times 9, the digits of the answer add up to 9: 9 x 4 = 36, "
@@ -1740,7 +1740,7 @@ SKILLS.append({"id": "word-ops", "name": "Choosing the operation", "prerequisite
 WORD_LESSON = {
     "id": "word-ops", "skill": "word-ops", "title": "Which operation?",
     "subtitle": "Read a story, spot the clue, and pick adding, subtracting, multiplying, or dividing.",
-    "duration": 9, "color": "violet", "icon": "fraction",
+    "duration": 9, "color": "yellow", "icon": "fraction",
     "intro": "A word problem is a short story with a question. To solve it, ask what is happening in "
              "the story. If things are put together or something grows, add. If some are taken "
              "away, or you compare two amounts, subtract. If there are equal groups, multiply. If "
