@@ -532,10 +532,8 @@ function visual(lesson) {
   if (lesson.visual === "line-explorer") return lineExplorer();
   if (lesson.visual === "equation-explorer") return equationExplorer();
   if (lesson.visual === "fraction-explorer") return fractionExplorer();
-  if (lesson.visual === "graph") return `<div class="interactive-canvas"><div class="canvas-header"><span>${icon("practice")} EXPLORE THE LINE</span><span class="canvas-badge">INTERACTIVE</span></div><div class="graph-wrap">${graph()}</div><div class="graph-equation" id="graph-equation">y = 2x + 1</div><div class="canvas-controls"><label>Slope <output id="slope-output">2</output><input id="slope-control" type="range" min="-3" max="3" step="0.5" value="2" aria-label="Slope"></label><label>Starting value <output id="intercept-output">1</output><input id="intercept-control" type="range" min="-4" max="4" step="1" value="1" aria-label="Starting value"></label></div><p class="canvas-caption">Move a slider. What changes? What stays the same?<br>This exploratory canvas does not submit an answer.</p></div>`;
-  if (lesson.visual === "fraction") return `<div class="concept-visual fraction-visual"><div class="fraction-blocks"><span></span><span></span><span class="empty"></span><span class="empty"></span></div><strong>2 of 4 equal parts</strong><span>Same amount. Two ways to describe it.</span><div class="formula">2/4 <span>=</span> 1/2</div></div>`;
-  if (lesson.visual === "balance") return `<div class="concept-visual">${miniArt("balance", "mint")}<div class="formula">2x + 4 = 12</div><span>Subtract 4 from both sides.</span><div class="formula small-formula">2x = 8 <span>&rarr;</span> x = 4</div></div>`;
-  return `<div class="concept-visual">${miniArt("expression", "peach")}<div class="formula">3x + 2</div><span>Three notebooks. One pen. One expression.</span></div>`;
+  if (lesson.visual === "expression-explorer") return exprExplorer();
+  return "";
 }
 function lessonQuestions(mode, lesson) {
   return mode === "review" && state.practice[lesson.id] ? state.practice[lesson.id].questions : lesson.exercises;
@@ -550,7 +548,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 }, tf: { a: 8, b: 5 }, blocks: { n: 34 }, hops: { step: 5, hops: 4 }, regroup: { a: 27, b: 38 }, gap: { a: 15, b: 9 }, array: { r: 3, c: 4 }, share: { total: 14, groups: 3 }, story: { type: 1, a: 8, b: 5 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 }, tf: { a: 8, b: 5 }, blocks: { n: 34 }, hops: { step: 5, hops: 4 }, regroup: { a: 27, b: 38 }, gap: { a: 15, b: 9 }, array: { r: 3, c: 4 }, share: { total: 14, groups: 3 }, story: { type: 1, a: 8, b: 5 }, expr: { a: 3, b: 2, x: 5 } };
   }
   return session;
 }
@@ -615,6 +613,17 @@ planeModel = withMachine(planeModel, ({ x1, y1, x2, y2 }) => {
   return machineStrip({ ins: [`(${x1}, ${y1})`, `(${x2}, ${y2})`], op: "A B", kind: "eq", out: [Number.isInteger(root) ? root : `\u221a${sq}`, slopeText(dy, dx).split(" ")[0]], aria: "Distance and slope between the points" });
 });
 lineModel = withMachine(lineModel, (m, b) => machineStrip({ ins: [m, b], op: "mx+b", kind: "eq", out: lineEquation(m, b).replace("y = ", ""), aria: lineEquation(m, b) }));
+function exprModel(a, b, x) {
+  const width = 24 + a * 66 + (b ? 70 : 0);
+  const books = Array.from({ length: a }, (_, i) => `<rect x="${14 + i * 66}" y="20" width="56" height="60" rx="14" class="expr-box"/><text x="${42 + i * 66}" y="58" text-anchor="middle" class="expr-x">${x}</text>`).join("");
+  const pen = b ? `<circle cx="${24 + a * 66 + 22}" cy="50" r="24" class="expr-pen"/><text x="${24 + a * 66 + 22}" y="58" text-anchor="middle" class="expr-b">${b}</text>` : "";
+  return `<svg viewBox="0 0 ${width} 100" role="img" aria-label="${a} notebooks costing ${x} each, plus a pen costing ${b}, total ${a * x + b}">${books}${pen}</svg>`;
+}
+exprModel = withMachine(exprModel, (a, b, x) => machineStrip({ ins: [a, b, x], op: "ax+b", kind: "mul", out: a * x + b, aria: `${a} times ${x} plus ${b} equals ${a * x + b}` }));
+function exprExplorer() {
+  const e = session.expr;
+  return `<div class="interactive-canvas expr-explorer"><div class="canvas-header"><span>NOTEBOOKS AND A PEN</span><span class="canvas-badge">INTERACTIVE</span></div><div id="expr-model">${exprModel(e.a, e.b, e.x)}</div><div class="fraction-controls">${sliderRow("expr", "a", "Notebooks", e.a, 1, 6)}${sliderRow("expr", "x", "Cost of one notebook", e.x, 1, 9)}${sliderRow("expr", "b", "Cost of the pen", e.b, 0, 9)}</div></div>`;
+}
 function tutorPanel() {
   return `<aside class="tutor-panel compact" aria-label="Guide">${robot("sleep", "bot-sm")}<span class="tutor-note">${icon("lock")} AI tutor off. Hints are ready.</span></aside>`;
 }
@@ -664,7 +673,7 @@ function lessonView(mode, id) {
     <div class="lesson-title"><div><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div><div class="title-art ${lesson.color}" aria-hidden="true">${lessonArt(lesson)}</div></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `<div class="explanation-card"><h2 class="formula">${esc(lesson.formula)}</h2>${visual(lesson)}${bubble(lesson.takeaway)}${storyCard(lesson.id)}<details class="read-more"><summary>Read the idea</summary><p>${esc(lesson.intro)}</p></details><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer", "story-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing", "story-explorer": "story" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer", "story-explorer", "expression-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing", "story-explorer": "story", "expression-explorer": "expression" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
@@ -710,8 +719,10 @@ function render() {
   $("#main").innerHTML = html;
   document.title = `${page === "lesson" || page === "review" ? state.lessons.find(l => l.id === id)?.title || "Lesson" : ({ home: "Overview", learn: "Explore", practice: "Practice", progress: "Progress", studio: "Content studio", assessment: "Starting check", "course-check": "Course check", course: state.catalog.courses.find(c => c.id === id)?.title, unit: "Course unit", curriculum: "Coverage map" }[page] || "Not found")} - Learnova`;
 }
+const VISUAL_ALIAS = { fraction: "fraction-explorer", balance: "equation-explorer", expression: "expression-explorer", graph: "line-explorer" };
 async function refresh() {
   state = await api("/api/state");
+  for (const lesson of state.lessons) lesson.visual = VISUAL_ALIAS[lesson.visual] || lesson.visual;
 }
 function currentContext() {
   const [mode, id] = location.hash.slice(1).split("/");
@@ -826,13 +837,13 @@ document.addEventListener("input", event => {
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
     return;
   }
-  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"], "tf-": ["a", "b"], "blocks-": ["n"], "hops-": ["step", "hops"], "regroup-": ["a", "b"], "gap-": ["a", "b"], "array-": ["r", "c"], "share-": ["total", "groups"], "story-": ["type", "a", "b"] };
+  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"], "tf-": ["a", "b"], "blocks-": ["n"], "hops-": ["step", "hops"], "regroup-": ["a", "b"], "gap-": ["a", "b"], "array-": ["r", "c"], "share-": ["total", "groups"], "story-": ["type", "a", "b"], "expr-": ["a", "b", "x"] };
   for (const [prefix, names] of Object.entries(explorerIds)) {
     if (!event.target.id.startsWith(prefix) || !names.includes(event.target.id.slice(prefix.length))) continue;
     const key = prefix.slice(0, -1), model = session[key];
     model[event.target.id.slice(prefix.length)] = Number(event.target.value);
     for (const name of names) $(`#${key}-${name}-output`).textContent = model[name];
-    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed), tf: () => tenFrameModel(model.a, model.b), blocks: () => blocksModel(model.n), hops: () => hopsModel(model.step, model.hops), regroup: () => regroupModel(model.a, model.b), gap: () => gapModel(model.a, model.b), array: () => arrayModel(model.r, model.c), share: () => sharingModel(model.total, model.groups), story: () => storyModel(model.type, model.a, model.b) };
+    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed), tf: () => tenFrameModel(model.a, model.b), blocks: () => blocksModel(model.n), hops: () => hopsModel(model.step, model.hops), regroup: () => regroupModel(model.a, model.b), gap: () => gapModel(model.a, model.b), array: () => arrayModel(model.r, model.c), share: () => sharingModel(model.total, model.groups), story: () => storyModel(model.type, model.a, model.b), expr: () => exprModel(model.a, model.b, model.x) };
     $(`#${key}-model`).innerHTML = render[key]();
     return;
   }

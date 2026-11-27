@@ -151,6 +151,7 @@ input[type=range]{height:6px;background:#d9d4c3}input[type=range]::-webkit-slide
 .interactive-canvas svg{margin-top:16px}.machine .gears,.machine-strip svg{margin-top:0;max-width:none}.story-card{margin:26px 0 18px;padding:22px 0 4px}.story-art .lesson-art{background:none}.story-art{width:130px}
 .lesson-art,svg.lesson-art{background:transparent!important}.story-art,.title-art{background:transparent!important}
 .story-explorer #story-model>svg{display:none}
+.expr-explorer #expr-model{padding:6px 0 0}.expr-explorer svg:not(.gears){width:100%;max-width:460px;margin:12px auto 0}.expr-box{fill:#ffe3d3;stroke:#ef7d57;stroke-width:3}.expr-x{font:700 26px "Segoe UI",sans-serif;fill:#8a3b1a}.expr-pen{fill:#fad680;stroke:#e6a23c;stroke-width:3}.expr-b{font:700 22px "Segoe UI",sans-serif;fill:#6b4a00}
 @media(prefers-reduced-motion:reduce){.pipe,.gear,.bot-body,.bot-eyes,.bot-bulb,.machine,.chip.out{animation:none!important}}
 @media(prefers-reduced-motion:reduce){.confetti{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

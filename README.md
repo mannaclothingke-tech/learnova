@@ -21,6 +21,14 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
+- A graphics-first lesson layout. Every explorer shows inputs (amber) flowing
+  through an animated gear machine, colored by operation (add green, subtract
+  coral, multiply violet, divide blue), into outputs (lime), so a learner can see
+  what goes in and what comes out without reading. Pip, an original robot guide,
+  gives the one-line takeaway, reacts to answers, and cheers on completion. The
+  long explanation is folded behind "Read the idea". The text steps remain in the
+  page for screen readers but are hidden visually. All motion respects the
+  reduced-motion setting.
 - A warm, illustrated visual design: soft gradient backgrounds, a lesson-specific
   illustration on every lesson card, lesson header, and playable course card,
   tactile answer choices, styled sliders, and a small celebration on correct
