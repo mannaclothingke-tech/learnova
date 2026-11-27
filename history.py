@@ -123,4 +123,12 @@ STORIES = {
                 "That is where the idea of a remainder comes from, and it shows up in everyday "
                 "sharing today.",
     },
+    "word-ops": {
+        "title": "Stories are old problems",
+        "art": "baskets",
+        "text": "Word problems are very old. Some clay tablets from ancient Babylonia include problems "
+                "about grain, fields, and loans, so people have been practising how to turn a story "
+                "into a calculation for a very long time. The skill is the same today: picture what "
+                "is happening, then choose the operation that matches it.",
+    },
 }

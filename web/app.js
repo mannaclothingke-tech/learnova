@@ -77,6 +77,7 @@ function lessonArt(lesson) {
     "gap-explorer": () => wrap(`<rect x="16" y="22" width="120" height="24" rx="6" class="art-light"/><rect x="16" y="62" width="76" height="24" rx="6" class="art-dark"/><rect x="92" y="62" width="44" height="24" rx="6" fill="none" class="art-stroke" stroke-dasharray="5 4"/>`),
     "array-explorer": () => wrap(dots(36, 28, 4, 5, 22)),
     "sharing-explorer": () => wrap(`${[0, 1, 2].map(i => `<rect x="${12 + i * 50}" y="26" width="42" height="52" rx="8" class="art-light"/>${[0, 1, 2, 3].map(k => `<circle cx="${23 + i * 50 + (k % 2) * 18}" cy="${42 + Math.floor(k / 2) * 18}" r="6" class="art-dark"/>`).join("")}`).join("")}<circle cx="30" cy="96" r="5" class="art-orange"/><circle cx="46" cy="96" r="5" class="art-orange"/>`),
+    "story-explorer": () => wrap(`<rect x="16" y="14" width="128" height="58" rx="16" class="art-light"/><path d="M42 72l-10 18 26-14z" class="art-light"/><text x="80" y="52" class="art-text-dark">+ \u2212 \u00d7 \u00f7</text>`),
     "number-systems-explorer": () => wrap(`<path d="M20 22v50M32 22v50M44 22v50M56 22v50M12 62L68 34" fill="none" class="art-stroke"/><rect x="82" y="26" width="64" height="44" rx="10" class="art-dark"/><text x="114" y="58">243</text>`),
     "doubling-explorer": () => wrap(`${[1, 2, 4, 8].map((w, i) => `<rect x="18" y="${16 + i * 22}" width="${w * 14 + 8}" height="16" rx="5" class="${i % 2 ? "art-light" : "art-dark"}"/>`).join("")}`),
     "ledger-explorer": () => wrap(`<path d="M14 62h132" class="art-stroke"/>${[0, 1, 2, 3, 4, 5, 6].map(i => `<path d="M${20 + i * 20} 58v8" class="art-stroke"/>`).join("")}<path d="M80 62H40" class="art-orange-line"/><circle cx="40" cy="62" r="9" class="art-orange"/>`),
@@ -494,7 +495,26 @@ function sharingExplorer() {
   const s = session.share;
   return `<div class="interactive-canvas share-explorer"><div class="canvas-header"><span>SHARE EQUALLY</span><span class="canvas-badge">INTERACTIVE</span></div><div id="share-model">${sharingModel(s.total, s.groups)}</div><div class="fraction-controls">${sliderRow("share", "total", "Things to share", s.total, 1, 30)}${sliderRow("share", "groups", "Number of groups", s.groups, 1, 6)}</div><p class="canvas-caption">Orange dots are left over when the sharing cannot be exactly equal.<br>This explorer does not submit answers or award mastery.</p></div>`;
 }
+function storyModel(type, a, b) {
+  const t = Math.min(4, Math.max(1, type));
+  const bb = t === 2 && b > a ? a : b;
+  const q = Math.floor(a / bb), rem = a % bb;
+  const defs = {
+    1: { sym: "+", name: "Join", story: `You have ${a} and get ${bb} more.`, res: String(a + bb), ask: "How many now?", clue: "Putting amounts together: add." },
+    2: { sym: "\u2212", name: "Take away", story: `You have ${a} and ${bb} are taken away.`, res: String(a - bb), ask: "How many are left?", clue: "Taking some away: subtract." },
+    3: { sym: "\u00d7", name: "Equal groups", story: `There are ${a} groups with ${bb} in each group.`, res: String(a * bb), ask: "How many in all?", clue: "Equal groups: multiply." },
+    4: { sym: "\u00f7", name: "Sharing", story: `${a} things are shared equally among ${bb} groups.`, res: rem ? `${q} r${rem}` : String(q), ask: "How many in each group?", clue: "Sharing equally: divide." },
+  };
+  const d = defs[t];
+  const note = t === 2 && b > a ? " (You cannot take away more than you have, so the second number is set to the first.)" : "";
+  return `<svg viewBox="0 0 400 110" role="img" aria-label="${d.story} ${a} ${d.sym} ${bb} = ${d.res}"><rect x="12" y="30" width="80" height="50" rx="14" fill="#c9bfee"/><text x="52" y="64" text-anchor="middle" font-size="26" font-weight="700" fill="#3f3a5a">${a}</text><circle cx="116" cy="55" r="17" fill="#7ba03a"/><text x="116" y="64" text-anchor="middle" font-size="24" font-weight="700" fill="#fff">${d.sym}</text><rect x="140" y="30" width="80" height="50" rx="14" fill="#f4c27a"/><text x="180" y="64" text-anchor="middle" font-size="26" font-weight="700" fill="#6a3f12">${bb}</text><text x="240" y="64" text-anchor="middle" font-size="26" font-weight="700" fill="#54664b">=</text><rect x="262" y="30" width="126" height="50" rx="14" fill="#d8ee8a"/><text x="325" y="64" text-anchor="middle" font-size="26" font-weight="700" fill="#3f5a25">${d.res}</text></svg><ul class="plane-facts" aria-live="polite"><li>${d.name}: ${d.story} ${d.ask}</li><li>${a} ${d.sym} ${bb} = ${d.res}</li><li>Clue: ${d.clue}${note}</li></ul>`;
+}
+function storyExplorer() {
+  const s = session.story;
+  return `<div class="interactive-canvas story-explorer"><div class="canvas-header"><span>WHICH OPERATION?</span><span class="canvas-badge">INTERACTIVE</span></div><div id="story-model">${storyModel(s.type, s.a, s.b)}</div><div class="fraction-controls">${sliderRow("story", "type", "Story type: 1 join, 2 take away, 3 groups, 4 sharing", s.type, 1, 4)}${sliderRow("story", "a", "First number", s.a, 1, 30)}${sliderRow("story", "b", "Second number", s.b, 1, 10)}</div><p class="canvas-caption">Change the story type and notice which operation fits.<br>This explorer does not submit answers or award mastery.</p></div>`;
+}
 function visual(lesson) {
+  if (lesson.visual === "story-explorer") return storyExplorer();
   if (lesson.visual === "tenframe-explorer") return tenFrameExplorer();
   if (lesson.visual === "blocks-explorer") return blocksExplorer();
   if (lesson.visual === "hops-explorer") return hopsExplorer();
@@ -530,7 +550,7 @@ function getSession(mode, lesson) {
     if (index === -1) index = mode === "review" ? 0 : questions.length;
     session = { key, index, intro: mode === "lesson" && index < questions.length,
       feedback: null, hint: null, answer: "", error: null, attemptId: null,
-      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 }, tf: { a: 8, b: 5 }, blocks: { n: 34 }, hops: { step: 5, hops: 4 }, regroup: { a: 27, b: 38 }, gap: { a: 15, b: 9 }, array: { r: 3, c: 4 }, share: { total: 14, groups: 3 } };
+      explorer: { numerator: 1, denominator: 4, whole: 12 }, equation: { a: 2, b: 3, x: 4 }, line: { m: 2, b: 1 }, plane: { x1: -2, y1: 1, x2: 4, y2: 5 }, shape: { w: 4, h: 3 }, angle: { a: 60 }, polar: { r: 5, a: 45 }, nsys: { n: 243 }, dbl: { a: 13, b: 12 }, ledger: { owned: 3, owed: 5 }, tf: { a: 8, b: 5 }, blocks: { n: 34 }, hops: { step: 5, hops: 4 }, regroup: { a: 27, b: 38 }, gap: { a: 15, b: 9 }, array: { r: 3, c: 4 }, share: { total: 14, groups: 3 }, story: { type: 1, a: 8, b: 5 } };
   }
   return session;
 }
@@ -583,7 +603,7 @@ function lessonView(mode, id) {
     <div class="lesson-title"><div><span class="eyebrow">${esc(placement.course.title.toUpperCase())}</span><h1>${esc(lesson.title)}</h1><p>${esc(lesson.subtitle)}</p></div><div class="title-art ${lesson.color}" aria-hidden="true">${lessonArt(lesson)}</div></div>
     <div class="lesson-layout"><section><div class="lesson-stepper">${mode === "lesson" ? `<span class="${session.intro ? "current" : "done"}">Explore</span>` : ""}${questions.map((q, i) => `<span class="${!session.intro && session.index === i ? "current" : passed.includes(q.id) ? "done" : ""}">Challenge ${i + 1}</span>`).join("")}</div>
     ${session.intro ? `${storyCard(lesson.id)}<div class="explanation-card"><span class="eyebrow">FIRST, THE IDEA</span><h2>${esc(lesson.formula)}</h2><p>${esc(lesson.intro)}</p>${visual(lesson)}<div class="takeaway"><span>&#10038;</span><p>${esc(lesson.takeaway)}</p></div><button class="button primary" data-action="begin">Let's try it ${icon("arrow")}</button></div>` :
-      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
+      `${exerciseView(question, mode, questions.length)}${["graph", "fraction-explorer", "equation-explorer", "line-explorer", "plane-explorer", "shape-explorer", "angle-explorer", "polar-explorer", "number-systems-explorer", "doubling-explorer", "ledger-explorer", "tenframe-explorer", "blocks-explorer", "hops-explorer", "regroup-explorer", "gap-explorer", "array-explorer", "sharing-explorer", "story-explorer"].includes(lesson.visual) ? `<details class="canvas-details"><summary>Open the ${({ graph: "graph", "fraction-explorer": "fraction", "equation-explorer": "equation", "line-explorer": "line", "plane-explorer": "plane", "shape-explorer": "shape", "angle-explorer": "angle", "polar-explorer": "polar", "number-systems-explorer": "number", "doubling-explorer": "doubling", "ledger-explorer": "owing and owning", "tenframe-explorer": "ten-frame", "blocks-explorer": "blocks", "hops-explorer": "number line", "regroup-explorer": "carrying", "gap-explorer": "gap", "array-explorer": "array", "sharing-explorer": "sharing", "story-explorer": "story" })[lesson.visual]} explorer</summary>${visual(lesson)}</details>` : ""}`}
     </section>${tutorPanel()}</div>`;
 }
 function assessment() {
@@ -745,13 +765,13 @@ document.addEventListener("input", event => {
     $("#fraction-model").innerHTML = fractionModel(model.numerator, model.denominator, model.whole);
     return;
   }
-  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"], "tf-": ["a", "b"], "blocks-": ["n"], "hops-": ["step", "hops"], "regroup-": ["a", "b"], "gap-": ["a", "b"], "array-": ["r", "c"], "share-": ["total", "groups"] };
+  const explorerIds = { "plane-": ["x1", "y1", "x2", "y2"], "shape-": ["w", "h"], "angle-": ["a"], "polar-": ["r", "a"], "nsys-": ["n"], "dbl-": ["a", "b"], "ledger-": ["owned", "owed"], "tf-": ["a", "b"], "blocks-": ["n"], "hops-": ["step", "hops"], "regroup-": ["a", "b"], "gap-": ["a", "b"], "array-": ["r", "c"], "share-": ["total", "groups"], "story-": ["type", "a", "b"] };
   for (const [prefix, names] of Object.entries(explorerIds)) {
     if (!event.target.id.startsWith(prefix) || !names.includes(event.target.id.slice(prefix.length))) continue;
     const key = prefix.slice(0, -1), model = session[key];
     model[event.target.id.slice(prefix.length)] = Number(event.target.value);
     for (const name of names) $(`#${key}-${name}-output`).textContent = model[name];
-    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed), tf: () => tenFrameModel(model.a, model.b), blocks: () => blocksModel(model.n), hops: () => hopsModel(model.step, model.hops), regroup: () => regroupModel(model.a, model.b), gap: () => gapModel(model.a, model.b), array: () => arrayModel(model.r, model.c), share: () => sharingModel(model.total, model.groups) };
+    const render = { plane: () => planeModel(model), shape: () => shapeModel(model.w, model.h), angle: () => angleModel(model.a), polar: () => polarModel(model.r, model.a), nsys: () => numberSystemsModel(model.n), dbl: () => doublingModel(model.a, model.b), ledger: () => ledgerModel(model.owned, model.owed), tf: () => tenFrameModel(model.a, model.b), blocks: () => blocksModel(model.n), hops: () => hopsModel(model.step, model.hops), regroup: () => regroupModel(model.a, model.b), gap: () => gapModel(model.a, model.b), array: () => arrayModel(model.r, model.c), share: () => sharingModel(model.total, model.groups), story: () => storyModel(model.type, model.a, model.b) };
     $(`#${key}-model`).innerHTML = render[key]();
     return;
   }

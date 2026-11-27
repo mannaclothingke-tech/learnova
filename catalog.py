@@ -261,6 +261,9 @@ def _courses():
             {"id": "dividing-start", "title": "Sharing and grouping",
              "objectives": ["Divide by sharing and grouping, and describe a remainder."],
              "lesson_ids": ["div-share"]},
+            {"id": "problem-stories", "title": "Word problems",
+             "objectives": ["Read a story problem and choose adding, subtracting, multiplying, or dividing."],
+             "lesson_ids": ["word-ops"]},
         ],
     }, {
         "id": "everyday-foundations", "subject_id": "math",

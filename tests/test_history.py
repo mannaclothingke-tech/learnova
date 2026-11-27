@@ -43,7 +43,7 @@ class HistoryTests(unittest.TestCase):
 
     def test_stories_reference_real_lessons_and_are_complete(self):
         lesson_ids = {lesson["id"] for lesson in LESSONS}
-        self.assertEqual(len(STORIES), 15)
+        self.assertEqual(len(STORIES), 16)
         for lesson_id, story in STORIES.items():
             self.assertIn(lesson_id, lesson_ids)
             self.assertTrue(story["title"].strip() and story["art"] in {"pie", "scales", "grid", "river", "circle", "rope", "tally", "hands", "abacus", "coins", "baskets", "share"})

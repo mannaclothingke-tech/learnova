@@ -20,7 +20,7 @@ class CatalogTests(unittest.TestCase):
         catalog = self.store.state()["catalog"]
         self.assertEqual(catalog["summary"], {
             "subject_count": 7, "course_count": 69, "available_course_count": 9,
-            "published_lesson_count": 50, "reference_course_count": 64,
+            "published_lesson_count": 51, "reference_course_count": 64,
             "partial_reference_count": 2, "topic_count": 13,
         })
         self.assertEqual(sum(len(rows) for _, _, rows in TOPICS), 72)
@@ -37,7 +37,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(len(set(ids)), len(ids))
         starter = next(c for c in catalog["courses"] if c["id"] == "everyday-foundations")
         self.assertEqual(starter["estimated_minutes"], sum(l["duration"] for l in LESSONS[:6]))
-        self.assertEqual(len(ids), 50)
+        self.assertEqual(len(ids), 51)
         self.assertEqual(starter["status"], "available")
         self.assertEqual(len(starter["units"]), 3)
 
@@ -54,7 +54,7 @@ class CatalogTests(unittest.TestCase):
                 self.assertEqual(unit["status"], "planned")
                 self.assertEqual(unit["lesson_ids"], [])
                 self.assertTrue(unit["objectives"])
-        self.assertEqual(len(state["mastery"]), 50)
+        self.assertEqual(len(state["mastery"]), 51)
         self.assertEqual(len(state["diagnostic"]), 12)
 
     def test_existing_database_content_and_evidence_are_not_migrated(self):

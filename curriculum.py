@@ -1734,3 +1734,44 @@ COURSE_ASSESSMENTS["multiply-divide"] = [
     ("div-share", question("vd1", "What is 18 / 6?", "3", "3 x 6 = 18.", "How many 6s make 18?")),
     ("div-share", question("vd2", "23 marbles are shared equally among 4 friends. How many marbles are left over?", "3", "Each friend gets 5, using 20 marbles, so 3 are left over.", "Find the biggest share that fits.")),
 ]
+
+SKILLS.append({"id": "word-ops", "name": "Choosing the operation", "prerequisites": ["div-share", "sub-gap"]})
+
+WORD_LESSON = {
+    "id": "word-ops", "skill": "word-ops", "title": "Which operation?",
+    "subtitle": "Read a story, spot the clue, and pick adding, subtracting, multiplying, or dividing.",
+    "duration": 9, "color": "violet", "icon": "fraction",
+    "intro": "A word problem is a short story with a question. To solve it, ask what is happening in "
+             "the story. If things are put together or something grows, add. If some are taken "
+             "away, or you compare two amounts, subtract. If there are equal groups, multiply. If "
+             "you share equally or make equal groups from a total, divide. Clue words help, but "
+             "always picture the story first. Choose a story type and two numbers in the explorer "
+             "and watch the story, the operation, and the answer change together.",
+    "takeaway": "Picture the story first: join, take away, equal groups, or sharing.",
+    "visual": "story-explorer", "formula": "join +   take away -   groups x   share /",
+    "exercises": [
+        question("wo1", "Mia has 8 stickers and gets 5 more. Which operation finds how many she has now?",
+                 "Add", "Getting more means putting amounts together, so you add: 8 + 5 = 13.",
+                 "Is something being joined, taken away, grouped, or shared?", ["Add", "Subtract", "Multiply", "Divide"]),
+        question("wo2", "A bag has 24 apples. 9 are eaten. How many apples are left?",
+                 "15", "Some are taken away, so subtract: 24 - 9 = 15.", "Eaten apples are taken away."),
+        question("wo3", "There are 6 boxes with 7 pens in each box. How many pens are there in all?",
+                 "42", "Equal groups: 6 x 7 = 42.", "Six groups of seven."),
+        question("wo4", "20 cards are shared equally among 4 players. How many cards does each player get?",
+                 "5", "Sharing equally means dividing: 20 / 4 = 5.", "Share the cards out one at a time."),
+    ],
+}
+BEGINNER_LESSONS.append(WORD_LESSON)
+LESSONS.append(WORD_LESSON)
+
+PRACTICE["word-ops"] = [
+    question("to1", "Sam has 14 marbles and finds 9 more. How many marbles does he have now?", "23", "Finding more means adding: 14 + 9 = 23.", "Is something being joined?"),
+    question("to2", "A shelf has 40 books. 15 are borrowed. How many books are left?", "25", "Borrowed books are taken away: 40 - 15 = 25.", "Subtract what was taken."),
+    question("to3", "There are 5 packs with 8 stickers in each pack. How many stickers are there in all?", "40", "Equal groups: 5 x 8 = 40.", "Five groups of eight."),
+    question("to4", "30 sweets are put into bags of 6. How many bags can be filled?", "5", "Making equal groups from a total: 30 / 6 = 5.", "How many sixes fit in 30?"),
+]
+
+COURSE_ASSESSMENTS["multiply-divide"] += [
+    ("word-ops", question("vo1", "A farmer plants 7 rows of 9 trees. How many trees are there in all?", "63", "Equal groups: 7 x 9 = 63.", "Seven groups of nine.")),
+    ("word-ops", question("vo2", "A rope 45 metres long is cut into pieces of 5 metres each. How many pieces are there?", "9", "Making equal pieces from a total: 45 / 5 = 9.", "How many fives fit in 45?")),
+]

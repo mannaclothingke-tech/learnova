@@ -10,7 +10,7 @@ from server import Store, grade
 
 COURSES = {"counting-numbers": ["num-count", "num-place", "num-line"],
            "add-subtract": ["add-facts", "add-regroup", "sub-gap"],
-           "multiply-divide": ["mul-groups", "mul-tables", "div-share"]}
+           "multiply-divide": ["mul-groups", "mul-tables", "div-share", "word-ops"]}
 
 
 class BeginnerPathTests(unittest.TestCase):
@@ -51,7 +51,7 @@ class BeginnerPathTests(unittest.TestCase):
         for skill in order:
             self.assertTrue(set(skills[skill]["prerequisites"]) <= seen, skill)
             seen.add(skill)
-        self.assertEqual(len(BEGINNER_LESSONS), 9)
+        self.assertEqual(len(BEGINNER_LESSONS), 10)
 
     def test_shape_and_unique_question_ids(self):
         for lesson in BEGINNER_LESSONS:
@@ -76,6 +76,8 @@ class BeginnerPathTests(unittest.TestCase):
             "mg1": 4 * 5, "mg2": 3 * 6, "mg3": 7 * 2,
             "mt1": 10 * 7, "mt2": 5 * 8, "mt3": 9 * 3, "mt4": 2 * 9,
             "ds1": 12 // 3, "ds2": 20 // 5, "ds3": 21 // 3, "ds4": 14 % 3,
+            "wo2": 24 - 9, "wo3": 6 * 7, "wo4": 20 // 4, "to1": 14 + 9, "to2": 40 - 15,
+            "to3": 5 * 8, "to4": 30 // 6, "vo1": 7 * 9, "vo2": 45 // 5,
             "tc1": 10 - 8, "tc2": 10 + 10, "tc3": 5 + 4, "tc4": 30 - 1,
             "tp1": 63 % 10, "tp2": 6 * 10, "tp3": 10 // 10, "tp4": (71 // 10) * 10,
             "tl1": 12 + 2, "tl2": 6 * 5, "tl4": 70 + 10,
@@ -114,6 +116,10 @@ class BeginnerPathTests(unittest.TestCase):
         self.assertEqual(by_id["af4"]["answer"], "9 + 5")
         self.assertEqual(3 * 8, 8 * 3)
         self.assertEqual(by_id["mg4"]["answer"], "8 x 3")
+        # wo1: getting more is adding, and the choice list offers all four operations.
+        self.assertEqual(8 + 5, 13)
+        self.assertEqual(by_id["wo1"]["answer"], "Add")
+        self.assertEqual(by_id["wo1"]["choices"], ["Add", "Subtract", "Multiply", "Divide"])
 
     def test_explorer_logic_matches_arithmetic(self):
         for a in range(10, 100, 7):
@@ -141,7 +147,7 @@ class BeginnerPathTests(unittest.TestCase):
         state = self.store.state()
         for cid in COURSES:
             course = next(c for c in state["catalog"]["courses"] if c["id"] == cid)
-            self.assertEqual(course["completed_count"], 3)
+            self.assertEqual(course["completed_count"], len(COURSES[cid]))
         new_skills = {l["skill"] for l in BEGINNER_LESSONS}
         for skill in state["mastery"]:
             self.assertEqual(skill["status"] == "mastered", skill["id"] in new_skills)
@@ -153,7 +159,7 @@ class BeginnerPathTests(unittest.TestCase):
         state = self.store.state()
         for cid in COURSES:
             self.assertTrue(state["course_assessments"][cid]["complete"])
-            self.assertEqual(state["course_assessments"][cid]["correct_count"], 6)
+            self.assertEqual(state["course_assessments"][cid]["correct_count"], 2 * len(COURSES[cid]))
 
 
 if __name__ == "__main__":

@@ -35,13 +35,15 @@ python server.py --port 8001
   prerequisite chain to assign a Beginner, Intermediate, or Advanced level.
 - A roadmap page listing every course by subject and topic group.
 - A beginner path for people starting with no foundation, taught in this order:
-  "Counting and number sense", "Adding and subtracting", and "Multiplying and
-  dividing" (three lessons each). Fractions and negative numbers now depend on
-  it, and the home screen's Start button points at the first lesson you have not
-  yet mastered, beginning with counting. Each lesson has a hands-on explorer
-  (ten-frames, tens-and-ones blocks, number-line hops, carrying, a gap between
-  towers, dot arrays, and sharing), 4 lesson challenges, 4 practice questions,
-  and a six-question course check.
+  "Counting and number sense" (three lessons), "Adding and subtracting" (three
+  lessons), and "Multiplying and dividing" (four lessons, ending with a word
+  problems lesson on choosing the operation). Fractions and negative numbers now
+  depend on it, and the home screen's Start button points at the first lesson you
+  have not yet mastered, beginning with counting. Each lesson has a hands-on
+  explorer (ten-frames, tens-and-ones blocks, number-line hops, carrying, a gap
+  between towers, dot arrays, sharing, and a story-type picker), 4 lesson
+  challenges, 4 practice questions, and a course check with two questions per
+  lesson.
 - Nine playable courses: the beginner path above, the six-lesson starter
   course, fractions, equations ("First steps with equations"), linear
   relationships ("Lines tell a story"), a combined geometry course ("Geometry and
@@ -50,14 +52,14 @@ python server.py --port 8001
   The other 60 courses are outlines with objectives and proposed prerequisites,
   not playable courses.
 - Math history in two forms. Story cards ("Why people needed this") open
-  fifteen lessons with a short account and illustration. They are display-only:
+  sixteen lessons with a short account and illustration. They are display-only:
   not graded, and they never affect progress. The history course follows the
   chain of needs from counting to geometry in eight low-stakes lessons, with no
   graded course check. History text is written in hedged language where
   scholars disagree and should be fact-checked against reputable sources before
   release.
 - Editable local learner profile and daily intention.
-- Fifty lessons, 221 lesson challenges, hints, and explanations.
+- Fifty-one lessons, 225 lesson challenges, hints, and explanations.
 - The fractions course covers equal parts, equivalence, comparison, addition,
   subtraction, and fractions of quantities. It includes 30 lesson challenges,
   24 separate authored practice questions, and a twelve-question course check.
