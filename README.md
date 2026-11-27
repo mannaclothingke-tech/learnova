@@ -21,7 +21,13 @@ python server.py --port 8001
 ## Included
 
 - Responsive overview, course library, practice, and skill-map screens.
-- A graphics-first lesson layout. Every explorer shows inputs (amber) flowing
+- A graphics-first lesson layout. The overview hero is an animated picture of
+  Euler's identity: a point leaves 1, e^(i&theta;) carries it round the unit circle
+  to &minus;1 while the arc, angle, and cos/sin guides are drawn, then +1 slides it
+  to 0. The five constants (e, i, &pi;, 1, 0) light up as each one is used, with
+  amber input and lime output chips showing &theta; and the point's coordinates.
+  It pauses when you leave the page and shows its finished frame under reduced
+  motion. Every explorer shows inputs (amber) flowing
   through an animated gear machine, colored by operation (add green, subtract
   coral, multiply violet, divide blue), into outputs (lime), so a learner can see
   what goes in and what comes out without reading. Pip, an original robot guide,

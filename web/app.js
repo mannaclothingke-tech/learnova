@@ -98,22 +98,105 @@ function miniArt(kind, color = "violet") {
   if (kind === "balance") return `<svg class="lesson-art ${color}" viewBox="0 0 160 110" aria-hidden="true"><path d="M80 25v61M58 89h44M28 35h104M43 35 25 63h36zM117 35 99 63h36z" class="art-stroke"/><circle cx="80" cy="35" r="7" class="art-dark"/></svg>`;
   return `<svg class="lesson-art ${color}" viewBox="0 0 160 110" aria-hidden="true"><path d="M30 20v70h106M30 66h106M30 42h106M56 20v70M82 20v70M108 20v70" class="art-grid"/><path d="m35 78 94-52" class="art-line"/><circle cx="78" cy="54" r="6" class="art-dark"/></svg>`;
 }
-function heroArt() {
-  return `<svg class="hero-art" viewBox="0 0 380 280" role="img" aria-label="An illustration of a rising line and mathematical building blocks">
-    <defs><pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0v32" fill="none" stroke="#617364" stroke-opacity=".25"/></pattern></defs>
-    <rect x="40" y="15" width="290" height="245" rx="24" fill="url(#hero-grid)"/>
-    <path d="M66 219h239M91 242V38" stroke="#87968a" stroke-width="1.5"/>
-    <path d="m66 224 225-151" fill="none" stroke="#d8f36a" stroke-width="4"/>
-    <path d="M151 167h76v-49" fill="none" stroke="#d8f36a" stroke-width="1.5" stroke-dasharray="5 5"/>
-    <circle cx="151" cy="167" r="7" fill="#d8f36a"/><circle cx="227" cy="116" r="7" fill="#d8f36a"/>
-    <text x="185" y="190" fill="#c1cbbd" font-size="13">run</text><text x="239" y="147" fill="#c1cbbd" font-size="13">rise</text>
-    <g transform="rotate(-8 110 65)"><rect x="43" y="37" width="121" height="48" rx="14" fill="#ece7ff"/><text x="104" y="68" text-anchor="middle" fill="#46376a" font-size="22" font-family="Georgia">y = mx + b</text></g>
-    <g transform="rotate(9 295 216)"><rect x="261" y="180" width="68" height="68" rx="18" fill="#d8f36a"/><path d="m277 216 10 10 26-29" fill="none" stroke="#2c3d2b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
-    <path d="m310 38 4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#d8f36a"/>
-    <g class="float-a"><rect x="30" y="150" width="34" height="34" rx="10" fill="#ffffff22"/><text x="47" y="174" text-anchor="middle" fill="#d8f36a" font-size="20" font-family="Georgia">&#247;</text></g>
-    <g class="float-b"><rect x="318" y="120" width="34" height="34" rx="10" fill="#ffffff22"/><text x="335" y="145" text-anchor="middle" fill="#ece7ff" font-size="20" font-family="Georgia">&#960;</text></g>
-    <g class="float-c"><rect x="238" y="22" width="34" height="34" rx="10" fill="#ffffff22"/><text x="255" y="46" text-anchor="middle" fill="#d8f36a" font-size="20" font-family="Georgia">&#8730;</text></g>
+const EU = { cx: 190, cy: 180, r: 110, T: 14 };
+let eulerRaf = 0;
+function eulerArt() {
+  const { cx, cy, r } = EU;
+  const half = r / 2;
+  const badge = (key, x, glyph, cap) => `<g class="eu-badge b-${key}" id="bd-${key}"><circle cx="${x}" cy="196" r="23"/><text x="${x}" y="204" class="eu-glyph" text-anchor="middle">${glyph}</text><text x="${x}" y="240" class="eu-cap" text-anchor="middle">${cap}</text></g>`;
+  return `<svg class="euler-art" id="euler" viewBox="0 0 700 340" role="img" aria-label="Euler's identity animation. A point starts at 1 and e to the i theta carries it half way round the unit circle to minus 1. Adding 1 then slides it to 0, so e to the i pi plus 1 equals 0.">
+    <defs>
+      <filter id="eu-glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <pattern id="eu-grid" width="${half}" height="${half}" x="${cx}" y="${cy}" patternUnits="userSpaceOnUse"><path d="M${half} 0H0v${half}" fill="none" stroke="#8fa894" stroke-opacity=".14"/></pattern>
+    </defs>
+    <g id="eu-scene">
+      <rect x="28" y="30" width="324" height="290" rx="28" fill="url(#eu-grid)"/>
+      <path class="eu-axis" d="M44 ${cy}H334M${cx} 308V52"/><path class="eu-arrow" d="M338 ${cy}l-9 -4.5v9zM${cx} 48l-4.5 9h9z"/>
+      <text x="332" y="${cy - 9}" class="eu-axis-lab" text-anchor="end">real</text><text x="${cx - 10}" y="62" class="eu-axis-lab" text-anchor="end">imaginary</text>
+      <circle class="eu-track" cx="${cx}" cy="${cy}" r="${r}"/>
+      <path id="eu-low" class="eu-low" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" d="M${cx - r} ${cy}A${r} ${r} 0 0 0 ${cx + r} ${cy}"/>
+      <path id="eu-wedge" class="eu-wedge"/>
+      <line id="eu-cos" class="eu-cos"/><line id="eu-sin" class="eu-sin"/>
+      <path id="eu-arc" class="eu-arc" filter="url(#eu-glow)"/>
+      <line id="eu-slide" class="eu-slide" x1="${cx - r}" y1="${cy}" x2="${cx - r}" y2="${cy}"/>
+      <line id="eu-rad" class="eu-rad" x1="${cx}" y1="${cy}" x2="${cx + r}" y2="${cy}"/>
+      <path id="eu-ang" class="eu-ang"/><text id="eu-theta" class="eu-theta" text-anchor="middle">&#952;</text>
+      <circle class="eu-dot" cx="${cx + r}" cy="${cy}" r="4"/><circle class="eu-dot" cx="${cx - r}" cy="${cy}" r="4"/><circle class="eu-dot" cx="${cx}" cy="${cy - r}" r="4"/><circle class="eu-dot" cx="${cx}" cy="${cy + r}" r="4"/>
+      <text x="${cx + r + 12}" y="${cy + 20}" class="eu-lab l-1">1</text><text x="${cx - r - 10}" y="${cy + 22}" class="eu-lab l-m1" text-anchor="end">&#8722;1</text>
+      <text x="${cx + 12}" y="${cy - r - 9}" class="eu-lab l-i">i</text><text x="${cx + 12}" y="${cy + r + 18}" class="eu-lab l-i">&#8722;i</text>
+      <text x="${cx + 9}" y="${cy + 19}" class="eu-lab l-0">0</text>
+      <circle id="eu-rip" class="eu-rip" cx="${cx}" cy="${cy}" r="0"/>
+      <circle id="eu-halo" class="eu-halo" cx="${cx + r}" cy="${cy}" r="14"/>
+      <circle id="eu-pt" class="eu-pt" cx="${cx + r}" cy="${cy}" r="8.5" filter="url(#eu-glow)"/>
+      <g id="eu-plus" class="eu-plus"><rect width="46" height="26" rx="13"/><text x="23" y="18" text-anchor="middle">+1</text></g>
+      <text class="eu-eq" x="396" y="104"><tspan id="tk-e" class="eu-tok tk-e it">e</tspan><tspan id="tk-i" class="eu-tok tk-i it sup" dy="-24">i</tspan><tspan id="tk-pi" class="eu-tok tk-pi sup" dx="2">&#960;</tspan><tspan id="tk-plus" class="eu-tok tk-op" dy="24" dx="10">+</tspan><tspan id="tk-1" class="eu-tok tk-1" dx="8">1</tspan><tspan id="tk-eq" class="eu-tok tk-op" dx="12">=</tspan><tspan id="tk-0" class="eu-tok tk-0" dx="12">0</tspan></text>
+      <text id="eu-status" class="eu-status" x="398" y="146"></text>
+      ${badge("e", 414, "e", "steady spin")}${badge("i", 478, "i", "sideways")}${badge("pi", 542, "&#960;", "half turn")}${badge("1", 606, "1", "the start")}${badge("0", 670, "0", "all cancels")}
+      <g class="eu-chip in"><rect x="396" y="274" width="122" height="38" rx="19"/><text id="eu-in" x="457" y="299" text-anchor="middle"></text></g>
+      <path class="eu-flow" d="M526 293h26m-7 -7l7 7l-7 7"/>
+      <g class="eu-chip out"><rect x="562" y="274" width="128" height="38" rx="19"/><text id="eu-out" x="626" y="299" text-anchor="middle"></text></g>
+    </g>
   </svg>`;
+}
+function eulerDraw(t) {
+  const { cx, cy, r, T } = EU;
+  const $e = id => document.getElementById(id);
+  if (!$e("eu-scene")) return;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = v => v < .5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2;
+  const fmt = v => (Math.abs(v) < .005 ? 0 : v).toFixed(2).replace("-", "\u2212");
+  const theta = Math.PI * ease(clamp((t - 1.2) / 5.6));
+  const slide = ease(clamp((t - 8.2) / 2.2));
+  const px = slide > 0 ? -1 + slide : Math.cos(theta);
+  const py = slide > 0 ? 0 : Math.sin(theta);
+  const X = cx + r * px, Y = cy - r * py;
+  const poly = (rad, th) => {
+    const steps = Math.max(1, Math.ceil(th / .06));
+    let d = "";
+    for (let k = 0; k <= steps; k++) {
+      const a = th * k / steps;
+      d += `${k ? "L" : "M"}${(cx + rad * Math.cos(a)).toFixed(1)} ${(cy - rad * Math.sin(a)).toFixed(1)}`;
+    }
+    return d;
+  };
+  const set = (id, attrs) => { const el = $e(id); for (const k in attrs) el.setAttribute(k, attrs[k]); };
+  const arc = poly(r, theta);
+  set("eu-arc", { d: arc });
+  set("eu-wedge", { d: `M${cx} ${cy}L${arc.slice(1)}Z`, opacity: 1 - slide });
+  set("eu-ang", { d: poly(30, theta), opacity: (1 - slide) * clamp(theta * 3) });
+  set("eu-theta", { x: cx + 50 * Math.cos(theta / 2), y: cy - 50 * Math.sin(theta / 2) + 6, opacity: (1 - slide) * clamp((theta - .3) * 3) });
+  set("eu-rad", { x2: X, y2: Y });
+  const guide = clamp(Math.sin(theta) * 4) * (1 - slide);
+  set("eu-cos", { x1: X, y1: Y, x2: X, y2: cy, opacity: guide });
+  set("eu-sin", { x1: X, y1: Y, x2: cx, y2: Y, opacity: guide });
+  set("eu-low", { "stroke-dashoffset": 100 * (1 - clamp((t - 6.8) / 1.4)) });
+  set("eu-slide", { x2: X, opacity: slide > 0 ? .9 * (1 - clamp((t - 11.2) / .6)) : 0 });
+  set("eu-pt", { cx: X, cy: Y });
+  set("eu-halo", { cx: X, cy: Y, r: 14 + 3 * Math.sin(t * 6) });
+  const rip = clamp((t - 10.4) / 1.1);
+  set("eu-rip", { r: 8 + rip * r * .8, opacity: rip > 0 && rip < 1 ? 1 - rip : 0 });
+  const plusOn = t > 8 && t < 10.7 ? clamp((t - 8) / .4) * clamp((10.7 - t) / .4) : 0;
+  set("eu-plus", { transform: `translate(${(X - 23).toFixed(1)} ${(Y - 56).toFixed(1)})`, opacity: plusOn });
+  const lit = { "tk-e": 1.4, "tk-i": 2, "tk-pi": 6.8, "tk-plus": 8.2, "tk-1": 8.2, "tk-eq": 10.4, "tk-0": 10.4, "bd-1": .3, "bd-e": 1.4, "bd-i": 2, "bd-pi": 6.8, "bd-0": 10.4 };
+  for (const id in lit) $e(id).classList.toggle("on", t >= lit[id]);
+  const phase = t < 1.2 ? 0 : t < 6.8 ? 1 : t < 8.2 ? 2 : t < 10.4 ? 3 : 4;
+  $e("eu-status").textContent = ["Start at 1", "Keep turning: you stay on the circle", "Half a turn lands on \u22121", "Now add 1: slide right", "\u22121 + 1 = 0"][phase];
+  $e("eu-in").textContent = slide > 0 ? `+ ${slide.toFixed(2)}` : `\u03B8 = ${(theta / Math.PI).toFixed(2)} \u03C0`;
+  $e("eu-out").textContent = `(${fmt(px)}, ${fmt(py)})`;
+  $e("eu-scene").setAttribute("opacity", clamp(t / .5) * (1 - clamp((t - (T - .5)) / .5)));
+}
+function startEuler() {
+  cancelAnimationFrame(eulerRaf);
+  const svg = document.getElementById("euler");
+  if (!svg) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { eulerDraw(12); return; }
+  const t0 = performance.now();
+  const tick = now => {
+    if (!svg.isConnected) return;
+    eulerDraw(((now - t0) / 1000) % EU.T);
+    eulerRaf = requestAnimationFrame(tick);
+  };
+  eulerRaf = requestAnimationFrame(tick);
 }
 
 function updateShell(page) {
@@ -156,7 +239,7 @@ function home() {
   }
   return `${heading("LET'S KEEP YOUR CURIOSITY GOING", name ? `Welcome back, ${esc(name)} <span class="wave">&#10038;</span>` : 'Your next "aha" starts here.', "Build understanding, one small discovery at a time.",
     `<a class="text-link" href="#progress">View your progress ${icon("arrow")}</a>`)}
-    <div class="dashboard-grid"><section class="hero"><div class="hero-copy"><span class="pill">LEARN BY DOING</span><h2>Make the next<br>idea <em>click.</em></h2><p>Not just the answer. The understanding.<br>Explore the math hiding in everyday things.</p><a class="button lime" href="#lesson/${next.id}">${state.activity.attempts ? "Continue your path" : "Start exploring"} ${icon("arrow")}</a><span class="hero-foot">${icon("clock")} One lesson. A fresh perspective.</span></div>${heroArt()}<div class="hero-bot" aria-hidden="true">${robot("happy", "bot-xl")}</div></section>
+    <div class="dashboard-grid"><section class="hero euler"><div class="hero-copy"><span class="pill">LEARN BY DOING</span><h2>Make the next<br>idea <em>click.</em></h2><p>Not just the answer. The understanding.<br>Explore the math hiding in everyday things.</p><div class="hero-actions"><a class="button lime" href="#lesson/${next.id}">${state.activity.attempts ? "Continue your path" : "Start exploring"} ${icon("arrow")}</a><span aria-hidden="true">${robot("happy", "bot-sm")}</span></div><span class="hero-foot">${icon("clock")} One lesson. A fresh perspective.</span></div>${eulerArt()}</section>
     <section class="week-card"><div class="section-label">YOUR LEARNING RHYTHM <span>&#10038;</span></div><div class="streak-value">${state.activity.streak}<span>day${state.activity.streak === 1 ? "" : "s"} of momentum</span></div><p>Consistency starts with showing up.</p><div class="week-days">${recent.join("")}</div><hr><div class="daily-goal">${icon("clock")}<span>Daily intention<strong>${state.profile?.minutes || 10} minutes of curiosity</strong></span><button class="icon-button" data-action="profile" aria-label="Edit daily intention">${icon("studio")}</button></div></section></div>
     <section class="stats-row"><div>${icon("learn")}<span><strong>${done}<small> / ${state.lessons.length}</small></strong>Lessons completed</span></div><div>${icon("check")}<span><strong>${masteryCount()}<small> / ${state.mastery.length}</small></strong>Skills mastered</span></div><div>${icon("practice")}<span><strong>${state.activity.attempts}</strong>Answers explored</span></div><div><span class="tiny-spark">&#10038;</span><span><strong>A little every day</strong>Progress, not perfection</span></div></section>
     <div class="section-heading"><div><span class="eyebrow">YOUR GUIDED PATH</span><h2>From little pieces to big ideas</h2></div><a class="text-link" href="#learn">Explore all lessons ${icon("arrow")}</a></div>
@@ -717,6 +800,8 @@ function render() {
     course: courseView, unit: unitView, curriculum: curriculumView, "course-check": courseCheck };
   const html = page === "lesson" || page === "review" ? lessonView(page, id) : views[page] ? views[page](id) : notFound();
   $("#main").innerHTML = html;
+  cancelAnimationFrame(eulerRaf);
+  if (page === "home") startEuler();
   document.title = `${page === "lesson" || page === "review" ? state.lessons.find(l => l.id === id)?.title || "Lesson" : ({ home: "Overview", learn: "Explore", practice: "Practice", progress: "Progress", studio: "Content studio", assessment: "Starting check", "course-check": "Course check", course: state.catalog.courses.find(c => c.id === id)?.title, unit: "Course unit", curriculum: "Coverage map" }[page] || "Not found")} - Learnova`;
 }
 const VISUAL_ALIAS = { fraction: "fraction-explorer", balance: "equation-explorer", expression: "expression-explorer", graph: "line-explorer" };
